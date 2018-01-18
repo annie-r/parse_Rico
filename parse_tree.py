@@ -23,29 +23,76 @@ def has_label(child):
 	pass_label = False
 	k = child.keys()
 	# set to if the field exists
-	hasText = 'text' in k
-	hasContentDesc = 'content-desc' in k
+	has_text = 'text' in k
+	has_content_desc = 'content-desc' in k
 	# check if existing fields have content
-	if hasContentDesc:
+	if has_content_desc:
 		if(child["content-desc"] == [None]):
-			hasContentDesc = False
+			has_content_desc = False
 		#print("content desc: ")
 		#print(child["content-desc"])
-	if hasText:
+	if has_text:
 		#print ("Text:" + str(child["text"]))
 		if child["text"] == "" :
 			#print("empty text")
-			hasText = False
+			has_text = False
 	#print("RESULT: ")
 	# must have non-empty/null text or cont_desc to pass
-	if not hasText and not hasContentDesc:
+	if not has_text and not has_content_desc:
 		pass_label = False
-		print ("inaccessible")
+		#print ("inaccessible")
 	else:
 		pass_label = True
-		print("accessible")
+		#print("accessible")
 	# return if has label 
 	return pass_label
+
+def px_to_dp(px):
+	# TODO: figure out dpi/phyical device of RICO
+	# conversion of dp units to screen pixels is simple: px = dp * (dpi / 160).
+	# assuming mdpi device, so dpi = 160
+	# https://developer.android.com/guide/practices/screens_support.html
+	# assuming mdpi device, so dpi = 160
+	dpi = 160
+	return (px * 160)/dpi
+
+def wide_enough(element):
+	k = element.keys()
+	# bounds is 4 element array
+	# 0 = left, 1 = top, 2 = right, 3 = bottom
+	# google dev guidelines, needs to be 48 dp
+	bounds = element["bounds"]
+	px_width = bounds[2] - bounds[0]
+	# must convert pixel to dp
+
+	dp_width = px_to_dp(px_width)
+	dp_width_threshold = 48
+	wide_enough = None
+	if (dp_width < dp_width_threshold ):
+		wide_enough = False
+	else:
+		wide_enough = True
+	return wide_enough
+
+def tall_enough(element):
+	k = element.keys()
+	# bounds is 4 element array
+	# 0 = left, 1 = top, 2 = right, 3 = bottom
+	# google dev guidelines, needs to be 48 dp
+	bounds = element["bounds"]
+	px_height = bounds[3] - bounds[1]
+	# must convert pixel to dp
+	dp_height = px_to_dp(px_height)
+	dp_height_threshold = 48
+	tall_enough = None
+	if (dp_height < dp_height_threshold ):
+		tall_enough = False
+	else:
+		tall_enough = True
+	return tall_enough
+
+
+
 
 # recursively parse all children 
 # only actually parse leaf elements
@@ -56,24 +103,29 @@ def parse_children(root, checks):
 		k = child.keys()
 		# if has children, analyze them
 		if 'children' in k:
-			print("has children")
+			#print("has children")
 			#num_focusable += parse_children(child, checks)
 			parse_children(child,checks)
 		# test all elements, run tests
 		
 		# TODO: is right to only check focusable elements?
 		# only focusable elements need to be tested
-		if 'resource-id' in k:
+		'''if 'resource-id' in k:
 			print("\nresource id: "+str(child["resource-id"]))
 		else:
 			print("no resource id")
+		'''
 		if not 'focusable' in k:
-			print("not focus")
+			#print("not focus")
 			print('not tagged focusable')
-		elif child['focusable'] == True:
-			print ("focus")
-			checks['num_focusable'] += 1
-			
+		elif child['focusable'] == True or child["clickable"] == True:
+			#print ("focus")
+			if(child['focusable']):
+				checks['num_focusable'] += 1
+			if(child['clickable']):
+				checks['num_clickable'] += 1
+			if child['focusable'] and child['clickable']:
+				checks['num_foc_and_click'] +=1
 			
 			if 'resource-id' in k:
 				print("\nresource id: "+str(child["resource-id"]))
@@ -89,11 +141,21 @@ def parse_children(root, checks):
 			########### PER ELEMENT CHECK LIST
 
 			## Check for existance of label 
-			print ("updating")
+			#print ("updating")
 			if(not has_label(child)):
+				print ("no label")
 				checks['unlabeled_elements'] += 1
-		else:
-			print ("focus false")
+
+			## Check element is wide enough
+			if(not wide_enough(child)):
+				print ("not wide")
+				checks['num_not_wide_enough'] += 1
+			## Check element is tall enough
+			if not tall_enough(child):
+				print ("not tall")
+				checks['num_not_tall_enough'] += 1
+		#else:
+		#	print ("focus false")
 
 	#return num_focusable
 	'''
@@ -119,6 +181,10 @@ def parse_children(root, checks):
 def initialize_checks(checks):
 	checks['unlabeled_elements']=0
 	checks['num_focusable']=0
+	checks['num_clickable']=0
+	checks['num_not_wide_enough']=0
+	checks['num_not_tall_enough']=0
+	checks['num_foc_and_click']=0
 
 def parse_json(filepath):
 	checks = {}
@@ -160,7 +226,9 @@ if __name__ == "__main__":
 	filepath = "C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\com.google.android.gm\\trace_0\\view_hierarchies\\170.json"
 	filepath="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.google.android.gm\\trace_0\\view_hierarchies\\2.json"
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.utorrent.client\\trace_0\\view_hierarchies\\3.json"
-	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.utorrent.client\\trace_0\\view_hierarchies\\46.json"
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.utorrent.client\\trace_0\\view_hierarchies\\286.json"
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\485.json"
+	
 	parse_json(filepath)
 	#parse_directory("C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\example_apps")
 	#parse_directory("C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/example_apps")
