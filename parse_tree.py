@@ -1,5 +1,5 @@
-## IS NOT PARSING ALL CHILDREN!!
-# see Sand 3.json as example 
+## not sure if making right inferences based on visible elements who get their text from invisible children\
+# see gmail 385
 
 #import com.android.provider.Settings
 import time, sys, os.path, os
@@ -9,6 +9,8 @@ sys.path.append(os.path.join('/usr/lib/python2.7/dist-packages/'))
 #print sys.path
 import yaml
 import json
+from talkbackAccessible import talkback_accessible
+from node import Node
 
 
 
@@ -19,34 +21,10 @@ def json_loader(filepath):
 	return data
 
 # check if an item has text or content_desc
+''' moved to talkbackAccessible
 def has_label(child):
-	pass_label = False
-	k = child.keys()
-	# set to if the field exists
-	has_text = 'text' in k
-	has_content_desc = 'content-desc' in k
-	# check if existing fields have content
-	if has_content_desc:
-		if(child["content-desc"] == [None]):
-			has_content_desc = False
-		#print("content desc: ")
-		#print(child["content-desc"])
-	if has_text:
-		#print ("Text:" + str(child["text"]))
-		if child["text"] == "" :
-			#print("empty text")
-			has_text = False
-	#print("RESULT: ")
-	# must have non-empty/null text or cont_desc to pass
-	if not has_text and not has_content_desc:
-		pass_label = False
-		#print ("inaccessible")
-	else:
-		pass_label = True
-		#print("accessible")
-	# return if has label 
-	return pass_label
-
+	'''
+	
 def px_to_dp(px):
 	# TODO: figure out dpi/phyical device of RICO
 	# conversion of dp units to screen pixels is simple: px = dp * (dpi / 160).
@@ -93,117 +71,72 @@ def tall_enough(element):
 
 
 
-
 # recursively parse all children 
-# only actually parse leaf elements
 #TODO case where just root
-def parse_children(root, checks):
-	#num_focusable = 0
-	for child in root["children"]:
-		k = child.keys()
-		# if has children, analyze them
-		if 'children' in k:
-			#print("has children")
-			#num_focusable += parse_children(child, checks)
-			parse_children(child,checks)
-		# test all elements, run tests
-		
-		# TODO: is right to only check focusable elements?
-		# only focusable elements need to be tested
-		'''if 'resource-id' in k:
-			print("\nresource id: "+str(child["resource-id"]))
-		else:
-			print("no resource id")
+def parse_child(node, ancestor_focusable, checks, level):
+	#level 
+	k = node.properties.keys()
+	#if 'resource-id' in k:
+	#	print("\n~~~~resource id: "+str(element["resource-id"]))
+	#else:
+	#	print("\n~~~~no resource id")
+	children_visible = False
+	# recursively go through children
+	if 'children' in k:
+		for child_prop in node.properties["children"]:
+			# create node object with current node as parent
+			child = Node(child_prop, node)
+			# add child node to current node's children
+			node.add_child(child)
+			next_level = level + 1
+			child_visible = parse_child(child, ancestor_focusable,checks, next_level)
+			# only need one visible child to pass the test
+			if child_visible:
+				children_visible = child_visible
+	for i in range(0,level):
+		print("\t",end="")
+	if 'resource-id' in k:
+		print("resource id: "+str(node.properties["resource-id"]))
+	else:
+		print("no resource id")
+	# only run checks on elements that talkback (and therefore switch?) would focus on
+	if (talkback_accessible(node, ancestor_focusable, children_visible)):
+		checks['num_talkback_accessible'] +=1
+		print ("talkback_accessible")
+		## has cont_desc or label
+		#TODO : dif b/t non-speaking and bad labeling
 		'''
-		if not 'focusable' in k:
-			#print("not focus")
-			print('not tagged focusable')
-		elif child['focusable'] == True or child["clickable"] == True:
-			#print ("focus")
-			if(child['focusable']):
-				checks['num_focusable'] += 1
-			if(child['clickable']):
-				checks['num_clickable'] += 1
-			if child['focusable'] and child['clickable']:
-				checks['num_foc_and_click'] +=1
-			
-			if 'resource-id' in k:
-				print("\nresource id: "+str(child["resource-id"]))
-			else:
-				print("no resource id")
-			#if 'class' in k:
-				#print("class:")
-				#print(child['class'])
-			#else:
-				#print("no class")
+		if(not has_label(node)):
+			checks['num_unlabeled'] += 1
+			print("no label")
+		'''
+	checks['num_elements'] +=1	
 
-
-			########### PER ELEMENT CHECK LIST
-
-			## Check for existance of label 
-			#print ("updating")
-			if(not has_label(child)):
-				print ("no label")
-				checks['unlabeled_elements'] += 1
-
-			## Check element is wide enough
-			if(not wide_enough(child)):
-				print ("not wide")
-				checks['num_not_wide_enough'] += 1
-			## Check element is tall enough
-			if not tall_enough(child):
-				print ("not tall")
-				checks['num_not_tall_enough'] += 1
-		#else:
-		#	print ("focus false")
-
-	#return num_focusable
-	'''
-		if 'class' in k:
-			if(child['class'] == "android.support.design.widget.FloatingActionButton" or
-				child['class'] == "android.widget.ImageButton" or
-				child['class'] == "android.widget.ImageView" 
-				):
-				print("class: ")
-				print(child['class'])
-				if 'content-desc' in k:
-					print("content desc: ")
-					print(child["content-desc"])
-
-				else:
-					print("no content desc\n")
-				if 'resource-id' in k:
-					print(child["resource-id"])
-				else:
-					print("no resource id")
-					'''
-
+	return node.properties['visibility'] == 'visible'	
+	
 def initialize_checks(checks):
-	checks['unlabeled_elements']=0
-	checks['num_focusable']=0
-	checks['num_clickable']=0
+	checks['num_unlabeled']=0
+	checks['num_talkback_accessible']=0
+	checks['num_elements']=0
 	checks['num_not_wide_enough']=0
 	checks['num_not_tall_enough']=0
-	checks['num_foc_and_click']=0
 
 def parse_json(filepath):
+	print ("file: "+filepath)
 	checks = {}
 	initialize_checks(checks)
 	file_data = json_loader(filepath)
 	#if no tree, data will be null
 	if(file_data):
 		checks.update({"has_file":True})
-		root = file_data["activity"]["root"]
-		parse_children(root, checks)
-		if checks['num_focusable'] == 0:
-			checks.update({"has_focusable":False})
-			#print ("none focusable")
-		else:
-			checks.update({"has_focusable":True})
+		root_prop = file_data["activity"]["root"]
+		root = Node(root_prop, None)
+		print("created node")
+		parse_child(root, False, checks,0)
 	else:
 		checks.update({"has_file":False})
 		#print("no tree")
-	print ("file: "+filepath)
+	print("\n\n")
 	for check, val in checks.items():
 		print(check +" : "+ str(val))
 
@@ -222,13 +155,17 @@ def parse_directory(apps_dir):
 
 
 if __name__ == "__main__":
+
+	''
 	filepath = "C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/com.google.android.gm/trace_0/view_hierarchies/170.json"
 	filepath = "C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\com.google.android.gm\\trace_0\\view_hierarchies\\170.json"
 	filepath="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.google.android.gm\\trace_0\\view_hierarchies\\2.json"
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.utorrent.client\\trace_0\\view_hierarchies\\3.json"
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.utorrent.client\\trace_0\\view_hierarchies\\286.json"
-	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\485.json"
-	
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\test.json"
+	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\air.com.KalromSystems.SandDrawLite\\trace_0\\view_hierarchies\\197.json"
+	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.google.android.gm\\trace_0\\view_hierarchies\\385.json"
+
 	parse_json(filepath)
 	#parse_directory("C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\example_apps")
 	#parse_directory("C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/example_apps")
