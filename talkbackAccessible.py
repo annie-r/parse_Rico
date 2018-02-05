@@ -8,20 +8,23 @@
 
 def has_text_or_cont_desc(node):
 	pass_label = False
-	k = node.properties.keys()
+	k = node.raw_properties.keys()
 	# set to if the field exists
 	has_text = 'text' in k
+	node.characteristics['talkback_accessible'].append("has text")
 	has_content_desc = 'content-desc' in k
 	# check if existing fields have content
 	if has_content_desc:
-		if(node.properties["content-desc"] == [None]):
+		if(node.raw_properties["content-desc"] == [None]):
 			has_content_desc = False
+		else:
+			node.characteristics['talkback_accessible'].append("has non-none cont desc")
 		#print("content desc: ")
 		#print(node["content-desc"])
 	#if has_text:
 		#print ("Text:" + str(node["text"]))
 		# not checking if good, checking if has?
-		#if node.properties["text"] == "" :
+		#if node.raw_properties["text"] == "" :
 			#print("empty text")
 		#	has_text = False
 	#print("RESULT: ")
@@ -38,19 +41,20 @@ def has_text_or_cont_desc(node):
 
 # return if node is clickable or long-clickable
 def is_clickable(node):
-	k = node.properties.keys()
+	k = node.raw_properties.keys()
 	has_clickable ='clickable' in k
 	has_long_clickable = 'content-desc' in k
 
 	# is clickable
 	if('clickable' in k):
-		if(node.properties["clickable"]):
-			print("node is clickable")
+		if(node.raw_properties["clickable"]):
+
+			node.characteristics['talkback_accessible'].append("node is clickable")
 			return True
 	# long clickable
 	if('long-clickable' in k):
-		if(node.properties["long-clickable"]):
-			print ("node is long clickable")
+		if(node.raw_properties["long-clickable"]):
+			node.characteristics['talkback_accessible'].append("node is long clickable")
 			return True
 	return False
 
@@ -94,31 +98,39 @@ A node is speakable if:
 
 def is_speakable(node):
 	if (has_text_or_cont_desc(node)):
-		node.is_speakable = True
+		node.characteristics['is_speakable'] = True
 	if(is_clickable(node)):
-		node.is_speakable = True
+		node.characteristics['is_speakable'] = True
 	#TODO web content
 	if(has_nonactionable_speaking_children(node)):
-		node.is_speakable = True
-	return node.is_speakable
+		node.characteristics['talkback_accessible'].append("has nonactionable speaking children")
+		node.characteristics['is_speakable'] = True
+	return node.characteristics['is_speakable']
 
 
 def is_focusable(node):
-	return node.properties["focusable"]
+	result = node.raw_properties["focusable"]
+	if result:
+		node.characteristics['talkback_accessible'].append("focusable")
+	else:
+		node.characteristics['talkback_accessible'].append("not focusable")
+	return result
 
 # returns if a node is visible
 def is_visible(node):
-	k = node.properties.keys()
-	print (k)
+	k = node.raw_properties.keys()
 
 	if ('visibility' in k):
 		# TODO: figure out all the meaning of the different
 		# possible values of 'visibility' 
-		if (node.properties['visibility'] == "visible"):
+		node.characteristics['talkback_accessible'].append('visibility: ' + str(node.raw_properties['visibility']))
+		if (node.raw_properties['visibility'] == "visible"):
 			return True
 	# if the node doesn't have a visibility property
 	# or if that property is not set to "visible"
 	# it is not a visible node
+	else:
+		node.characteristics['talkback_accessible'].append('no visibility tag')
 	return False
 
 ''' returns if is accessed by Talkback based on Xiaoyi's list:
@@ -147,19 +159,20 @@ def is_visible(node):
 
 
 '''
-def talkback_accessible(node, ancestor_focusable, children_visible):
-	talkback_accessible = False
-	k = node.properties.keys()
+# TODO: what are the ancestor focusable and children visible necessary?
 
-
+#def talkback_accessible(node, ancestor_focusable, children_visible):
+def talkback_accessible(node):
+	# Based on Annie's list
 	if not is_visible(node):
-		node.talkback_accessible = False
+		node.characteristics['talkback_accessible'][0] = False
 	elif is_clickable(node):
-		node.talkback_accessible = True
+		node.characteristics['talkback_accessible'][0] = True
 	elif is_focusable(node):
-		node.talkback_accessible = True
+		node.characteristics['talkback_accessible'][0] = True
 	elif is_speakable(node):
-		node.talkback_accessible = True
+		node.characteristics['talkback_accessible'][0] = True
+
 
 	# inclusion criteria 2
 	'''
@@ -176,15 +189,15 @@ def talkback_accessible(node, ancestor_focusable, children_visible):
 	# 	talkback_accessible = False 
 
 	# inclusion criteria 4
-	if has_text_or_cont_desc(node) and (not ancestor_focusable):
-		print ("labeled with no focusable ancestor")
-		talkback_accessible = True
+	#if has_text_or_cont_desc(node) and (not ancestor_focusable):
+	#	print ("labeled with no focusable ancestor")
+	#	talkback_accessible = True
 
 	# exclusion criteria 1
 	#print("visibility: "+str(element['visibility'])+ " "+ str(element['visibility'] == "visible"))
-	if not 'visibility' in k or not (node.properties['visibility'] == "visible"):
-		print("not visible")
-		talkback_accessible = False
+	#if not 'visibility' in k or not (node.raw_properties['visibility'] == "visible"):
+	#	print("not visible")
+	#	talkback_accessible = False
 
-	print ("tb_access: "+str(talkback_accessible))
-	return talkback_accessible
+	#print ("tb_access: "+str(talkback_accessible))
+	
