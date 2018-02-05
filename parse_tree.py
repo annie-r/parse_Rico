@@ -9,7 +9,7 @@ sys.path.append(os.path.join('/usr/lib/python2.7/dist-packages/'))
 #print sys.path
 import yaml
 import json
-from talkbackAccessible import talkback_accessible
+from talkbackAccessible import should_focus
 from node import Node
 import checks
 
@@ -88,6 +88,14 @@ def parse_json(filepath):
 	checks = {}
 	initialize_checks(checks)
 	file_data = json_loader(filepath)
+
+	# TO TEST
+	if(file_data):
+		checks.update({"has_file":True})
+		root_prop = file_data["activity"]["root"]
+		root = Node(root_prop, None)
+		should_focus(root)
+'''
 	#if no tree, data will be null
 	if(file_data):
 		checks.update({"has_file":True})
@@ -107,7 +115,7 @@ def parse_json(filepath):
 
 	for check, val in checks.items():
 		print(check +" : "+ str(val))
-
+'''
 def parse_directory(apps_dir):
 	for subdir, app_dirs, app_files in os.walk(apps_dir):
 		for file in app_files:
