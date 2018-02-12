@@ -9,7 +9,7 @@ sys.path.append(os.path.join('/usr/lib/python2.7/dist-packages/'))
 #print sys.path
 import yaml
 import json
-from talkbackAccessible import should_focus
+from talkbackAccessible import talkback_focus
 from node import Node
 import checks
 
@@ -27,18 +27,15 @@ def has_label(child):
 	'''
 	
 # runs all accessibility checks on a node
+# TODO
 def run_checks(node, checks):
-	non_null_speaking	
+	
+	return False
 
 # recursively parse all children 
 #TODO case where just root
-def parse_child(node, ancestor_focusable, checks, level):
-	#level 
+def parse_node(node, ancestor_focusable, checks): 
 	k = node.raw_properties.keys()
-	#if 'resource-id' in k:
-	#	print("\n~~~~resource id: "+str(element["resource-id"]))
-	#else:
-	#	print("\n~~~~no resource id")
 	children_visible = False
 	# recursively go through children
 	if 'children' in k:
@@ -47,31 +44,16 @@ def parse_child(node, ancestor_focusable, checks, level):
 			child = Node(child_prop, node)
 			# add child node to current node's children
 			node.add_child(child)
-			next_level = level + 1
-			child_visible = parse_child(child, ancestor_focusable,checks, next_level)
+			child_visible = parse_node(child, ancestor_focusable,checks)
 			# only need one visible child to pass the test
 			if child_visible:
 				children_visible = child_visible
-	#for i in range(0,level):
-	#	print("\t",end="")
-	#if 'resource-id' in k:
-	#	print("resource id: "+str(node.properties["resource-id"]))
-	#else:
-	#	print("no resource id")
+
 	# only run checks on elements that talkback (and therefore switch?) would focus on
-	talkback_accessible(node)
-	'''
-	if (node.characteristics['talkback_accessible'][0]):
-		checks['num_talkback_accessible'] +=1
-		print ("talkback_accessible")
-		## has cont_desc or label
-		run_checks(node, checks)
-		#TODO : dif b/t non-speaking and bad labeling
-	
-		if(not has_label(node)):
-			checks['num_unlabeled'] += 1
-			print("no label")
-		'''
+	node.characteristics['talkback_accessible']= talkback_focus(node)
+	if (node.characteristics['talkback_accessible']):
+		checks['num_talkback_accessible'] += 1
+	# run_checks(node)
 	checks['num_elements'] +=1	
 
 	return node.raw_properties['visibility'] == 'visible'	
@@ -89,7 +71,7 @@ def parse_json(filepath):
 	initialize_checks(checks)
 	file_data = json_loader(filepath)
 
-	# TO TEST
+	''' TO TEST
 	if(file_data):
 		checks.update({"has_file":True})
 		root_prop = file_data["activity"]["root"]
@@ -102,20 +84,19 @@ def parse_json(filepath):
 		root_prop = file_data["activity"]["root"]
 		root = Node(root_prop, None)
 		print("created node")
-		parse_child(root, False, checks,0)
+		parse_node(root, False, checks)
 		print("\n\n TREE:")
-		print_tree(root)
+		print_tree(root, talkback_focus_only=True)
 	else:
 		checks.update({"has_file":False})
 		#print("no tree")
 	
-
 	print("\n\n CHECKS")
 
 
 	for check, val in checks.items():
 		print(check +" : "+ str(val))
-'''
+
 def parse_directory(apps_dir):
 	for subdir, app_dirs, app_files in os.walk(apps_dir):
 		for file in app_files:
@@ -128,20 +109,24 @@ def parse_directory(apps_dir):
 		#for trace_subdir, trace_dirs, trace_files in os.walk(subdir):
 		#	print ("trace: "+str(trace_subdir))
 
-def print_node(node, level):
+def print_node(node, level, talkback_focus_only):
 	# print self
-	node.print(level)
+	if not talkback_focus_only:
+		node.print(level)
+	# if only want to print talkback focused, check that it's talkback accessible 
+	# before printing
+	elif talkback_focus_only and node.characteristics['talkback_accessible']:
+		node.print(level)
 
 	# increment level for children
 	level += 1
 	# print children
 	for child in node.children:
-		print_node(child, level)
+		print_node(child, level, talkback_focus_only)
 
-
-def print_tree(root):
+def print_tree(root, talkback_focus_only=False):
 	level = 0
-	print_node(root,level)
+	print_node(root,level, talkback_focus_only)
 
 
 if __name__ == "__main__":
@@ -151,10 +136,12 @@ if __name__ == "__main__":
 	filepath = "C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\com.google.android.gm\\trace_0\\view_hierarchies\\170.json"
 	filepath="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.google.android.gm\\trace_0\\view_hierarchies\\2.json"
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.utorrent.client\\trace_0\\view_hierarchies\\3.json"
-	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.utorrent.client\\trace_0\\view_hierarchies\\286.json"
-	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\test.json"
-	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\air.com.KalromSystems.SandDrawLite\\trace_0\\view_hierarchies\\197.json"
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.utorrent.client\\trace_0\\view_hierarchies\\240.json"
+	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\test.json"
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\air.com.KalromSystems.SandDrawLite\\trace_0\\view_hierarchies\\197.json"
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.google.android.gm\\trace_0\\view_hierarchies\\385.json"
+	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\620.json"
+	## Problem in imo 492 not identifying the search and hamburger button as accessibility focusable, likely because unlabeled but don't know what heuristic is failing
 
 	parse_json(filepath)
 	#parse_directory("C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\example_apps")
@@ -162,5 +149,5 @@ if __name__ == "__main__":
 	'''filepath = "C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/com.google.android.gm/trace_0/view_hierarchies/170.json"
 	file_data = json_loader(filepath)
 	root = file_data["activity"]["root"]
-	parse_children(root)
+	parse_node(root)
 '''
