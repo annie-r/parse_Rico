@@ -9,7 +9,7 @@ sys.path.append(os.path.join('/usr/lib/python2.7/dist-packages/'))
 #print sys.path
 import yaml
 import json
-from talkbackAccessible import talkback_focus
+from talkbackAccessible import talkback_focus, get_role
 from node import Node
 import checks
 
@@ -26,10 +26,23 @@ def json_loader(filepath):
 def has_label(child):
 	'''
 	
+
 # runs all accessibility checks on a node
-# TODO
-def run_checks(node, checks):
-	
+# right now, the elements to be tested are only those
+# that are talkback accessible
+# TODO: worth running check on elements that are not talkback
+# accessible for size, etc. diff type of error
+def run_checks(node, overall_checks):
+	if node.characteristics['talkback_accessible']:
+		overall_checks['num_talkback_accessible'] += 1 
+
+		node.checks['wide_enough'] = checks.wide_enough(node)
+		if not node.checks['wide_enough']:
+			overall_checks['num_not_wide_enough'] += 1
+
+		node.checks['tall_enough'] = checks.tall_enough(node)
+		if not node.checks['tall_enough']:
+			overall_checks['num_not_tall_enough'] += 1
 	return False
 
 # recursively parse all children 
@@ -49,12 +62,12 @@ def parse_node(node, ancestor_focusable, checks):
 			if child_visible:
 				children_visible = child_visible
 
-	# only run checks on elements that talkback (and therefore switch?) would focus on
-	node.characteristics['talkback_accessible']= talkback_focus(node)
-	if (node.characteristics['talkback_accessible']):
-		checks['num_talkback_accessible'] += 1
-	# run_checks(node)
 	checks['num_elements'] +=1	
+
+	# determine if talkback focuses
+	node.characteristics['talkback_accessible']= talkback_focus(node)
+	# run relevant checks
+	run_checks(node, checks)
 
 	return node.raw_properties['visibility'] == 'visible'	
 	
@@ -139,10 +152,11 @@ if __name__ == "__main__":
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.utorrent.client\\trace_0\\view_hierarchies\\240.json"
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\test.json"
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\air.com.KalromSystems.SandDrawLite\\trace_0\\view_hierarchies\\197.json"
-	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.google.android.gm\\trace_0\\view_hierarchies\\385.json"
-	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\620.json"
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\\com.google.android.gm\\trace_0\\view_hierarchies\\385.json"
+	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
 	## Problem in imo 492 not identifying the search and hamburger button as accessibility focusable, likely because unlabeled but don't know what heuristic is failing
-
+	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\test1.json"
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.duolingo\\trace_0\\view_hierarchies\\1571.json"
 	parse_json(filepath)
 	#parse_directory("C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\example_apps")
 	#parse_directory("C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/example_apps")

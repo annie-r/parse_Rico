@@ -14,7 +14,8 @@ class Node:
 		# collects results of check results for individual nodes
 		self.checks = {}
 		# log to track decisions about talkback accessibility and checks
-		self.log = []
+		# logged by step
+		self.log = {'talkback_accessible':[], 'checks':[]}
 
 	def initialize_charactertistics(self):
 		# will be focused and attempted read by Talkback
@@ -76,8 +77,20 @@ class Node:
 		self.print_level(level)
 		print("talkback_accessible: " + str(self.characteristics['talkback_accessible']))
 
-		# print log
-		for entry in set(self.log):
+		# print talkback accessible log
+		for entry in set(self.log['talkback_accessible']):
+			self.print_level(level)
+			print("- "+str(entry))
+
+		# print results of checks
+		self.print_level(level)
+		print("checks results")
+		for check, result in self.checks.items():
+			self.print_level(level)
+			print(check + ": "+str(result))
+
+		# print checks log
+		for entry in set(self.log['checks']):
 			self.print_level(level)
 			print("- "+str(entry))
 		print ('\n')
