@@ -11,7 +11,7 @@ import yaml
 import json
 from talkbackAccessible import talkback_focus, get_role
 from node import Node
-import checks
+from checker import Checker
 
 
 
@@ -32,6 +32,7 @@ def has_label(child):
 # that are talkback accessible
 # TODO: worth running check on elements that are not talkback
 # accessible for size, etc. diff type of error
+'''
 def run_checks(node, overall_checks):
 	if node.characteristics['talkback_accessible']:
 		overall_checks['num_talkback_accessible'] += 1 
@@ -44,10 +45,11 @@ def run_checks(node, overall_checks):
 		if not node.checks['tall_enough']:
 			overall_checks['num_not_tall_enough'] += 1
 	return False
+	'''
 
 # recursively parse all children 
 #TODO case where just root
-def parse_node(node, ancestor_focusable, checks): 
+def parse_node(node, ancestor_focusable, checker): 
 	k = node.raw_properties.keys()
 	children_visible = False
 	# recursively go through children
@@ -57,31 +59,33 @@ def parse_node(node, ancestor_focusable, checks):
 			child = Node(child_prop, node)
 			# add child node to current node's children
 			node.add_child(child)
-			child_visible = parse_node(child, ancestor_focusable,checks)
+			parse_node(child, ancestor_focusable,checker)
 			# only need one visible child to pass the test
-			if child_visible:
-				children_visible = child_visible
+			#if child_visible:
+			#	children_visible = child_visible
 
-	checks['num_elements'] +=1	
+	checker.add_node()	
 
 	# determine if talkback focuses
 	node.characteristics['talkback_accessible']= talkback_focus(node)
 	# run relevant checks
-	run_checks(node, checks)
+	checker.perform_checks(node)
 
-	return node.raw_properties['visibility'] == 'visible'	
-	
+	#return node.raw_properties['visibility'] == 'visible'	
+'''	
 def initialize_checks(checks):
 	checks['num_unlabeled']=0
 	checks['num_talkback_accessible']=0
 	checks['num_elements']=0
 	checks['num_not_wide_enough']=0
 	checks['num_not_tall_enough']=0
+'''
 
 def parse_json(filepath):
 	print ("file: "+filepath)
-	checks = {}
-	initialize_checks(checks)
+	checker = Checker()
+	#checks = {}
+	#initialize_checks(checks)
 	file_data = json_loader(filepath)
 
 	''' TO TEST
@@ -93,22 +97,23 @@ def parse_json(filepath):
 '''
 	#if no tree, data will be null
 	if(file_data):
-		checks.update({"has_file":True})
+		checker.add_overall_check('has_file',True)
 		root_prop = file_data["activity"]["root"]
 		root = Node(root_prop, None)
 		print("created node")
-		parse_node(root, False, checks)
+		parse_node(root, False, checker)
 		print("\n\n TREE:")
 		print_tree(root, talkback_focus_only=True)
 	else:
-		checks.update({"has_file":False})
+		checks.add_overall_check("has_file", False)
 		#print("no tree")
 	
-	print("\n\n CHECKS")
+	checker.print_overall_checks()
 
-
+	'''
 	for check, val in checks.items():
 		print(check +" : "+ str(val))
+		'''
 
 def parse_directory(apps_dir):
 	for subdir, app_dirs, app_files in os.walk(apps_dir):
