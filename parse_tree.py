@@ -1,5 +1,6 @@
 ## not sure if making right inferences based on visible elements who get their text from invisible children\
-# see gmail 385
+# see gmail 385 
+# for merge
 
 #import com.android.provider.Settings
 import time, sys, os.path, os

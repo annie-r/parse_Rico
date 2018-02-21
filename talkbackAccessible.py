@@ -4,6 +4,8 @@ print("width: "+str(window_width))
 window_height = window_bounds['lower'] - window_bounds['upper']
 print("height: "+str(window_height))
 
+#for get merge. delete
+
 #TODO
 def has_webAction(node):
 	return False
