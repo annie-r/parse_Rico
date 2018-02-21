@@ -22,10 +22,6 @@ class Node:
 		# an array to add the cause of the decision
 		self.characteristics['talkback_accessible'] = False
 
-		# has characteristics of being speakable by Talkback
-		self.characteristics['is_speakable'] = False 
-		# has an actual non-null field to be read by Talkback
-		self.characteristics['has_label'] = False
 
 	def add_child(self,child):
 		self.children.append(child)

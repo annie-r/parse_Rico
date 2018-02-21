@@ -125,20 +125,6 @@ def is_visible(node):
 	# it is not a visible node
 	else:
 		node.log['talkback_accessible'].append('no visible-to-user tag')
-
-	'''
-	if ('visibility' in k):
-		# TODO: figure out all the meaning of the different
-		# possible values of 'visibility' 
-		node.log['talkback_accessible'].append('visibility: ' + str(node.raw_properties['visibility']))
-		if (node.raw_properties['visibility'] == "visible"):
-			return True
-	# if the node doesn't have a visibility property
-	# or if that property is not set to "visible"
-	# it is not a visible node
-	else:
-		node.log['talkback_accessible'].append('no visibility tag')
-	'''
 	return False
 
 def is_clickable(node):
@@ -281,6 +267,7 @@ def has_non_actionable_speaking_children(node):
 		# check if this is a speaking child
 		if is_speaking(child):
 			node.log['talkback_accessible'].append("has nonactionable speaking children")
+			#node.characteristics['has_non_actionable_speaking_children'] = True
 			return True
 		# recursively check
 		if len(child.children) > 0:
@@ -327,30 +314,20 @@ def has_text(node):
 	has_text = 'text' in k
 	if has_text:
 		node.log['talkback_accessible'].append("has text: "+node.raw_properties['text'])
-	if (has_text):
 		has_text = not is_empty(node.raw_properties['text'])
-	#node.log['talkback_accessible'].append("has text: ")
+
+	else:
+		node.log['talkback_accessible'].append("no text")
 	has_content_desc = 'content-desc' in k
 	if has_content_desc:
+		node.log['talkback_accessible'].append("has cont desc: "+str(node.raw_properties['content-desc'][0]))
 		has_content_desc = not is_empty(node.raw_properties["content-desc"][0])
-
-	# check if existing fields have content
-	'''
-	if has_content_desc:
-		if(node.raw_properties["content-desc"] == [None]):
-			has_content_desc = False
-			node.log['talkback_accessible'].append("has none cont desc")
-		else:
-			node.log['talkback_accessible'].append("has non-none cont desc"+str(node.raw_properties['content-desc']))
-	# must have non-empty/null text or cont_desc to pass
-	'''
-	if not has_text and not has_content_desc:
+	if (not has_text) and (not has_content_desc):
 		pass_label = False
-		#print ("inaccessible")
 	else:
 		pass_label = True
-		#print("accessible")
-	# return if has label 
+	# return if has label
+	node.log['talkback_accessible'].append("has own label: "+str(pass_label))
 	return pass_label
 
 def is_actionable(node):

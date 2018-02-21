@@ -21,32 +21,6 @@ def json_loader(filepath):
 	#data = yaml.load(file_descriptor)
 	return data
 
-# check if an item has text or content_desc
-''' moved to talkbackAccessible
-def has_label(child):
-	'''
-	
-
-# runs all accessibility checks on a node
-# right now, the elements to be tested are only those
-# that are talkback accessible
-# TODO: worth running check on elements that are not talkback
-# accessible for size, etc. diff type of error
-'''
-def run_checks(node, overall_checks):
-	if node.characteristics['talkback_accessible']:
-		overall_checks['num_talkback_accessible'] += 1 
-
-		node.checks['wide_enough'] = checks.wide_enough(node)
-		if not node.checks['wide_enough']:
-			overall_checks['num_not_wide_enough'] += 1
-
-		node.checks['tall_enough'] = checks.tall_enough(node)
-		if not node.checks['tall_enough']:
-			overall_checks['num_not_tall_enough'] += 1
-	return False
-	'''
-
 # recursively parse all children 
 #TODO case where just root
 def parse_node(node, ancestor_focusable, checker): 
@@ -60,10 +34,6 @@ def parse_node(node, ancestor_focusable, checker):
 			# add child node to current node's children
 			node.add_child(child)
 			parse_node(child, ancestor_focusable,checker)
-			# only need one visible child to pass the test
-			#if child_visible:
-			#	children_visible = child_visible
-
 	checker.add_node()	
 
 	# determine if talkback focuses
@@ -71,15 +41,6 @@ def parse_node(node, ancestor_focusable, checker):
 	# run relevant checks
 	checker.perform_checks(node)
 
-	#return node.raw_properties['visibility'] == 'visible'	
-'''	
-def initialize_checks(checks):
-	checks['num_unlabeled']=0
-	checks['num_talkback_accessible']=0
-	checks['num_elements']=0
-	checks['num_not_wide_enough']=0
-	checks['num_not_tall_enough']=0
-'''
 
 def parse_json(filepath):
 	print ("file: "+filepath)
