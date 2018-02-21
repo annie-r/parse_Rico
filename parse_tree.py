@@ -1,5 +1,7 @@
-## IS NOT PARSING ALL CHILDREN!!
-# see Sand 3.json as example 
+
+## not sure if making right inferences based on visible elements who get their text from invisible children\
+# see gmail 385 
+
 
 #import com.android.provider.Settings
 import time, sys, os.path, os
