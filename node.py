@@ -5,6 +5,7 @@ class Node:
 	# characteristics are determined with heuristic tests (e.g. "is speakble" "is visible")
 	# parent, pointer to parent node
 	# children, empty list of children
+	#test
 	def __init__(self, properties, parent):
 		self.raw_properties = properties
 		self.characteristics = {}
