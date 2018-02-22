@@ -68,7 +68,10 @@ class Node:
 
 		if 'text' in self.raw_properties.keys():
 			self.print_level(level)
-			print("text: " + str(self.raw_properties['text']))
+			try:
+				print("text: " + str(self.raw_properties['text']))
+			except UnicodeEncodeError:
+				print("text: undefined unicode")
 
 		# talkback accessible criteria
 		self.print_level(level)
@@ -77,7 +80,10 @@ class Node:
 		# print talkback accessible log
 		for entry in set(self.log['talkback_accessible']):
 			self.print_level(level)
-			print("- "+str(entry))
+			try:
+				print("- "+str(entry))
+			except UnicodeEncodeError:
+				print("-: undefined unicode")
 
 		# print results of checks
 		self.print_level(level)

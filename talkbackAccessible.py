@@ -320,10 +320,7 @@ def has_text(node):
 
 	else:
 		node.log['talkback_accessible'].append("no text")
-	has_content_desc = 'content-desc' in k
-	if has_content_desc:
-		node.log['talkback_accessible'].append("has cont desc: "+str(node.raw_properties['content-desc'][0]))
-		has_content_desc = not is_empty(node.raw_properties["content-desc"][0])
+	has_content_desc = has_non_empty_cont_desc(node)
 	if (not has_text) and (not has_content_desc):
 		pass_label = False
 	else:
@@ -331,6 +328,14 @@ def has_text(node):
 	# return if has label
 	node.log['talkback_accessible'].append("has own label: "+str(pass_label))
 	return pass_label
+
+def has_non_empty_cont_desc(node):
+	k = node.raw_properties.keys()
+	has_content_desc = 'content-desc' in k
+	if has_content_desc:
+		node.log['talkback_accessible'].append("has cont desc: "+str(node.raw_properties['content-desc'][0]))
+		has_content_desc = not is_empty(node.raw_properties["content-desc"][0])
+	return has_content_desc
 
 def is_actionable(node):
 	#print("is actionable test")

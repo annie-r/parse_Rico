@@ -70,7 +70,7 @@ def parse_json(filepath):
 		checker.perform_checks()
 
 		print("\n\n TREE:")
-		print_tree(root, talkback_focus_only=True)
+		print_tree(root)#, talkback_focus_only=True)
 	else:
 		checks.add_overall_check("has_file", False)
 		#print("no tree")
@@ -131,6 +131,8 @@ if __name__ == "__main__":
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.duolingo\\trace_0\\view_hierarchies\\1571.json"
 	# overlapping elements
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.waze\\trace_0\\view_hierarchies\\1540.json"
+	# cont desc editable textfield
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	parse_json(filepath)
 	#parse_directory("C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\example_apps")
 	#parse_directory("C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/example_apps")
