@@ -9,7 +9,9 @@ import re
 class Checker:
 	# initialize all overall checks
 	# git test
-	def __init__(self):
+	def __init__(self, file):
+		self.file = file
+
 		self.overall_checks = {}
 		self.overall_checks['num_unlabeled']=0
 		self.overall_checks['num_talkback_accessible']=0
@@ -17,6 +19,10 @@ class Checker:
 		self.overall_checks['num_not_wide_enough']=0
 		self.overall_checks['num_not_tall_enough']=0
 		self.overall_checks['num_not_wide_tall_enough']=0
+		self.overall_checks['num_full_overlapping']=0
+
+		#all nodes associated with TODO: screen? app? trace?
+		self.nodes = []
 
 	# TODO
 	def print_overall_checks(self):
@@ -29,7 +35,8 @@ class Checker:
 	def add_overall_check(self, key, value):
 		self.overall_checks[key] = value
 
-	def add_node(self):
+	def add_node(self, node):
+		self.nodes.append(node)
 		self.overall_checks['num_elements'] += 1
 
 
@@ -37,12 +44,25 @@ class Checker:
 	## CHECKS
 	###########
 
-	# takes care of all tests
-	def perform_checks(self,node):
-		# tests to run on talkback accessible nodes
-		if node.characteristics['talkback_accessible']:
-			self.overall_checks['num_talkback_accessible'] += 1 
-			self.run_talkback_accessible_checks(node)
+	# takes care of all tests over all nodes
+	def perform_checks(self):
+		# data needed for checks involving multiple nodes
+		self.set_clickable_nodes()
+
+		#perform checks on each node
+		for node in self.nodes:
+			# tests to run on talkback accessible nodes
+			if node.characteristics['talkback_accessible']:
+				self.overall_checks['num_talkback_accessible'] += 1 
+				self.run_talkback_accessible_checks(node)
+
+
+	def set_clickable_nodes(self):
+		self.clickable_nodes = []
+		for n in self.nodes:
+			if talkbackAccessible.is_clickable(n):
+				self.clickable_nodes.append(n)
+
 
 	def run_talkback_accessible_checks(self,node):
 
@@ -64,19 +84,57 @@ class Checker:
 		if (not node.checks['has_label']):
 			self.overall_checks['num_unlabeled'] += 1
 
-		### Overlap check
-		# only clickable items need to check for overlap
-		if is_clickable(node):
-			node.checks['overlapping'] = self.overlap()
+		### Full Overlap check
+		# only clickable items need to check for full overlap
+		if node in self.clickable_nodes:
+			node.checks['num_full_overlap'] = self.full_overlap_clickable(node)
+			if node.checks['num_full_overlap'] > 0:
+				self.overall_checks['num_full_overlapping'] += 1
 
 
 
 	#####
+	### Check exact overlap
+	### checks if two clickable nodes occupy the exact same place on the screen
+	#####
+
+	def full_overlap_clickable(self,node):
+		num_full_overlap = 0
+		for n in self.clickable_nodes:
+			if n==node:
+				continue
+			else:
+				if self.full_overlap_compare(node, n):
+					num_full_overlap += 1
+		return num_full_overlap
+
+	# check if two elements n1 and n2 occupy the exact same space 
+	def full_overlap_compare(self, node1,node2):
+		b1 = node1.get_bounds()
+		b2 = node2.get_bounds()
+		if(b1['upper'] == b2['upper'] and b1['lower'] == b2['lower'] and \
+			b1['left'] == b2['left'] and b1['right'] == b2['right']):
+			return True
+		return False
+
+	#####
+	### NOT IN USE
 	### Check overlap
+	### Not actually a check on Google Scanner
 	#####
+	def overlap_clickable(self, node):
+		num_overlap = 0
+		for n in self.clickable_nodes:
+			if n == node:
+				continue
+			else:
+				# only need to return 
+				if self.overlap_clickable_compare(node, n):
+					num_overlap += 1
+		return num_overlap
 
 	# check if two rectangular elements n1 and n2 overlap
-	def overlap(self, node1,node2):
+	def overlap_clickable_compare(self, node1,node2):
 		b1 = node1.get_bounds()
 		b2 = node2.get_bounds()
 
@@ -84,7 +142,7 @@ class Checker:
 		# or to the left of the other
 
 		#above or below
-		if (b1['lower'] > b2['upper'] or b2['lower'] > b1['upper']):
+		if (b1['lower'] < b2['upper'] or b2['lower'] < b1['upper']):
 			return False
 		# to the right or left
 		if b1['left'] > b2['right'] or b2['left'] > b2['right']:

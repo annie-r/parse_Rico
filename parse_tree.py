@@ -35,17 +35,16 @@ def parse_node(node, ancestor_focusable, checker):
 			# add child node to current node's children
 			node.add_child(child)
 			parse_node(child, ancestor_focusable,checker)
-	checker.add_node()	
+	checker.add_node(node)	
 
 	# determine if talkback focuses
 	node.characteristics['talkback_accessible']= talkback_focus(node)
-	# run relevant checks
-	checker.perform_checks(node)
+
 
 
 def parse_json(filepath):
 	print ("file: "+filepath)
-	checker = Checker()
+	checker = Checker(filepath)
 	#checks = {}
 	#initialize_checks(checks)
 	file_data = json_loader(filepath)
@@ -63,7 +62,13 @@ def parse_json(filepath):
 		root_prop = file_data["activity"]["root"]
 		root = Node(root_prop, None)
 		print("created node")
+		# parse data
 		parse_node(root, False, checker)
+
+		# run checks on all nodes
+		# run relevant checks
+		checker.perform_checks()
+
 		print("\n\n TREE:")
 		print_tree(root, talkback_focus_only=True)
 	else:
@@ -124,6 +129,8 @@ if __name__ == "__main__":
 	## Problem in imo 492 not identifying the search and hamburger button as accessibility focusable, likely because unlabeled but don't know what heuristic is failing
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\test1.json"
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.duolingo\\trace_0\\view_hierarchies\\1571.json"
+	# overlapping elements
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.waze\\trace_0\\view_hierarchies\\1540.json"
 	parse_json(filepath)
 	#parse_directory("C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\example_apps")
 	#parse_directory("C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/example_apps")
