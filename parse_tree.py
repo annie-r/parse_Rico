@@ -10,7 +10,7 @@ sys.path.append(os.path.join('/usr/lib/python2.7/dist-packages/'))
 #print sys.path
 import yaml
 import json
-from talkbackAccessible import talkback_focus, get_role
+import talkbackAccessible #import talkback_focus, get_role
 from node import Node
 from checker import Checker
 
@@ -38,8 +38,10 @@ def parse_node(node, ancestor_focusable, checker):
 	checker.add_node(node)	
 
 	# determine if talkback focuses
-	node.characteristics['talkback_accessible']= talkback_focus(node)
+	node.characteristics['talkback_accessible']= talkbackAccessible.talkback_focus(node)
 
+	# get speaking test, if applicable
+	node.characteristics['speakable_text'] = talkbackAccessible.get_speaking_text(node)
 
 
 def parse_json(filepath):
@@ -129,10 +131,10 @@ if __name__ == "__main__":
 	## Problem in imo 492 not identifying the search and hamburger button as accessibility focusable, likely because unlabeled but don't know what heuristic is failing
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\test1.json"
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.duolingo\\trace_0\\view_hierarchies\\1571.json"
-	# overlapping elements
+	# overlapping elements, 3 overlapping, 7 accessible, 4 unlabeled
 	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.waze\\trace_0\\view_hierarchies\\1540.json"
-	# cont desc editable textfield
-	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
+	# cont desc editable textfield, 1 
+	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	parse_json(filepath)
 	#parse_directory("C:\\Users\\ansross\\Documents\\Research\\Accessibility\\parse_Rico\\example_apps")
 	#parse_directory("C:/Users/ansross/Documents/Research/Accessibility/parse_Rico/example_apps")
