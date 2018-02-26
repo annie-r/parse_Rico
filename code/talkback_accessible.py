@@ -4,66 +4,6 @@ print("width: "+str(window_width))
 window_height = window_bounds['bottom'] - window_bounds['top']
 print("height: "+str(window_height))
 
-
-
-
-
-
-
-
-
-
-
-
-
-def non_actionable_speaking_children_text(node):
-	#print("non actionable children test")
-	for child in node.children:
-		# ignore focusable children
-		if is_focusable(child):
-			continue
-		# ignore invisible children
-		if not is_visible(child):
-			continue
-		# check if this is a speaking child
-		child_text = get_speaking_text(child)
-		if child_text != None:
-			node.log['talkback_accessible'].append("has nonactionable speaking children")
-			#node.characteristics['has_non_actionable_speaking_children'] = True
-			return child_text
-		# recursively check
-		if len(child.children) > 0:
-			return non_actionable_speaking_children_text(child)
-		# if leaf node and hasn't passed yet, false
-	return None
-
-
-
-
-
-
-
-
-# def get_text(node):
-# 	if not has_text(node):
-# 		return None
-# 	else:
-# 		if has_non_empty_cont_desc(node):
-# 			return node.raw_properties['content-desc']
-# 		else:
-# 			return node.raw_properties['text']
-
-
-
-
-
-
-
-
-
-
-
-
 ######################
 ##### TODO
 ######################
@@ -72,11 +12,6 @@ def non_actionable_speaking_children_text(node):
 ######################
 ##### PRIVATE FUNCTIONS
 ######################
-def __is_empty(str):
-	if (str == None or len(str) == 0):
-		return True
-	else:
-		return False
 
 
 

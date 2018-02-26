@@ -25,6 +25,15 @@ class View:
 		self.nodes.append(node)
 		self.num_nodes += 1
 
+	def print(self, talkback_focus_only = True):
+		for node in self.nodes:	
+			if not talkback_focus_only:
+				node.print()
+			elif talkback_focus_only and node.is_talkback_accessible():
+				node.print()
+			for child in node.children:
+				child.print()
+
 	##### PARSING VIEW FILE INTO NODES
 	def __parse_view(self):
 		print ("file: "+self.filepath)

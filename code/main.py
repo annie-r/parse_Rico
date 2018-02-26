@@ -1,5 +1,7 @@
 from view import View
 
 if __name__ == "__main__":
-	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.waze\\trace_0\\view_hierarchies\\1540.json"
+	# cont desc editable textfield, 1 
+	filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	v = View(filepath)
+	v.print()

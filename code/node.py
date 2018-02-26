@@ -20,6 +20,77 @@ class Node:
 		# logged by step
 		self.log = {'talkback_accessible':[], 'checks':[]}
 
+
+	def print(self):
+		k = self.raw_properties.keys()
+		self.__print_level()
+		print("##########")
+		# resource id
+		self.__print_level()
+		if 'resource-id' in k:
+			print("id: " + str(self.raw_properties['resource-id']))
+		else: 
+			print("no resource id")
+		# class
+		self.__print_level()
+		if 'class' in k:
+			print("class: "+str(self.raw_properties['class']))
+		else:
+			print('no class')
+		# bounds
+		self.__print_level()
+		print("bounds: "+str(self.get_bounds()))
+		# text, if applicable, to help identify
+
+		if 'text' in self.raw_properties.keys():
+			self.__print_level()
+			try:
+				print("text: " + str(self.raw_properties['text']))
+			except UnicodeEncodeError:
+				print("text: undefined unicode")
+
+		self.__print_level()
+		try:
+			print("label: " + str(self.get_speakable_text()))
+		except UnicodeEncodeError:
+			print("label: undefined unicode")
+		
+
+		# talkback accessible criteria
+		self.__print_level()
+		print("talkback_accessible: " + str(self.is_talkback_accessible()))
+
+		# print talkback accessible log
+		for entry in set(self.log['talkback_accessible']):
+			self.__print_level()
+			try:
+				print("- "+str(entry))
+			except UnicodeEncodeError:
+				print("-: undefined unicode")
+
+		# print results of checks
+		self.__print_level()
+		print("checks results")
+		for check, result in self.checks.items():
+			self.__print_level()
+			print(check + ": "+str(result))
+
+		# print checks log
+		for entry in set(self.log['checks']):
+			self.__print_level()
+			print("- "+str(entry))
+		print ('\n')
+
+	def __print_level(self):
+		for i in range(0,self.level):
+			print("\t ",end="")
+		print("++ ",end="")
+
+
+	##############
+	#### Getters and Setters
+	##############
+
 	def set_characteristics(self):
 		# will it be focused and attempted read by Talkback
 		self.characteristics['talkback_accessible'] = talkback_focus(self)
@@ -33,7 +104,10 @@ class Node:
 		# the coordinates start in upper left of screen so 0,0 is left, upper-most point
 		return {"left":bounds[0], "top":bounds[1], "right":bounds[2], "bottom":bounds[3]}
 
-
+	def is_talkback_accessible(self):
+		if not 'talkback_accessible' in self.characteristics.keys():
+			self.characteristics['talkback_accessible'] = talkback_focus(self)
+		return self.characteristics['talkback_accessible']
 	#################
 	##### TODO
 	###############
@@ -45,6 +119,8 @@ class Node:
 	# don't know what fields to look for
 	def is_checkable(self):
 		return False
+
+
 
 
 	###############
