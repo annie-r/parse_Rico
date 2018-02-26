@@ -13,6 +13,10 @@ class Checker:
 		self.file = file
 
 		self.overall_checks = {}
+		self.log = []
+
+		# must add overall check here and initialize in order
+		# to track later
 		self.overall_checks['num_unlabeled']=0
 		self.overall_checks['num_talkback_accessible']=0
 		self.overall_checks['num_elements']=0
@@ -20,6 +24,7 @@ class Checker:
 		self.overall_checks['num_not_tall_enough']=0
 		self.overall_checks['num_not_wide_tall_enough']=0
 		self.overall_checks['num_full_overlapping']=0
+		self.overall_checks['num_cont_desc_editable_textview'] =0
 
 		#all nodes associated with TODO: screen? app? trace?
 		self.nodes = []
@@ -31,6 +36,10 @@ class Checker:
 			print(str(k) + ": "+ str(v))
 
 
+	def print_log(self):
+		print ("CHECKER LOG")
+		for v in set(self.log):
+			print(str(v))
 	# Modifiers
 	def add_overall_check(self, key, value):
 		self.overall_checks[key] = value
@@ -91,6 +100,84 @@ class Checker:
 			if node.checks['num_full_overlap'] > 0:
 				self.overall_checks['num_full_overlapping'] += 1
 
+		### Editable TextView check
+		node.checks['cont_desc_editable_textview'] = self.cont_desc_editable_textview(node)
+		if node.checks['cont_desc_editable_textview']:
+			self.overall_checks['num_cont_desc_editable_textview'] += 1
+
+		### Duplicate Label
+		self.duplicate_text_check()
+
+
+
+	#####
+	## Check content desc in TextView
+	## editable image label
+	#####
+
+	# TODO, check if this is right class to check!
+	# check if inherits from android.widget.EditText
+	# should use get_role but don't know if just check class or inheritance
+	def cont_desc_editable_textview(self, node):
+		if self.is_editable_textview(node) and (talkbackAccessible.get_cont_desc(node)!= None):
+			return True
+		return False
+
+	def is_editable_textview(self,node):
+		ancestors = node.raw_properties['ancestors']
+		if "android.widget.EditText" in ancestors:
+			return True
+		return False
+
+	#####
+	## Check identical speakable text
+	## item descriptions
+	# /** Accessitility-Test-framework-for-android DuplicateSpeakableTextViewHierarchyCheck
+ 	# If two Views in a hierarchy have the same speakable text, that could be confusing for users. Two
+ 	# Views with the same text, and at least one of them is clickable we warn in that situation. If we
+ 	# find two non-clickable Views with the same speakable text, we report that fact as info. If no
+ 	# Views in the hierarchy have any speakable text, we report that the test was not run.
+	#####
+
+	def duplicate_text_check(self):
+		# find all text and views that have text
+		speakable_text_to_node_map = {}
+		for node in self.nodes:
+			text = talkbackAccessible.get_speaking_text(node)
+			if text != None:
+				if not text in speakable_text_to_node_map:
+					speakable_text_to_node_map[text] = []
+				speakable_text_to_node_map[text].append(node)
+		# deal with duplicates
+		for speakable_text in speakable_text_to_node_map.keys():
+			# not duplicate
+			if(len(speakable_text_to_node_map[speakable_text]) < 2):
+				continue
+			# sort into clickable and non clickable
+			clickable = []
+			non_clickable = []
+			for n in speakable_text_to_node_map[speakable_text]:
+				if (talkbackAccessible.is_clickable(n)):
+					clickable.append(n)
+				else:
+					non_clickable.append(n)
+			# if it's clickable, it's a warning
+			# if it's not, then it's just info
+			# so for now count as separate checks
+			# line 69, accessibility test framework, proto, duplicatespeakabletextviewhierarchycheck
+			# shares with clickable
+			if len(clickable) > 0:
+				self.overall_checks['num_shares_label_clickable'] = len(clickable) 
+				self.log.append("duplicate clickable label: "+ str(speakable_text))
+			# duplication is on non-clickable
+			# don't know why -1, in framework code
+			else:
+				self.overall_checks['num_shares_label_non_clickable'] = len(non_clickable) - 1 
+				self.log.append("duplicate non clickable label: "+ str(speakable_text))
+
+
+	# return map from speakable text to all views/nodes of self with that speakable text
+	#def get_speakable_text_to_node_map(self):
 
 
 	#####
@@ -154,14 +241,16 @@ class Checker:
 	#####
 
 	def has_label(self,node):
-		# if has own label, done
-		if talkbackAccessible.has_text(node):
-			return True
-		# if doesn't have own label, but is using children's label, ok
-		elif talkbackAccessible.has_non_actionable_speaking_children(node):
-			return True
-		else:
-			return False
+		return talkbackAccessible.get_speaking_text(node) != None
+
+		# # if has own label, done
+		# if talkbackAccessible.has_text(node):
+		# 	return True
+		# # if doesn't have own label, but is using children's label, ok
+		# elif talkbackAccessible.has_non_actionable_speaking_children(node):
+		# 	return True
+		# else:
+		# 	return False
 
 	#####
 	### Check Size

@@ -72,13 +72,13 @@ def parse_json(filepath):
 		checker.perform_checks()
 
 		print("\n\n TREE:")
-		print_tree(root)#, talkback_focus_only=True)
+		print_tree(root, talkback_focus_only=True)
 	else:
 		checks.add_overall_check("has_file", False)
 		#print("no tree")
 	
 	checker.print_overall_checks()
-
+	checker.print_log()
 	'''
 	for check, val in checks.items():
 		print(check +" : "+ str(val))
