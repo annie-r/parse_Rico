@@ -93,7 +93,8 @@ class Node:
 
 	def set_characteristics(self):
 		# will it be focused and attempted read by Talkback
-		self.characteristics['talkback_accessible'] = talkback_focus(self)
+		#self.characteristics['talkback_accessible'] = talkback_focus(self)
+		return 0
 
 	def add_child(self,child):
 		self.children.append(child)

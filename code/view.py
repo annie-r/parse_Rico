@@ -10,6 +10,8 @@ class View:
 		# json file of viewhierarchy
 		self.filepath = file
 		self.has_valid_file = False
+		# root node
+		self.root = None
 		# set of Node objects, representing the elements exposed by the view hierarchy	
 		self.nodes = []
 		# to perform checks on this view's nodes
@@ -25,14 +27,17 @@ class View:
 		self.nodes.append(node)
 		self.num_nodes += 1
 
+	def __print(self, node, talkback_focus_only = True):
+		if not talkback_focus_only:
+			node.print()
+		elif talkback_focus_only and node.is_talkback_accessible():
+			node.print()
+		for child in node.children:
+			self.__print(child, talkback_focus_only)
+
 	def print(self, talkback_focus_only = True):
-		for node in self.nodes:	
-			if not talkback_focus_only:
-				node.print()
-			elif talkback_focus_only and node.is_talkback_accessible():
-				node.print()
-			for child in node.children:
-				child.print()
+		print ("num nodes: "+str(len(self.nodes)))
+		self.__print(self.root, talkback_focus_only)
 
 	##### PARSING VIEW FILE INTO NODES
 	def __parse_view(self):
@@ -43,9 +48,9 @@ class View:
 		if(file_data):
 			self.has_valid_file,True
 			root_prop = file_data["activity"]["root"]
-			root = Node(root_prop, None, 0)
+			self.root = Node(root_prop, None, 0)
 			# parse data
-			self.__parse_node(root)
+			self.__parse_node(self.root)
 
 
 	# first build tree of children/parent
