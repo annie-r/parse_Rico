@@ -6,9 +6,10 @@ from node import Node
 import json
 class View:
 	
-	def __init__(self, file):
+	def __init__(self, id_arg, file_arg):
+		self.id = id_arg
 		# json file of viewhierarchy
-		self.filepath = file
+		self.filepath = file_arg
 		self.has_valid_file = False
 		# root node
 		self.root = None
@@ -21,27 +22,30 @@ class View:
 
 		self.__parse_view()
 
+	
 
-	##### Gettings and Setters
+
+	##### Gettings and Setters and 
+	# checks if the coords land within any Node in the view 
+	# coords: dict { "x":x_coord, "y":y_coord}
+	# return: Node node if there exists a containing node
+	#			else, returns None
+	def get_node_containing_coords(self, coords):
+		for node in self.nodes:
+			if node.contains_coords(coords):
+				return node
+		return None
+
+
 	def __add_node(self, node):
 		self.nodes.append(node)
 		self.num_nodes += 1
 
-	def __print(self, node, talkback_focus_only = True):
-		if not talkback_focus_only:
-			node.print()
-		elif talkback_focus_only and node.is_talkback_accessible():
-			node.print()
-		for child in node.children:
-			self.__print(child, talkback_focus_only)
 
-	def print(self, talkback_focus_only = True):
-		print ("num nodes: "+str(len(self.nodes)))
-		self.__print(self.root, talkback_focus_only)
 
 	##### PARSING VIEW FILE INTO NODES
 	def __parse_view(self):
-		print ("file: "+self.filepath)
+		#print ("file: "+self.filepath)
 		file_data = self.json_loader(self.filepath)
 
 		#if no tree, data will be null
@@ -72,9 +76,23 @@ class View:
 		node.set_characteristics()
 
 	#### HELPERS ####
+	def __print(self, node, talkback_focus_only = True):
+		if not talkback_focus_only:
+			node.print()
+		elif talkback_focus_only and node.is_talkback_accessible():
+			node.print()
+		for child in node.children:
+			self.__print(child, talkback_focus_only)
+
+	def print(self, talkback_focus_only = True):
+		print("view ID: "+self.id)
+		print ("num nodes: "+str(len(self.nodes)))
+		self.__print(self.root, talkback_focus_only)
+
 	def json_loader(self,filepath):
 		file_descriptor = open(filepath, "r")
 		data = json.load(file_descriptor)
+		file_descriptor.close()
 		#data = yaml.load(file_descriptor)
 		return data
 

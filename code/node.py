@@ -20,6 +20,15 @@ class Node:
 		# logged by step
 		self.log = {'talkback_accessible':[], 'checks':[]}
 
+	# checks if coords are within this node's boundries
+	def contains_coords(self,coords):
+		bounds = self.get_bounds()
+		if coords['x'] >= bounds['left'] and coords['x'] <= bounds['right'] and \
+			coords['y'] >= bounds['top'] and coords['y'] <= bounds['bottom']:
+			return True
+		else:
+			return False
+
 
 	def print(self):
 		k = self.raw_properties.keys()

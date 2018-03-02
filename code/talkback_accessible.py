@@ -1,8 +1,8 @@
 window_bounds = {"left": 0, "top": 0, "right":1440, "bottom": 2560}
 window_width = window_bounds['right'] - window_bounds['left']
-print("width: "+str(window_width))
+#print("width: "+str(window_width))
 window_height = window_bounds['bottom'] - window_bounds['top']
-print("height: "+str(window_height))
+#print("height: "+str(window_height))
 
 ######################
 ##### TODO
