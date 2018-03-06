@@ -3,6 +3,7 @@
 # creates view's set of Nodes from file
 from view_checker import View_Checker
 from node import Node
+import node_checker
 import json
 class View:
 	
@@ -24,6 +25,9 @@ class View:
 
 	
 
+	def check_nodes(self):
+		for node in self.nodes:
+			node.checker.perform_checks()
 
 	##### Gettings and Setters and 
 	# checks if the coords land within any Node in the view 
@@ -76,6 +80,16 @@ class View:
 		node.set_characteristics()
 
 	#### HELPERS ####
+
+
+	def print_views_table(self,app_id):
+		for n in self.nodes:
+			if n.is_talkback_accessible():
+				print(str(app_id)+",",end="")
+				n.print_view_table_entry()
+				# new line
+				print("")
+
 	def __print(self, node, talkback_focus_only = True):
 		if not talkback_focus_only:
 			node.print()

@@ -1,6 +1,6 @@
 
 from talkback_accessible import talkback_focus
-
+from node_checker import Node_Checker
 class Node:
 	# raw_properties are the dictionary of properties associated with the node 9(e.g. "focusable" "cont_desc")
 	# characteristics are determined with heuristic tests (e.g. "is speakble" "is visible")
@@ -14,11 +14,14 @@ class Node:
 		self.characteristics = {}
 		self.parent = parent
 		self.children = []
-		# collects results of check results for individual nodes
-		self.checks = {}
+
 		# log to track decisions about talkback accessibility and checks
-		# logged by step
 		self.log = {'talkback_accessible':[], 'checks':[]}
+		# logged by step
+		#self.log = {'talkback_accessible':[], 'checks':[]}
+
+		# collects results of check results for individual nodes
+		self.checker = Node_Checker(self)
 
 	# checks if coords are within this node's boundries
 	def contains_coords(self,coords):
@@ -29,6 +32,16 @@ class Node:
 		else:
 			return False
 
+	def print_view_table_entry(self):
+		k = self.raw_properties.keys()
+		#ID column
+		if 'resource-id' in k:
+			print(str(self.raw_properties['resource-id']),end="")
+		else: 
+			print("None",end="")
+		#,class_name,android_widget?,ad_widget?,checks
+		print(","+str(self.raw_properties['class'])+"," + str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",",end="")
+		self.checker.print_views_table()
 
 	def print(self):
 		k = self.raw_properties.keys()
@@ -46,49 +59,53 @@ class Node:
 			print("class: "+str(self.raw_properties['class']))
 		else:
 			print('no class')
+		self.__print_level()
+		print("ad: "+str(self.is_ads_widget()))
+		self.__print_level()
+		print("widget: "+str(self.is_android_default_widget()))
 		# bounds
-		self.__print_level()
-		print("bounds: "+str(self.get_bounds()))
-		# text, if applicable, to help identify
+		# self.__print_level()
+		# print("bounds: "+str(self.get_bounds()))
+		# # text, if applicable, to help identify
 
-		if 'text' in self.raw_properties.keys():
-			self.__print_level()
-			try:
-				print("text: " + str(self.raw_properties['text']))
-			except UnicodeEncodeError:
-				print("text: undefined unicode")
+		# if 'text' in self.raw_properties.keys():
+		# 	self.__print_level()
+		# 	try:
+		# 		print("text: " + str(self.raw_properties['text']))
+		# 	except UnicodeEncodeError:
+		# 		print("text: undefined unicode")
 
-		self.__print_level()
-		try:
-			print("label: " + str(self.get_speakable_text()))
-		except UnicodeEncodeError:
-			print("label: undefined unicode")
+		# self.__print_level()
+		# try:
+		# 	print("label: " + str(self.get_speakable_text()))
+		# except UnicodeEncodeError:
+		# 	print("label: undefined unicode")
 		
 
-		# talkback accessible criteria
-		self.__print_level()
-		print("talkback_accessible: " + str(self.is_talkback_accessible()))
+		# # talkback accessible criteria
+		# self.__print_level()
+		# print("talkback_accessible: " + str(self.is_talkback_accessible()))
 
-		# print talkback accessible log
-		for entry in set(self.log['talkback_accessible']):
-			self.__print_level()
-			try:
-				print("- "+str(entry))
-			except UnicodeEncodeError:
-				print("-: undefined unicode")
+		# # print talkback accessible log
+		# for entry in set(self.log['talkback_accessible']):
+		# 	self.__print_level()
+		# 	try:
+		# 		print("- "+str(entry))
+		# 	except UnicodeEncodeError:
+		# 		print("-: undefined unicode")
 
-		# print results of checks
-		self.__print_level()
-		print("checks results")
-		for check, result in self.checks.items():
-			self.__print_level()
-			print(check + ": "+str(result))
+		# # print results of checks
+		# self.__print_level()
+		# print("checks results")
+		# for check, result in self.checks.items():
+		# 	self.__print_level()
+		# 	print(check + ": "+str(result))
 
-		# print checks log
-		for entry in set(self.log['checks']):
-			self.__print_level()
-			print("- "+str(entry))
-		print ('\n')
+		# # print checks log
+		# for entry in set(self.log['checks']):
+		# 	self.__print_level()
+		# 	print("- "+str(entry))
+		# print ('\n')
 
 	def __print_level(self):
 		for i in range(0,self.level):
@@ -118,6 +135,38 @@ class Node:
 		if not 'talkback_accessible' in self.characteristics.keys():
 			self.characteristics['talkback_accessible'] = talkback_focus(self)
 		return self.characteristics['talkback_accessible']
+
+	def is_android_default_widget(self):
+		if not 'android_default_widget' in self.characteristics.keys():
+			self.characteristics['android_default_widget'] = self.__is_android_default_widget()
+		return self.characteristics['android_default_widget']
+
+	# defined as having a class from the "android.widget" library
+	def __is_android_default_widget(self):
+		node_class = self.raw_properties['class']
+		# classes appear to be android.widget.<widget>.<name>....
+		class_name_list = node_class.split(".")
+		if (class_name_list[0] == "android" and class_name_list[1]=="widget"):
+			return True
+		return False
+
+
+	def is_ads_widget(self):
+		if not 'ads_widget' in self.characteristics.keys():
+			self.characteristics['ads_widget'] = self.__is_ads_widget()
+		return self.characteristics['ads_widget']
+
+	def __is_ads_widget(self):
+		# appears the ads interface comes from library com.google.android.gms.ads
+		ads_library = "com.google.android.gms.ads"
+		node_class = self.raw_properties['class']
+		# multiple types of views/widgets for ads? so just check for library at beginning
+		# e.g. a class of com.google.android.gms.com.AdView should return true
+		if node_class[:len(ads_library)] == ads_library:
+			return True
+		return False 
+
+
 	#################
 	##### TODO
 	###############

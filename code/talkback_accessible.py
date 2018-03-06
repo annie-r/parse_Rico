@@ -50,7 +50,7 @@ def __is_access_focus(node):
 		return False
 	elif node.is_actionable():
 		return True
-	elif node.is_top_level_scrollable() and is_speaking(node):
+	elif node.is_top_level_scrollable() and node.is_speaking():
 		return True
 
 

@@ -18,15 +18,22 @@ class Trace:
 		self.gestures = []
 		self.__parse_gestures()
 
+	def print_views_table(self):
+		# table format
+		# app_name, <node info>, <node checks>
+		for v in self.views.values():
+			v.print_views_table(self.app)
+
 	def print_check(self):
 		print("\t", end="")
 		print("trace id: "+self.id)
-		print("\tGESTURES")
-		for g in self.gestures:
-			print("\t\tgesture_id: "+str(g.view_id))
+		#print("\tGESTURES")
+		#for g in self.gestures:
+		#	print("\t\tgesture_id: "+str(g.view_id))
 		print("\tVIEWS")
 		for v in self.views.values():
-			print("\t\tview_id: "+str(v.id))
+			#print("\t\tview_id: "+str(v.id))
+			v.print()
 
 	def __parse_views_dir(self):
 		# go through trace directory and parse into Views

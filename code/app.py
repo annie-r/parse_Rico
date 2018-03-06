@@ -10,7 +10,7 @@ class App:
 		# assume app directory is of form <.....>\<app_package>
 		if (self.id == None):
 			self.id = self.app_dir.split("\\")[-1]
-		print("app id: "+str(self.id))
+		#print("app id: "+str(self.id))
 		# map trace ID to Trace object
 		self.traces = {}
 		self.__parse_trace_dirs()
@@ -23,11 +23,16 @@ class App:
 			# a trace directory
 			item_info = item.split("_")
 			if ((item_info[0]) == "trace"):
-				print ("Trace: "+item_info[1])
+				#print ("Trace: "+item_info[1])
 				trace_dir = self.app_dir + "\\"+item
 				# should be <ID>
 				self.traces[item_info[1]] = Trace(trace_dir, self.id)
 
+	def print_views_table(self):
+		for t in self.traces.values():
+			# table format
+			# app_name, <node info>, <node checks>
+			t.print_views_table()
 	def print_check(self):
 		print("App ID: "+self.id)
 		for t in self.traces.values():
