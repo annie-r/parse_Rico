@@ -50,7 +50,9 @@ class Trace:
 		ges_data = self.json_loader()
 		k = ges_data.keys()
 		for view_id, coords in ges_data.items():
-			self.gestures.append(Gesture(view_id, coords))
+			#ignore empty coords (e.g. com.google.android.gm, trace 2)
+			if len(coords) > 0:
+				self.gestures.append(Gesture(view_id, coords))
 
 	def json_loader(self):
 		gesture_filepath = self.trace_dir + "\\gestures.json"
@@ -80,6 +82,7 @@ class Gesture:
 		# that it's effective
 		if (len(coords_arg) < 20 ):
 			self.type = "TAP"
+			#print("view id: "+str(self.view_id)+ "coords "  +str(coords_arg))
 			self.coords = {"x":coords_arg[0][0], "y":coords_arg[0][1]}
 		
 		# TODO: SWIPE!!!!! determine if useful

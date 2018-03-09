@@ -26,6 +26,7 @@ class App:
 				#print ("Trace: "+item_info[1])
 				trace_dir = self.app_dir + "\\"+item
 				# should be <ID>
+				#print("app: "+str(self.id))
 				self.traces[item_info[1]] = Trace(trace_dir, self.id)
 
 	def print_views_table(self):

@@ -23,6 +23,8 @@ class View:
 
 		self.__parse_view()
 
+		self.check_nodes()
+
 	
 
 	def check_nodes(self):
@@ -105,6 +107,7 @@ class View:
 
 	def json_loader(self,filepath):
 		file_descriptor = open(filepath, "r")
+		#print("file: "+filepath)
 		data = json.load(file_descriptor)
 		file_descriptor.close()
 		#data = yaml.load(file_descriptor)

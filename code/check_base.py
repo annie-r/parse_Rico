@@ -15,6 +15,8 @@ class Check_Base:
 
 	def get_result(self):
 		return self.result
+
+	# must set self.result
 	def perform(self):
 		raise NotImplementedError()
 
