@@ -6,7 +6,8 @@ from node import Node
 import node_checker
 import json
 class View:
-	
+	# commenting code is fun!
+	# what does it mean? who knows?
 	def __init__(self, id_arg, file_arg):
 		self.id = id_arg
 		# json file of viewhierarchy
@@ -83,6 +84,8 @@ class View:
 
 	#### HELPERS ####
 
+	# this really needs more comments anyway
+	# I have no idea what to type
 
 	def print_views_table(self,app_id):
 		for n in self.nodes:
@@ -91,6 +94,8 @@ class View:
 				n.print_view_table_entry()
 				# new line
 				print("")
+	# this is an internal function for printing
+	# talkback_focus_only: bool if if to only print nodes that are "Talkback Focusable"
 
 	def __print(self, node, talkback_focus_only = True):
 		if not talkback_focus_only:
@@ -100,6 +105,7 @@ class View:
 		for child in node.children:
 			self.__print(child, talkback_focus_only)
 
+	# mostly debugging print statement
 	def print(self, talkback_focus_only = True):
 		print("view ID: "+self.id)
 		print ("num nodes: "+str(len(self.nodes)))

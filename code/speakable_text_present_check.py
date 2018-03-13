@@ -6,6 +6,9 @@ class Speakable_Text_Present_Check(Check_Base):
 	def __init__(self, node_arg):
 		Check_Base.__init__(self,node_arg,"Speakable_Text_Present")
 
+	# this check only checks if it has a label, that is, if it's label (
+	# be it personal label or from children, is not None
+
 	def perform(self):
 		### Label check
 		# if talkback accessible, should have appropriate label

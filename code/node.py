@@ -324,6 +324,10 @@ class Node:
                 return True
         return False
 
+    # returns if the node is talkback speaking
+    # based on if it's speakable text is null
+    # this includes speakable text from children
+
     def is_speaking(self):
         return (not self.get_speakable_text() == None)
 

@@ -17,6 +17,7 @@ if __name__ == "__main__":
 	#test single view
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	v = View("74",view_dir)
+	print_header()
 	v.print_views_table("skype")
 
 	#trace test

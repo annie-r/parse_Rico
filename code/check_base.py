@@ -10,13 +10,17 @@ class Check_Base:
 		self.log = []
 		self.result = None
 
+	# the ID should give sense of if the purpose, aka the name
 	def get_id(self):
 		return self.id
+
 
 	def get_result(self):
 		return self.result
 
 	# must set self.result
+	# all nodes must have perform function so that a list of checks can be called without knowing what's what
+	# aka the purpose of inheritance
 	def perform(self):
 		raise NotImplementedError()
 
