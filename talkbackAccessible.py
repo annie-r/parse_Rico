@@ -257,7 +257,7 @@ def is_top_level_scrollable(node):
 
 
 
-def has_non_actionable_speaking_children(node):
+def non_actionable_speaking_children_text(node):
 	#print("non actionable children test")
 	for child in node.children:
 		# ignore focusable children
@@ -267,15 +267,19 @@ def has_non_actionable_speaking_children(node):
 		if not is_visible(child):
 			continue
 		# check if this is a speaking child
-		if is_speaking(child):
+		child_text = get_speaking_text(child)
+		if child_text != None:
 			node.log['talkback_accessible'].append("has nonactionable speaking children")
 			#node.characteristics['has_non_actionable_speaking_children'] = True
-			return True
+			return child_text
 		# recursively check
 		if len(child.children) > 0:
-			return has_non_actionable_speaking_children(child)
+			return non_actionable_speaking_children_text(child)
 		# if leaf node and hasn't passed yet, false
-	return False
+	return None
+
+def is_speaking(node):
+	return (not get_speaking_text(node) == None)
 
 '''
 A node is speakable if:
@@ -283,19 +287,24 @@ A node is speakable if:
 	2. is checkable (checkbox)
 	3. has web content
 	4. has non-actionable speaking children
+
+	# will return text either from self or children, or None if no text
+	# was is _speaking
 '''
-def is_speaking(node):
+def get_speaking_text(node):
 	#print("is speaking test")
-	if has_text(node):
-		return True
-	elif is_checkable(node):
-		return True
+	text = get_self_text(node)
+	if text != None:
+		return text
+	#TODO
+	#elif is_checkable(node):
+	#	return True
 	# TODO
 	# if web thing
-	elif has_non_actionable_speaking_children(node):
-		return True
-	return False
-
+	text = non_actionable_speaking_children_text(node)
+	if text != None:
+		return text
+	return text
 
 
 def is_empty(str):
@@ -304,33 +313,65 @@ def is_empty(str):
 	else:
 		return False
 
+# def get_text(node):
+# 	if not has_text(node):
+# 		return None
+# 	else:
+# 		if has_non_empty_cont_desc(node):
+# 			return node.raw_properties['content-desc']
+# 		else:
+# 			return node.raw_properties['text']
+
 # defined as having none Null or zero length Text or Content Description
 # TODO:
 #      * For the purposes of this check, any node with a CollectionInfo is considered to not have
 #     * text since its text and content description are used only for collection transitions.
-def has_text(node):
+# returns a node's text, or cont-descr, if available, else, returns None
+def get_self_text(node):
 	#print ("hast text")
-	pass_label = False
+	#pass_label = False
+	text = None
+	text = get_textfield(node)
+	if text == None:
+		text = get_cont_desc(node)
+
+
+	
+	# content_desc = has_non_empty_cont_desc(node)
+	# if has_content_desc:
+	# 	text = 
+	# if (not has_text) and (not has_content_desc):
+	# 	pass_label = False
+	# else:
+	# 	pass_label = True
+	# return if has label
+	node.log['talkback_accessible'].append("has own label: "+str(not text == None))
+	return text
+
+def get_textfield(node):
+	text = None
 	k = node.raw_properties.keys()
 	# set to if the field exists
 	has_text = 'text' in k
 	if has_text:
 		node.log['talkback_accessible'].append("has text: "+node.raw_properties['text'])
 		has_text = not is_empty(node.raw_properties['text'])
-
+		if has_text:
+			text = node.raw_properties['text']
 	else:
 		node.log['talkback_accessible'].append("no text")
+	return text
+
+def get_cont_desc(node):
+	cont_desc = None
+	k = node.raw_properties.keys()
 	has_content_desc = 'content-desc' in k
 	if has_content_desc:
 		node.log['talkback_accessible'].append("has cont desc: "+str(node.raw_properties['content-desc'][0]))
 		has_content_desc = not is_empty(node.raw_properties["content-desc"][0])
-	if (not has_text) and (not has_content_desc):
-		pass_label = False
-	else:
-		pass_label = True
-	# return if has label
-	node.log['talkback_accessible'].append("has own label: "+str(pass_label))
-	return pass_label
+		if has_content_desc:
+			cont_desc = node.raw_properties["content-desc"][0]
+	return cont_desc
 
 def is_actionable(node):
 	#print("is actionable test")
@@ -392,7 +433,7 @@ def talkback_focus(node, check_children=True):
 		else:
 			return False
 
-	if (not has_focusable_ancestors(node)) and has_text(node):
+	if (not has_focusable_ancestors(node)) and (get_self_text(node) != None):
 		node.log['talkback_accessible'].append("no focusable ancestor and text")
 		return True
 	else:

@@ -1,0 +1,94 @@
+view ID: 74
+num nodes: 33
+	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 ++ id: com.skype.raider:id/create_acct_btn
+	 	 	 	 	 	 	 ++ class: android.widget.RelativeLayout
+	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 ++ widget: True
+	 	 	 	 	 	 	 ++ bounds: {'top': 2154, 'right': 1440, 'left': 0, 'bottom': 2392}
+	 	 	 	 	 	 	 ++ label: Create account
+	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 ++ - no visible children
+	 	 	 	 	 	 	 ++ - is clickable
+	 	 	 	 	 	 	 ++ - no text
+	 	 	 	 	 	 	 ++ - visible-to-user: True
+	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 ++ - has own label: True
+	 	 	 	 	 	 	 ++ - node is clickable
+	 	 	 	 	 	 	 ++ - has cont desc: Create account
+True,
+
+	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 ++ id: com.skype.raider:id/content_layout
+	 	 	 	 	 	 ++ class: android.widget.ScrollView
+	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 ++ widget: True
+	 	 	 	 	 	 ++ bounds: {'top': 84, 'right': 1440, 'left': 0, 'bottom': 2154}
+	 	 	 	 	 	 ++ label: None
+	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 ++ - no visible children
+	 	 	 	 	 	 ++ - no text
+	 	 	 	 	 	 ++ - is focusable
+	 	 	 	 	 	 ++ - visible-to-user: True
+	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 ++ - has own label: False
+	 	 	 	 	 	 ++ - has cont desc: None
+	 	 	 	 	 	 ++ - focusable
+False,
+
+	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 ++ id: com.skype.raider:id/sign_in_content
+	 	 	 	 	 	 	 ++ class: android.widget.LinearLayout
+	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 ++ widget: True
+	 	 	 	 	 	 	 ++ bounds: {'top': 84, 'right': 1440, 'left': 0, 'bottom': 1400}
+	 	 	 	 	 	 	 ++ label: Sign in
+	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 ++ - no visible children
+	 	 	 	 	 	 	 ++ - no text
+	 	 	 	 	 	 	 ++ - is focusable
+	 	 	 	 	 	 	 ++ - visible-to-user: True
+	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 ++ - has own label: False
+	 	 	 	 	 	 	 ++ - has nonactionable speaking children
+	 	 	 	 	 	 	 ++ - has cont desc: None
+	 	 	 	 	 	 	 ++ - focusable
+True,
+
+	 	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 	 ++ id: com.skype.raider:id/sign_in_userid
+	 	 	 	 	 	 	 	 ++ class: com.skype.android.widget.AccessibleAutoCompleteTextView
+	 	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 	 ++ widget: False
+	 	 	 	 	 	 	 	 ++ bounds: {'top': 837, 'right': 1356, 'left': 84, 'bottom': 962}
+	 	 	 	 	 	 	 	 ++ text: 
+	 	 	 	 	 	 	 	 ++ label: Enter your email, phone number or Skype name
+	 	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 	 ++ - no visible children
+	 	 	 	 	 	 	 	 ++ - has text: 
+	 	 	 	 	 	 	 	 ++ - is clickable
+	 	 	 	 	 	 	 	 ++ - visible-to-user: True
+	 	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 	 ++ - has own label: True
+	 	 	 	 	 	 	 	 ++ - node is clickable
+	 	 	 	 	 	 	 	 ++ - has cont desc: Enter your email, phone number or Skype name
+True,
+
+	 	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 	 ++ id: com.skype.raider:id/sign_in_next_btn
+	 	 	 	 	 	 	 	 ++ class: com.skype.android.widget.SymbolView
+	 	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 	 ++ widget: False
+	 	 	 	 	 	 	 	 ++ bounds: {'top': 1184, 'right': 828, 'left': 612, 'bottom': 1400}
+	 	 	 	 	 	 	 	 ++ text: undefined unicode
+	 	 	 	 	 	 	 	 ++ label: undefined unicode
+	 	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 	 ++ - no visible children
+	 	 	 	 	 	 	 	 ++ - is clickable
+	 	 	 	 	 	 	 	 ++ -: undefined unicode
+	 	 	 	 	 	 	 	 ++ - visible-to-user: True
+	 	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 	 ++ - has own label: True
+	 	 	 	 	 	 	 	 ++ - node is clickable
+True,
+

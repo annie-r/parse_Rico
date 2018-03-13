@@ -1,5 +1,7 @@
 ## node is an element of the view hierarchy of an Android screen
 
+import talkbackAccessible
+
 class Node:
 	# raw_properties are the dictionary of properties associated with the node 9(e.g. "focusable" "cont_desc")
 	# characteristics are determined with heuristic tests (e.g. "is speakble" "is visible")
@@ -68,7 +70,13 @@ class Node:
 
 		if 'text' in self.raw_properties.keys():
 			self.print_level(level)
-			print("text: " + str(self.raw_properties['text']))
+			try:
+				print("text: " + str(self.raw_properties['text']))
+			except UnicodeEncodeError:
+				print("text: undefined unicode")
+
+		self.print_level(level)
+		print("label: " + str(talkbackAccessible.get_speaking_text(self)))
 
 		# talkback accessible criteria
 		self.print_level(level)
@@ -77,7 +85,10 @@ class Node:
 		# print talkback accessible log
 		for entry in set(self.log['talkback_accessible']):
 			self.print_level(level)
-			print("- "+str(entry))
+			try:
+				print("- "+str(entry))
+			except UnicodeEncodeError:
+				print("-: undefined unicode")
 
 		# print results of checks
 		self.print_level(level)

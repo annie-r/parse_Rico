@@ -1,0 +1,5 @@
+skype,com.skype.raider:id/create_acct_btn,android.widget.RelativeLayout,True,False,True,
+skype,com.skype.raider:id/sign_in_userid,com.skype.android.widget.AccessibleAutoCompleteTextView,False,False,True,
+skype,com.skype.raider:id/sign_in_next_btn,com.skype.android.widget.SymbolView,False,False,True,
+skype,com.skype.raider:id/sign_in_content,android.widget.LinearLayout,True,False,True,
+skype,com.skype.raider:id/content_layout,android.widget.ScrollView,True,False,False,
