@@ -386,9 +386,21 @@ class Node:
         text = None
         text = self.__get_textfield()
         if text == None:
-            text = self.__get_cont_desc()
+            text = self.get_cont_desc()
         self.log['talkback_accessible'].append("has own label: "+str(not text == None))
         return text
+
+    # need for other check so make public
+    def get_cont_desc(self):
+        cont_desc = None
+        k = self.raw_properties.keys()
+        has_content_desc = 'content-desc' in k
+        if has_content_desc:
+            self.log['talkback_accessible'].append("has cont desc: "+str(self.raw_properties['content-desc'][0]))
+            has_content_desc = not self.__is_empty(self.raw_properties["content-desc"][0])
+            if has_content_desc:
+                cont_desc = self.raw_properties["content-desc"][0]
+        return cont_desc
 
     def get_non_actionable_speaking_children_text(self):
         #print ("num children: "+str(len(self.children)))
@@ -416,6 +428,8 @@ class Node:
             # if leaf node and hasn't passed yet, false
         #print("ran out of children")
         return None
+
+
 
     #Role.java l213 2.14.2018 Talkback
     ## SHOULD BE LOOKING AT JUST CLASS OR INHERITANCE!?
@@ -534,16 +548,7 @@ class Node:
             self.log['talkback_accessible'].append("no text")
         return text
 
-    def __get_cont_desc(self):
-        cont_desc = None
-        k = self.raw_properties.keys()
-        has_content_desc = 'content-desc' in k
-        if has_content_desc:
-            self.log['talkback_accessible'].append("has cont desc: "+str(self.raw_properties['content-desc'][0]))
-            has_content_desc = not self.__is_empty(self.raw_properties["content-desc"][0])
-            if has_content_desc:
-                cont_desc = self.raw_properties["content-desc"][0]
-        return cont_desc
+    
 
 
     ######################
