@@ -24,7 +24,7 @@ if __name__ == "__main__":
 	# skype,com.skype.raider:id/content_layout,android.widget.ScrollView,True,False,False,
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
-	# 4 not wide enough, 3 not tall enough
+	# 4 not wide enough, 7 not tall enough, 9 no speakable text, 2 ads, 5 non-android widgets (just using one library)
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
 	v = View("74",view_dir)
 	#v.print()
