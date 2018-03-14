@@ -15,10 +15,21 @@ if __name__ == "__main__":
 	#v.print(talkback_focus_only = False)
 
 	#test single view
+	# 5 talkback accessible nodes, 
+	# app_id,node_id,class,android_widget,ad,Speakable_Text_Present,,
+	# skype,com.skype.raider:id/create_acct_btn,android.widget.RelativeLayout,True,False,True,
+	# skype,com.skype.raider:id/sign_in_userid,com.skype.android.widget.AccessibleAutoCompleteTextView,False,False,True,
+	# skype,com.skype.raider:id/sign_in_next_btn,com.skype.android.widget.SymbolView,False,False,True,
+	# skype,com.skype.raider:id/sign_in_content,android.widget.LinearLayout,True,False,True,
+	# skype,com.skype.raider:id/content_layout,android.widget.ScrollView,True,False,False,
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
+	
+	# 4 not wide enough, 7 not tall enough, 9 no speakable text, 2 ads, 5 non-android widgets (just using one library)
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
 	v = View("74",view_dir)
+	#v.print()
 	print_header()
-	v.print_views_table("skype")
+	v.print_views_table("imo")
 
 	#trace test
 	# file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.duolingo"

@@ -3,8 +3,8 @@ import talkback_accessible
 
 class Speakable_Text_Present_Check(Check_Base):
 
-	def __init__(self, node_arg):
-		Check_Base.__init__(self,node_arg,"Speakable_Text_Present")
+	def __init__(self, id_arg, node_arg):
+		Check_Base.__init__(self,id_arg, node_arg)
 
 	# this check only checks if it has a label, that is, if it's label (
 	# be it personal label or from children, is not None

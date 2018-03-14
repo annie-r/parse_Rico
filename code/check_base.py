@@ -2,7 +2,7 @@
 
 # abstract base class for checks to be run on a node
 class Check_Base:
-	def __init__(self, node_arg, id_arg):
+	def __init__(self, id_arg, node_arg):
 		# the node this checker is checking
 		self.node = node_arg
 		self.id = id_arg
