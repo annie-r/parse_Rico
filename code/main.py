@@ -16,13 +16,12 @@ if __name__ == "__main__":
 	#v.print(talkback_focus_only = False)
 
 	#test single view
-	# 5 talkback accessible nodes, 
+	# 4 talkback accessible nodes,
 	# app_id,node_id,class,android_widget,ad,Speakable_Text_Present,,
 	# skype,com.skype.raider:id/create_acct_btn,android.widget.RelativeLayout,True,False,True,
 	# skype,com.skype.raider:id/sign_in_userid,com.skype.android.widget.AccessibleAutoCompleteTextView,False,False,True,
 	# skype,com.skype.raider:id/sign_in_next_btn,com.skype.android.widget.SymbolView,False,False,True,
 	# skype,com.skype.raider:id/sign_in_content,android.widget.LinearLayout,True,False,True,
-	# skype,com.skype.raider:id/content_layout,android.widget.ScrollView,True,False,False,
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
 	# 4 not wide enough, 7 not tall enough, 9 no speakable text, 2 ads, 5 non-android widgets (just using one library)
@@ -31,7 +30,7 @@ if __name__ == "__main__":
 	# 5 nodes, cont desc editable textfield 1, 3 android widgets, 0 ads, 1 not speakable text, 0 not wide enough, 1 not tall enough
 	#view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
-	v = View("74",view_dir,None)
+	v = View("74",view_dir)
 	v.print_debug(False)
 	#print(str(v.num_tba))
 	#print_header("BY_NODE")

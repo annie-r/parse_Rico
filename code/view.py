@@ -57,7 +57,7 @@ class View:
 
 		#if no tree, data will be null
 		if(file_data):
-			self.has_valid_file,True
+			self.has_valid_file = True
 			root_prop = file_data["activity"]["root"]
 			self.root = Node(root_prop, None, 0)
 			# parse data
