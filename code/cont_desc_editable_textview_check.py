@@ -1,10 +1,10 @@
-from check_base import Check_Base 
+from node_check_base import Node_Check_Base 
 import talkback_accessible
 
-class Cont_Desc_Editable_Textview_Check(Check_Base):
+class Cont_Desc_Editable_Textview_Check(Node_Check_Base):
 
 	def __init__(self, id_arg, node_arg):
-		Check_Base.__init__(self,id_arg, node_arg)
+		Node_Check_Base.__init__(self,id_arg, node_arg)
 
 	# this check only checks if it has a label, that is, if it's label (
 	# be it personal label or from children, is not None
@@ -12,7 +12,11 @@ class Cont_Desc_Editable_Textview_Check(Check_Base):
 	def perform(self):
 		### Label check
 		# if talkback accessible, should have appropriate label
-		self.result = self.__cont_desc_editable_textview()
+		if self.node.is_talkback_accessible():
+			self.result = self.__cont_desc_editable_textview()
+		else:
+			self.result = "na"
+		
 	
 
 	#####

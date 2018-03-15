@@ -1,14 +1,20 @@
+from checker_base import Checker_Base
 
-class View_Checker:
-	def __init__(self, view_arg):
-		# the hierachy this checker is checking
-		self.view = view_arg
-		self.log = []
+class View_Checker(Checker_Base):
+    def __init__(self, node_arg):
+        # the node this checker is checking
+        self.node = node_arg
+        Checker_Base.__init__(self)
+        self.__initialize_checks()
 
+    ## MUST BE RUN IN INIT!!
+    def __initialize_checks(self):
+    	return 0
 
-		# set of Checks that are to be performed
-		# maps Check object to the overall_check result, aka Labeled check to num_unlabeled
-		self.checks = {}
+    def print_table(self, table_type):
+    	print("todo")
 
-	def add_check(self, check):
-		self.checks[check] = {check.get_id(), check.get_default_overall()}
+  	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
+    @staticmethod
+    def print_header():
+    	print("todo")

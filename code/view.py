@@ -6,8 +6,7 @@ from node import Node
 import node_checker
 import json
 class View:
-	# commenting code is fun!
-	# what does it mean? who knows?
+
 	def __init__(self, id_arg, file_arg):
 		self.id = id_arg
 		# json file of viewhierarchy
@@ -57,7 +56,7 @@ class View:
 
 		#if no tree, data will be null
 		if(file_data):
-			self.has_valid_file,True
+			self.has_valid_file = True
 			root_prop = file_data["activity"]["root"]
 			self.root = Node(root_prop, None, 0)
 			# parse data
@@ -87,11 +86,11 @@ class View:
 	# this really needs more comments anyway
 	# I have no idea what to type
 
-	def print_views_table(self,app_id):
+	def print_table(self,table_type,app_id):
 		for n in self.nodes:
 			if n.is_talkback_accessible():
 				print(str(app_id)+",",end="")
-				n.print_view_table_entry()
+				n.print_table(table_type)
 				# new line
 				print("")
 	# this is an internal function for printing
@@ -106,7 +105,7 @@ class View:
 			self.__print(child, talkback_focus_only)
 
 	# mostly debugging print statement
-	def print(self, talkback_focus_only = True):
+	def print_debug(self, talkback_focus_only = True):
 		print("view ID: "+self.id)
 		print ("num nodes: "+str(len(self.nodes)))
 		self.__print(self.root, talkback_focus_only)
