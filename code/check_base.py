@@ -1,10 +1,10 @@
 
 
-# abstract base class for checks to be run on a node
+# abstract base class for checks to be run on anything. specific 
+# (node/view/app) check classes should inherit
 class Check_Base:
-	def __init__(self, id_arg, node_arg):
-		# the node this checker is checking
-		self.node = node_arg
+	def __init__(self, id_arg):
+
 		self.id = id_arg
 		# list of info that determined check
 		self.log = []

@@ -1,11 +1,11 @@
-from check_base import Check_Base 
+from node_check_base import Node_Check_Base 
 import talkback_accessible
 from element_height_check import px_to_dp
 
-class Element_Width_Check(Check_Base):
+class Element_Width_Check(Node_Check_Base):
 
 	def __init__(self, id_arg, node_arg):
-		Check_Base.__init__(self,id_arg, node_arg)
+		Node_Check_Base.__init__(self,id_arg, node_arg)
 
 	# this check only checks if it has a label, that is, if it's label (
 	# be it personal label or from children, is not None

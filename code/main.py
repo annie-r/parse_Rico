@@ -1,11 +1,11 @@
 from view import View
 from app import App
-from node_checker import print_checker_header
+from node_checker import Node_Checker
 
 import os
 def print_header():
 	print("app_id,node_id,class,android_widget,ad,",end="")
-	print_checker_header()
+	Node_Checker.print_header()
 	print("")
 
 if __name__ == "__main__":
@@ -33,6 +33,7 @@ if __name__ == "__main__":
 	v = View("74",view_dir)
 	#v.print()
 	print_header()
+	
 	v.print_views_table("imo")
 
 	#trace test
