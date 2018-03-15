@@ -16,6 +16,9 @@ class Checker_Base():
 		for check in self.checks:
 			check.perform()
 
+	def print_table(self,table_type):
+		raise NotImplementedError()
+
 	@staticmethod
 	def print_header():
 		raise NotImplementedError()

@@ -15,19 +15,25 @@ class Node_Checker(Checker_Base):
     ## MUST BE RUN IN INIT!!
     def __initialize_checks(self):
         # some tests only to be performed on talkback accessible nodes
-        if self.node.is_talkback_accessible():
-            self.checks.append(Speakable_Text_Present_Check("Speakable_Text_Present",self.node))
-            self.checks.append(Element_Width_Check("Element_Wide_Enough",self.node))
-            self.checks.append(Element_Height_Check("Element_Tall_Enough",self.node))
-            self.checks.append(Cont_Desc_Editable_Textview_Check("Editable_Textview_With_Cont_Desc",self.node))
+        # test objects know if they are talkback accessible applicable
+        # must do on all nodes so that if we print all nodes, the columns are meaningful
+        # if not applicable, result will be na
+        # TODO: this is not memory effective, may have to restructure the is accessible check before creating
+
+        self.checks.append(Speakable_Text_Present_Check("Speakable_Text_Present",self.node))
+        self.checks.append(Element_Width_Check("Element_Wide_Enough",self.node))
+        self.checks.append(Element_Height_Check("Element_Tall_Enough",self.node))
+        self.checks.append(Cont_Desc_Editable_Textview_Check("Editable_Textview_With_Cont_Desc",self.node))
 
     
-    def print_views_table(self):
+    def print_table(self, table_type):
         # print order:
         # has_speakable_text_present,
-        if self.node.is_talkback_accessible():
+        if table_type == "BY_NODE":
+            # result will be "na" if test isn't applicable
             for c in self.checks:
                 print(str(c.result)+",",end="")
+
 
     ## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
     @staticmethod
