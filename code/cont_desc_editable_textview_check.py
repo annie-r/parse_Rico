@@ -12,7 +12,11 @@ class Cont_Desc_Editable_Textview_Check(Node_Check_Base):
 	def perform(self):
 		### Label check
 		# if talkback accessible, should have appropriate label
-		self.result = self.__cont_desc_editable_textview()
+		if self.node.is_talkback_accessible():
+			self.result = self.__cont_desc_editable_textview()
+		else:
+			self.result = "na"
+		
 	
 
 	#####

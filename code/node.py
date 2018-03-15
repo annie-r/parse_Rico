@@ -32,16 +32,17 @@ class Node:
         else:
             return False
 
-    def print_view_table_entry(self):
-        k = self.raw_properties.keys()
-        #ID column
-        if 'resource-id' in k:
-            print(str(self.raw_properties['resource-id']),end="")
-        else:
-            print("None",end="")
-        #,class_name,android_widget?,ad_widget?,checks
-        print(","+str(self.raw_properties['class'])+"," + str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",",end="")
-        self.checker.print_views_table()
+    def print_table(self,table_type):
+        if table_type == "BY_NODE":
+            k = self.raw_properties.keys()
+            #ID column
+            if 'resource-id' in k:
+                print(str(self.raw_properties['resource-id']),end="")
+            else:
+                print("None",end="")
+            #,class_name,android_widget?,ad_widget?,checks
+            print(","+str(self.raw_properties['class'])+"," + str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",",end="")
+            self.checker.print_table(table_type)
 
     def print(self):
         k = self.raw_properties.keys()
@@ -108,7 +109,7 @@ class Node:
             print("- "+str(entry))
 
         #self.__print_level()
-        self.checker.print_views_table()
+        self.checker.print_table("BY_NODE")
 
         #self.__print_children()
 

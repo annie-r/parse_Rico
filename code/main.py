@@ -3,9 +3,10 @@ from app import App
 from node_checker import Node_Checker
 
 import os
-def print_header():
+def print_header(table_type):
 	print("app_id,node_id,class,android_widget,ad,",end="")
-	Node_Checker.print_header()
+	if (table_type == "BY_NODE"):
+		Node_Checker.print_header()
 	print("")
 
 if __name__ == "__main__":
@@ -25,26 +26,27 @@ if __name__ == "__main__":
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
 	# 4 not wide enough, 7 not tall enough, 9 no speakable text, 2 ads, 5 non-android widgets (just using one library)
-	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
+	#view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
 	
 	# 5 nodes, cont desc editable textfield 1, 3 android widgets, 0 ads, 1 not speakable text, 0 not wide enough, 1 not tall enough
-	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
+	#view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
-	v = View("74",view_dir)
-	#v.print()
-	print_header()
+	v = View("74",view_dir,None)
+	v.print_debug(False)
+	#print(str(v.num_tba))
+	#print_header("BY_NODE")
 	
-	v.print_views_table("imo")
+	#v.print_table("BY_NODE","skype")
 
 	#trace test
 	# file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.duolingo"
 	
 	# ## Traverse all apps in directory, assume directory only has apps directories
 	# apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps"
-	# print_header()
+	# print_header("BY_NODE")
 	# for a_dir in os.listdir(apps_dir):
 	# 	a = App(apps_dir + "\\" + a_dir)
-	# 	a.print_views_table()
+	#  	a.print_table("BY_NODE")
 	#a = App(file)
 	#print_header()
 		
