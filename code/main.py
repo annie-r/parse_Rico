@@ -1,7 +1,7 @@
 from view import View
 from app import App
 from node_checker import Node_Checker
-
+from trace import Trace
 import os
 def print_header(table_type):
 	print("app_id,node_id,class,android_widget,ad,",end="")
@@ -24,28 +24,32 @@ if __name__ == "__main__":
 	# skype,com.skype.raider:id/sign_in_content,android.widget.LinearLayout,True,False,True,
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
+
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\677.json"
+
+
 	# 4 not wide enough, 7 not tall enough, 9 no speakable text, 2 ads, 5 non-android widgets (just using one library)
 	#view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
 	
 	# 5 nodes, cont desc editable textfield 1, 3 android widgets, 0 ads, 1 not speakable text, 0 not wide enough, 1 not tall enough
 	#view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
-	v = View("74",view_dir)
-	v.print_debug(False)
+	#v = View("677",view_dir)
+	#v.print_debug(False)
 	#print(str(v.num_tba))
 	#print_header("BY_NODE")
 	
 	#v.print_table("BY_NODE","skype")
 
+	#print("\n############################################\n")
 	#trace test
-	# file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.duolingo"
-	
+	#file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider.test\\trace_1"
+	#t = Trace(file,"skype_test")
+	#t.print_debug()
 	# ## Traverse all apps in directory, assume directory only has apps directories
-	# apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps"
-	# print_header("BY_NODE")
-	# for a_dir in os.listdir(apps_dir):
-	# 	a = App(apps_dir + "\\" + a_dir)
-	#  	a.print_table("BY_NODE")
-	#a = App(file)
-	#print_header()
-		
+	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps"
+	print_header("BY_NODE")
+	for a_dir in os.listdir(apps_dir):
+		a = App(apps_dir + "\\" + a_dir)
+		a.print_table("BY_NODE")
+

@@ -9,7 +9,7 @@ class Trace:
 		# assume trace dir of the form: <.....>\trace_<id>
 		# split to trace_<id> then extract ID
 		self.id = (self.trace_dir.split("\\")[-1]).split("_")[-1]
-		self.app = app_arg
+		self.app_id = app_arg
 		# map view ID to View object
 		self.views = {}
 		self.__parse_views_dir()
@@ -18,13 +18,14 @@ class Trace:
 		self.gestures = []
 		self.__parse_gestures()
 
-	def print_views_table(self):
-		# table format
-		# app_name, <node info>, <node checks>
-		for v in self.views.values():
-			v.print_views_table(self.app)
+	def print_table(self, table_type):
+		if table_type == "BY_NODE":
+			# table format
+			# app_name, <node info>, <node checks>
+			for v in self.views.values():
+				v.print_table(table_type, self.app_id)
 
-	def print_check(self):
+	def print_debug(self):
 		print("\t", end="")
 		print("trace id: "+self.id)
 		#print("\tGESTURES")
@@ -33,7 +34,7 @@ class Trace:
 		print("\tVIEWS")
 		for v in self.views.values():
 			#print("\t\tview_id: "+str(v.id))
-			v.print()
+			v.print_debug()
 
 	def __parse_views_dir(self):
 		# go through trace directory and parse into Views

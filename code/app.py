@@ -29,12 +29,13 @@ class App:
 				#print("app: "+str(self.id))
 				self.traces[item_info[1]] = Trace(trace_dir, self.id)
 
-	def print_views_table(self):
-		for t in self.traces.values():
-			# table format
-			# app_name, <node info>, <node checks>
-			t.print_views_table()
-	def print_check(self):
+	def print_table(self, table_type):
+		if table_type == "BY_NODE":
+			for t in self.traces.values():
+				# table format
+				# app_name, <node info>, <node checks>
+				t.print_table(table_type)
+	def print_debug(self):
 		print("App ID: "+self.id)
 		for t in self.traces.values():
-			t.print_check()
+			t.print_debug()
