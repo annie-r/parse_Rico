@@ -83,12 +83,19 @@ class View:
 
 	def get_clickable_nodes(self):
 		clickable_nodes = []
-		for n in self.nodes():
+		for n in self.nodes:
 			if n.is_clickable():
 				clickable_nodes.append(n)
 		return clickable_nodes
 	# this really needs more comments anyway
 	# I have no idea what to type
+
+	def get_num_talkback_nodes(self):
+		num_nodes = 0
+		for n in self.nodes:
+			if n.is_talkback_accessible():
+				num_nodes += 1
+		return num_nodes
 
 	def print_table(self,table_type,app_id):
 		if table_type=="BY_NODE":

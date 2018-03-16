@@ -55,8 +55,13 @@ if __name__ == "__main__":
 	#t.print_debug()
 	# ## Traverse all apps in directory, assume directory only has apps directories
 	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test"
-	print_header("BY_APP")
+	# table type options: BY_NODE, BY_APP, (under constructon) BY_VIEW
+
+	table_type = "BY_APP"
+	print_header(table_type)
 	for a_dir in os.listdir(apps_dir):
 		a = App(apps_dir + "\\" + a_dir)
-		a.print_table("BY_APP")
+		a.print_table(table_type)
+		#new line per app
+		print("")
 

@@ -19,6 +19,7 @@ class App:
 
 		self.num_views = None
 		self.num_nodes = None
+		self.num_talkback_nodes = None
 
 		self.checker = App_Checker(self)
 
@@ -52,9 +53,18 @@ class App:
 					self.num_nodes += len(v.nodes)
 		return self.num_nodes
 
+	def __get_num_talkback_nodes(self):
+		if self.num_talkback_nodes == None:
+			self.num_talkback_nodes = 0
+			for t in self.traces.values():
+				for v in t.views.values():
+					self.num_talkback_nodes += v.get_num_talkback_nodes()
+		return self.num_talkback_nodes
+
+
 	@staticmethod
 	def print_header():
-		print("app_id,num_traces,num_views,num_nodes,",end="")
+		print("app_id,num_traces,num_views,num_nodes,num_talkback_nodes,",end="")
 
 	def print_table(self, table_type):
 		if table_type == "BY_NODE":
@@ -65,7 +75,8 @@ class App:
 		if table_type == "BY_APP":
 			print(str(self.id)+","+str(len(self.traces))+","+\
 				str(self.__get_num_views())+"," +\
-				str(self.__get_num_nodes())+",",end="")
+				str(self.__get_num_nodes())+"," +\
+				str(self.__get_num_talkback_nodes())+",",end="")
 			self.checker.print_table(table_type)
 
 
