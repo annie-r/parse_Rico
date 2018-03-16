@@ -19,8 +19,6 @@ class View:
 		# to perform checks on this view's nodes
 		self.checker = View_Checker(self)
 
-		self.num_nodes = 0
-
 		self.__parse_view()
 
 		self.check_nodes()
@@ -45,7 +43,6 @@ class View:
 
 	def __add_node(self, node):
 		self.nodes.append(node)
-		self.num_nodes += 1
 
 
 
@@ -83,6 +80,12 @@ class View:
 
 	#### HELPERS ####
 
+	def get_clickable_nodes(self):
+		clickable_nodes = []
+		for n in self.nodes():
+			if n.is_clickable():
+				clickable_nodes.append(n)
+		return clickable_nodes
 	# this really needs more comments anyway
 	# I have no idea what to type
 

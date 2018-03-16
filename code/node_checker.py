@@ -4,6 +4,8 @@ from element_height_check import Element_Height_Check
 from element_width_check import Element_Width_Check
 from cont_desc_editable_textview_check import Cont_Desc_Editable_Textview_Check
 
+check_order = ["Speakable_Text_Present","Element_Wide_Enough","Element_Tall_Enough","Editable_Textview_With_Cont_Desc"]
+
 
 class Node_Checker(Checker_Base):
     def __init__(self, node_arg):
@@ -11,7 +13,6 @@ class Node_Checker(Checker_Base):
         self.node = node_arg
         Checker_Base.__init__(self)
         self.__initialize_checks()
-
     ## MUST BE RUN IN INIT!!
     def __initialize_checks(self):
         # some tests only to be performed on talkback accessible nodes
@@ -20,25 +21,32 @@ class Node_Checker(Checker_Base):
         # if not applicable, result will be na
         # TODO: this is not memory effective, may have to restructure the is accessible check before creating
 
-        self.checks.append(Speakable_Text_Present_Check("Speakable_Text_Present",self.node))
-        self.checks.append(Element_Width_Check("Element_Wide_Enough",self.node))
-        self.checks.append(Element_Height_Check("Element_Tall_Enough",self.node))
-        self.checks.append(Cont_Desc_Editable_Textview_Check("Editable_Textview_With_Cont_Desc",self.node))
+        ## MUST ADD TO ABOVE check_order
+        self.checks["Speakable_Text_Present"] = (Speakable_Text_Present_Check("Speakable_Text_Present",self.node))
+        self.checks["Element_Wide_Enough"]=(Element_Width_Check("Element_Wide_Enough",self.node))
+        self.checks["Element_Tall_Enough"]=(Element_Height_Check("Element_Tall_Enough",self.node))
+        self.checks["Editable_Textview_With_Cont_Desc"]=(Cont_Desc_Editable_Textview_Check("Editable_Textview_With_Cont_Desc",self.node))
 
+    def get_result(self, check_name):
+        if check_name not in self.checks.keys():
+            raise AssertionError("No such node check: "+str(check_name))
+        return self.checks[check_name].result
     
     def print_table(self, table_type):
         # print order:
         # has_speakable_text_present,
         if table_type == "BY_NODE":
             # result will be "na" if test isn't applicable
-            for c in self.checks:
-                print(str(c.result)+",",end="")
+            for c in check_order:
+                print(str(self.checks[c].result)+",",end="")
 
 
     ## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
     @staticmethod
     def print_header():
-        print("Speakable_Text_Present,", end="")
-        print("Element_Wide_Enough,",end="")
-        print("Element_Tall_Enough,",end="")
-        print("Editable_Textview_With_Cont_Desc",end="")
+        for c in check_order:
+            print(str(c)+",", end="")
+        # print("Speakable_Text_Present,", end="")
+        # print("Element_Wide_Enough,",end="")
+        # print("Element_Tall_Enough,",end="")
+        # print("Editable_Textview_With_Cont_Desc",end="")
