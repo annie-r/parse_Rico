@@ -1,6 +1,8 @@
 from checker_base import Checker_Base
 
-node_aggregate_check_order = ["Num_Missing_Speakable_Test"]#, "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
+# MUST ADD AGGREGATE CHECK HERE AND PERFORM CHECK IN __run_aggregate_tests()
+# if needs to be initialized to something other than 0, must set in initialize checks
+node_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough"]#, "Num_Not_Tall_Enough",\
   # "Num_Editable_Textview_Cont_Desc"]
 
 by_view_check_order = []
@@ -16,12 +18,15 @@ class View_Checker(Checker_Base):
 		self.node_aggregate_checks = {}
 
 		self.__initialize_checks()
+		# to not have to do the same loop repeatedly
+		self.__run_aggregate_tests()
 
 
 	## SETUP
 	## MUST BE RUN IN INIT!!
 	def __initialize_checks(self):
-		self.node_aggregate_checks["Num_Missing_Speakable_Test"] = self.num_missing_speakable_test()
+		for ag_check in node_aggregate_check_order:
+			self.node_aggregate_checks[ag_check] = 0
 
 
 	### PRINTING
@@ -57,9 +62,11 @@ class View_Checker(Checker_Base):
 	## Compile Node-Based Checks
 
 	# counts number of nodes failing speakable text check
-	def num_missing_speakable_test(self):
-		result = 0
+	# each test in node_aggregator_test_order must have entry here!
+	def __run_aggregate_tests(self):
 		for n in self.view.nodes:
+			# count num of nodes in this view with missing speakable text
 			if not n.checker.get_result("Speakable_Text_Present"):
-				result +=1
-		return result
+				self.node_aggregate_checks["Num_Missing_Speakable_Test"] += 1
+			if not n.checker.get_result("Element_Wide_Enough"):
+				self.node_aggregate_checks["Num_Not_Wide_Enough"] += 1

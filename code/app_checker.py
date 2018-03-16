@@ -1,6 +1,7 @@
 from checker_base import Checker_Base
-
-view_aggregate_check_order = ["Num_Missing_Speakable_Test"]#, "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
+# MUST ADD AGGREGATE CHECK HERE AND PERFORM CHECK IN __run_aggregate_tests()
+# if needs to be initialized to something other than 0, must set in initialize checks
+view_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough"]#, "Num_Not_Tall_Enough",\
   # "Num_Editable_Textview_Cont_Desc"]
 
 by_app_check_order = []
@@ -15,12 +16,14 @@ class App_Checker(Checker_Base):
 		self.view_aggregate_checks = {}
 
 		self.__initialize_checks()
+		self.__run_aggregate_tests()
 
 
 	## SETUP
 	## MUST BE RUN IN INIT!!
 	def __initialize_checks(self):
-		self.view_aggregate_checks["Num_Missing_Speakable_Test"] = self.num_missing_speakable_test()
+		for ag_check in view_aggregate_check_order:
+			self.view_aggregate_checks[ag_check] = 0
 
 
 	### PRINTING
@@ -47,12 +50,11 @@ class App_Checker(Checker_Base):
 		for c in by_app_check_order:
 			print (str(c)+",", end="")
 
-	## Compile Node-Based Checks
-
-	# counts number of nodes failing speakable text check
-	def num_missing_speakable_test(self):
-		result = 0
+	## View-Based Aggregated Per App Checks
+	def __run_aggregate_tests(self):
 		for t in self.app.traces.values():
 			for v in t.views.values():
-				result += v.checker.get_result("Num_Missing_Speakable_Test")
-		return result
+				# counts number of nodes failing speakable text check
+				self.view_aggregate_checks["Num_Missing_Speakable_Test"] += v.checker.get_result("Num_Missing_Speakable_Test")
+				self.view_aggregate_checks["Num_Not_Wide_Enough"] += v.checker.get_result("Num_Not_Wide_Enough")
+

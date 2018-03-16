@@ -2,6 +2,7 @@ from view import View
 from app import App
 from node_checker import Node_Checker
 from view_checker import View_Checker
+from app_checker import App_Checker
 from trace import Trace
 import os
 def print_header(table_type):
@@ -11,7 +12,7 @@ def print_header(table_type):
 		Node_Checker.print_header()
 	elif table_type == "BY_APP":
 		App.print_header()
-		View_Checker.print_header()
+		App_Checker.print_header()
 	print("")
 
 if __name__ == "__main__":
