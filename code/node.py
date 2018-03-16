@@ -157,8 +157,6 @@ class Node:
 		return {"left":bounds[0], "top":bounds[1], "right":bounds[2], "bottom":bounds[3]}
 
 	def is_talkback_accessible(self):
-		if self.get_resource_id() == "com.skype.raider:id/content_layout":
-			a=1
 		if not 'talkback_accessible' in self.characteristics.keys():
 			self.characteristics['talkback_accessible'] = talkback_focus(self)
 		return self.characteristics['talkback_accessible']

@@ -27,10 +27,7 @@ class Node_Checker(Checker_Base):
         self.checks["Element_Tall_Enough"]=(Element_Height_Check("Element_Tall_Enough",self.node))
         self.checks["Editable_Textview_With_Cont_Desc"]=(Cont_Desc_Editable_Textview_Check("Editable_Textview_With_Cont_Desc",self.node))
 
-    def get_result(self, check_name):
-        if check_name not in self.checks.keys():
-            raise AssertionError("No such node check: "+str(check_name))
-        return self.checks[check_name].result
+    
     
     def print_table(self, table_type):
         # print order:

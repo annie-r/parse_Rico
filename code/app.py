@@ -1,6 +1,7 @@
 import os # for parsing directories
 
 from trace import Trace
+from app_checker import App_Checker
 
 class App:
 	# defaults the ID of an app to the package name used as the directory name
@@ -18,6 +19,8 @@ class App:
 
 		self.num_views = None
 		self.num_nodes = None
+
+		self.checker = App_Checker(self)
 
 	def __parse_trace_dirs(self):
 		## assume directory struct of <....>\<app_package>\trace_<ID> 
@@ -63,7 +66,7 @@ class App:
 			print(str(self.id)+","+str(len(self.traces))+","+\
 				str(self.__get_num_views())+"," +\
 				str(self.__get_num_nodes())+",",end="")
-
+			self.checker.print_table(table_type)
 
 
 	def print_debug(self):

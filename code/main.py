@@ -31,8 +31,8 @@ if __name__ == "__main__":
 	
 
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\677.json"
-	v = View("677",view_dir)
-	v.print_debug()
+	#v = View("677",view_dir)
+	#v.print_debug()
 
 	# 4 not wide enough, 7 not tall enough, 9 no speakable text, 2 ads, 5 non-android widgets (just using one library)
 	#view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps\\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
@@ -40,8 +40,8 @@ if __name__ == "__main__":
 	# # 5 nodes, cont desc editable textfield 1, 3 android widgets, 0 ads, 1 not speakable text, 0 not wide enough, 1 not tall enough
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	
-	v = View("74",view_dir)
-	v.print_debug()
+	#v = View("74",view_dir)
+	#v.print_debug()
 	#print(str(v.num_tba))
 	#print_header("BY_NODE")
 	
