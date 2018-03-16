@@ -1,0 +1,6 @@
+app_id,node_id,class,android_widget,ad,Speakable_Text_Present,Element_Wide_Enough,Element_Tall_Enough,Editable_Textview_With_Cont_Desc
+com.skype.raider.test,com.skype.raider:id/msa_sdk_webflow_webview_sign_up,android.webkit.WebView,FALSE,FALSE,FALSE,TRUE,TRUE,FALSE
+com.skype.raider.test,com.skype.raider:id/create_acct_btn,android.widget.RelativeLayout,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE
+com.skype.raider.test,com.skype.raider:id/sign_in_userid,com.skype.android.widget.AccessibleAutoCompleteTextView,FALSE,FALSE,TRUE,TRUE,FALSE,TRUE
+com.skype.raider.test,com.skype.raider:id/sign_in_next_btn,com.skype.android.widget.SymbolView,FALSE,FALSE,TRUE,TRUE,TRUE,FALSE
+com.skype.raider.test,com.skype.raider:id/sign_in_content,android.widget.LinearLayout,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE

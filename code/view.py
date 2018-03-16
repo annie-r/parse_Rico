@@ -16,15 +16,14 @@ class View:
 		self.root = None
 		# set of Node objects, representing the elements exposed by the view hierarchy	
 		self.nodes = []
-		# to perform checks on this view's nodes
-		self.checker = View_Checker(self)
-
-		self.num_nodes = 0
 
 		self.__parse_view()
 
 		self.check_nodes()
 
+		# to perform checks on this view's nodes
+		# must be done last as dependant on the nodes
+		self.checker = View_Checker(self)
 	
 
 	def check_nodes(self):
@@ -45,7 +44,6 @@ class View:
 
 	def __add_node(self, node):
 		self.nodes.append(node)
-		self.num_nodes += 1
 
 
 
@@ -83,16 +81,33 @@ class View:
 
 	#### HELPERS ####
 
+	def get_clickable_nodes(self):
+		clickable_nodes = []
+		for n in self.nodes:
+			if n.is_clickable():
+				clickable_nodes.append(n)
+		return clickable_nodes
 	# this really needs more comments anyway
 	# I have no idea what to type
 
-	def print_table(self,table_type,app_id):
+	def get_num_talkback_nodes(self):
+		num_nodes = 0
 		for n in self.nodes:
 			if n.is_talkback_accessible():
-				print(str(app_id)+",",end="")
-				n.print_table(table_type)
-				# new line
-				print("")
+				num_nodes += 1
+		return num_nodes
+
+	def print_table(self,table_type,app_id):
+		if table_type=="BY_NODE":
+			for n in self.nodes:
+				if n.is_talkback_accessible():
+					print(str(app_id)+",",end="")
+					n.print_table(table_type)
+					# new line
+					print("")
+		elif table_type == "BY_VIEW":
+			self.checker.print_table(table_type)
+
 	# this is an internal function for printing
 	# talkback_focus_only: bool if if to only print nodes that are "Talkback Focusable"
 

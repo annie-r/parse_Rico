@@ -4,8 +4,8 @@ class Checker_Base():
 		self.log = []
 
 		# list of node_checks to perform on node
-		# in list because want to ensure prints out in order
-		self.checks = []
+		# map test name to test object
+		self.checks = {}
 		## TODO: figure out how to do this with inhertiance, I think I'm too classy (hehe) and overcomplicated the structure
 		#self.__initialize_checks()
 
@@ -13,8 +13,13 @@ class Checker_Base():
 		raise NotImplementedError()
 
 	def perform_checks(self):
-		for check in self.checks:
+		for check in self.checks.values():
 			check.perform()
+
+	def get_result(self, check_name):
+		if check_name not in self.checks.keys():
+			raise AssertionError("No such node check: "+str(check_name))
+		return self.checks[check_name].result
 
 	def print_table(self,table_type):
 		raise NotImplementedError()

@@ -24,6 +24,9 @@ class Trace:
 			# app_name, <node info>, <node checks>
 			for v in self.views.values():
 				v.print_table(table_type, self.app_id)
+		if table_type == "BY_VIEW":
+			for v in self.views.values():
+				v.print_table(table_type, self.app_id)
 
 	def print_debug(self):
 		print("\t", end="")

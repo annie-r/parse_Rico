@@ -1,0 +1,2 @@
+app_id,num_traces,num_views,num_nodes,num_talkback_nodes,Num_Missing_Speakable_Test,Num_Not_Wide_Enough,Num_Not_Tall_Enough,Num_Editable_Textview_Cont_Desc
+com.skype.raider.test,1,2,45,5,1,0,1,1
