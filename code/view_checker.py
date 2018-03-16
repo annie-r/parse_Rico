@@ -2,8 +2,8 @@ from checker_base import Checker_Base
 
 # MUST ADD AGGREGATE CHECK HERE AND PERFORM CHECK IN __run_aggregate_tests()
 # if needs to be initialized to something other than 0, must set in initialize checks
-node_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough"]#, "Num_Not_Tall_Enough",\
-  # "Num_Editable_Textview_Cont_Desc"]
+node_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
+  "Num_Editable_Textview_Cont_Desc"]
 
 by_view_check_order = []
 
@@ -65,8 +65,15 @@ class View_Checker(Checker_Base):
 	# each test in node_aggregator_test_order must have entry here!
 	def __run_aggregate_tests(self):
 		for n in self.view.nodes:
+			# REMEBER, results can be na if not applicable
+			# so making checks explicit (== True) to reduce errors
 			# count num of nodes in this view with missing speakable text
-			if not n.checker.get_result("Speakable_Text_Present"):
+			if n.checker.get_result("Speakable_Text_Present") == False:
 				self.node_aggregate_checks["Num_Missing_Speakable_Test"] += 1
-			if not n.checker.get_result("Element_Wide_Enough"):
+			if n.checker.get_result("Element_Wide_Enough") == False:
 				self.node_aggregate_checks["Num_Not_Wide_Enough"] += 1
+			if n.checker.get_result("Element_Tall_Enough") == False:
+				self.node_aggregate_checks["Num_Not_Tall_Enough"] += 1
+			# this one's node check counts the undesired trait, the ones above count the positives
+			if n.checker.get_result("Editable_Textview_With_Cont_Desc") == True:
+				self.node_aggregate_checks["Num_Editable_Textview_Cont_Desc"] += 1
