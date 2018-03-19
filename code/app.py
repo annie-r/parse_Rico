@@ -78,6 +78,7 @@ class App:
 				str(self.__get_num_nodes())+"," +\
 				str(self.__get_num_talkback_nodes())+",",end="")
 			self.checker.print_table(table_type)
+			print("")
 
 
 	def print_debug(self):

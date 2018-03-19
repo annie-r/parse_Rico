@@ -43,6 +43,7 @@ class Node:
 			#,class_name,android_widget?,ad_widget?,checks
 			print(","+str(self.raw_properties['class'])+"," + str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",",end="")
 			self.checker.print_table(table_type)
+			print("")
 
 	def print(self):
 		k = self.raw_properties.keys()
