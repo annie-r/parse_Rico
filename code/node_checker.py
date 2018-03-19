@@ -8,7 +8,7 @@ check_order = ["Speakable_Text_Present","Element_Wide_Enough","Element_Tall_Enou
 
 # some per node checks can only be set by the view because need know about other nodes
 # so initilize here but will be set by view
-view_set_checks_order = ["Num_Nodes_Overlap_With"]
+view_set_checks_order = ["Num_Nodes_Overlap_With", "Num_Nodes_Share_Label"]
 class Node_Checker(Checker_Base):
 	def __init__(self, node_arg):
 		# the node this checker is checking
