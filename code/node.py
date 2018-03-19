@@ -109,6 +109,8 @@ class Node:
 			print("- "+str(entry))
 
 		#self.__print_level()
+		self.checker.print_header()
+		print("")
 		self.checker.print_table("BY_NODE")
 
 		#self.__print_children()
@@ -229,21 +231,28 @@ class Node:
 		return False
 
 	# return if node is visible
-	# currently defined as the "visibile to user" property is "True"
+	# OLD: currently defined as the "visibile to user" property is "True"
+	# defined as visibility == VISIBLE based on Accessibility-test-framework...ViewAccessibilityUtils...405
 	def is_visible(self):
 		#print("is visible test")
 		k = self.raw_properties.keys()
-		if ('visible-to-user' in k):
+		# if ('visible-to-user' in k):
 			# TODO: figure out all the meaning of the different
 			# possible values of 'visibility'
-			self.log['talkback_accessible'].append('visible-to-user: ' + str(self.raw_properties['visible-to-user']))
-			if (self.raw_properties['visible-to-user']):
+			# self.log['talkback_accessible'].append('visible-to-user: ' + str(self.raw_properties['visible-to-user']))
+			# if (self.raw_properties['visible-to-user']):
+			#	return True
+		if ('visibility' in k):
+			# TODO: figure out all the meaning of the different
+			# possible values of 'visibility'
+			self.log['talkback_accessible'].append('visibility: ' + str(self.raw_properties['visibility']))
+			if (self.raw_properties['visibility'] == 'visible'):
 				return True
 		# if the node doesn't have a visibility property
 		# or if that property is not set to "visible"
 		# it is not a visible node
 		else:
-			self.log['talkback_accessible'].append('no visible-to-user tag')
+			self.log['talkback_accessible'].append('no visibility tag')
 		return False
 
 	def has_non_zero_dimensions(self):
@@ -403,6 +412,7 @@ class Node:
 				cont_desc = self.raw_properties["content-desc"][0]
 		return cont_desc
 
+	## based on talkback
 	def get_non_actionable_speaking_children_text(self):
 		#print ("num children: "+str(len(self.children)))
 		#print("non actionable children test")
@@ -430,7 +440,10 @@ class Node:
 		#print("ran out of children")
 		return None
 
-
+	# based on Accessibility-Test_Framework-For-Android
+	# def get_non_actionable_speaking_children_ATF(self):
+	# 	for child in self.children:
+	# 		if (not child.is_visible()) or child.is_accessibility_focusable_ATF():
 
 	#Role.java l213 2.14.2018 Talkback
 	## SHOULD BE LOOKING AT JUST CLASS OR INHERITANCE!?

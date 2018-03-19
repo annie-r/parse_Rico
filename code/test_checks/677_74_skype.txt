@@ -1,0 +1,103 @@
+view ID: 677
+num nodes: 12
+	 	 	 	 ++ ##########
+	 	 	 	 ++ id: com.skype.raider:id/msa_sdk_webflow_webview_sign_up
+	 	 	 	 ++ class: android.webkit.WebView
+	 	 	 	 ++ ad: False
+	 	 	 	 ++ widget: False
+	 	 	 	 ++ bounds: {'top': 84, 'right': 1440, 'bottom': 2392, 'left': 0}
+	 	 	 	 ++ label: None
+	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 ++ - has own label: False
+	 	 	 	 ++ - node is clickable
+	 	 	 	 ++ - no text
+	 	 	 	 ++ - no visible children
+	 	 	 	 ++ - has cont desc: None
+	 	 	 	 ++ - is access focus
+	 	 	 	 ++ - is clickable
+	 	 	 	 ++ - visible-to-user: True
+False,True,True,False,0,
+
+view ID: 74
+num nodes: 33
+	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 ++ id: com.skype.raider:id/create_acct_btn
+	 	 	 	 	 	 	 ++ class: android.widget.RelativeLayout
+	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 ++ widget: True
+	 	 	 	 	 	 	 ++ bounds: {'top': 2154, 'right': 1440, 'bottom': 2392, 'left': 0}
+	 	 	 	 	 	 	 ++ label: Create account
+	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 ++ - node is clickable
+	 	 	 	 	 	 	 ++ - no text
+	 	 	 	 	 	 	 ++ - is_speaking
+	 	 	 	 	 	 	 ++ - has cont desc: Create account
+	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 ++ - has own label: True
+	 	 	 	 	 	 	 ++ - is clickable
+	 	 	 	 	 	 	 ++ - visible-to-user: True
+True,True,True,False,0,
+
+	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 ++ id: com.skype.raider:id/sign_in_content
+	 	 	 	 	 	 	 ++ class: android.widget.LinearLayout
+	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 ++ widget: True
+	 	 	 	 	 	 	 ++ bounds: {'top': 84, 'right': 1440, 'bottom': 1400, 'left': 0}
+	 	 	 	 	 	 	 ++ label: Sign in
+	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 ++ - has own label: False
+	 	 	 	 	 	 	 ++ - no text
+	 	 	 	 	 	 	 ++ - is_speaking
+	 	 	 	 	 	 	 ++ - has cont desc: None
+	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 ++ - visible-to-user: True
+	 	 	 	 	 	 	 ++ - has nonactionable speaking children
+	 	 	 	 	 	 	 ++ - is focusable
+	 	 	 	 	 	 	 ++ - focusable
+True,True,True,False,na,
+
+	 	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 	 ++ id: com.skype.raider:id/sign_in_userid
+	 	 	 	 	 	 	 	 ++ class: com.skype.android.widget.AccessibleAutoCompleteTextView
+	 	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 	 ++ widget: False
+	 	 	 	 	 	 	 	 ++ bounds: {'top': 837, 'right': 1356, 'bottom': 962, 'left': 84}
+	 	 	 	 	 	 	 	 ++ text: 
+	 	 	 	 	 	 	 	 ++ label: Enter your email, phone number or Skype name
+	 	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 	 ++ - has text: 
+	 	 	 	 	 	 	 	 ++ - has cont desc: Enter your email, phone number or Skype name
+	 	 	 	 	 	 	 	 ++ - node is clickable
+	 	 	 	 	 	 	 	 ++ - no visible children
+	 	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 	 ++ - has own label: True
+	 	 	 	 	 	 	 	 ++ - is clickable
+	 	 	 	 	 	 	 	 ++ - visible-to-user: True
+True,True,False,True,0,
+
+	 	 	 	 	 	 	 	 ++ ##########
+	 	 	 	 	 	 	 	 ++ id: com.skype.raider:id/sign_in_next_btn
+	 	 	 	 	 	 	 	 ++ class: com.skype.android.widget.SymbolView
+	 	 	 	 	 	 	 	 ++ ad: False
+	 	 	 	 	 	 	 	 ++ widget: False
+	 	 	 	 	 	 	 	 ++ bounds: {'top': 1184, 'right': 828, 'bottom': 1400, 'left': 612}
+	 	 	 	 	 	 	 	 ++ text: undefined unicode
+	 	 	 	 	 	 	 	 ++ label: undefined unicode
+	 	 	 	 	 	 	 	 ++ talkback_accessible: True
+	 	 	 	 	 	 	 	 ++ - node is clickable
+	 	 	 	 	 	 	 	 ++ -: undefined unicode
+	 	 	 	 	 	 	 	 ++ - no visible children
+	 	 	 	 	 	 	 	 ++ - is access focus
+	 	 	 	 	 	 	 	 ++ - has own label: True
+	 	 	 	 	 	 	 	 ++ - is clickable
+	 	 	 	 	 	 	 	 ++ - visible-to-user: True
+True,True,True,False,0,
+
+app_id,node_id,class,android_widget,ad,Speakable_Text_Present,Element_Wide_Enough,Element_Tall_Enough,Editable_Textview_With_Cont_Desc,Num_Nodes_Overlap_With,
+com.skype.raider.test,com.skype.raider:id/msa_sdk_webflow_webview_sign_up,android.webkit.WebView,False,False,False,True,True,False,0,
+com.skype.raider.test,com.skype.raider:id/create_acct_btn,android.widget.RelativeLayout,True,False,True,True,True,False,0,
+com.skype.raider.test,com.skype.raider:id/sign_in_userid,com.skype.android.widget.AccessibleAutoCompleteTextView,False,False,True,True,False,True,0,
+com.skype.raider.test,com.skype.raider:id/sign_in_next_btn,com.skype.android.widget.SymbolView,False,False,True,True,True,False,0,
+com.skype.raider.test,com.skype.raider:id/sign_in_content,android.widget.LinearLayout,True,False,True,True,True,False,na,
+

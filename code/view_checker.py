@@ -1,11 +1,11 @@
 from checker_base import Checker_Base
-
+from num_clickable_full_overlap_check import Num_Clickable_Full_Overlap_Check
 # MUST ADD AGGREGATE CHECK HERE AND PERFORM CHECK IN __run_aggregate_tests()
 # if needs to be initialized to something other than 0, must set in initialize checks
 node_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
   "Num_Editable_Textview_Cont_Desc"]
 
-by_view_check_order = []
+by_view_check_order = ["Num_Fully_Overlapping_Clickable"]
 
 class View_Checker(Checker_Base):
 	def __init__(self, view_arg):
@@ -18,8 +18,10 @@ class View_Checker(Checker_Base):
 		self.node_aggregate_checks = {}
 
 		self.__initialize_checks()
+
 		# to not have to do the same loop repeatedly
 		self.__run_aggregate_tests()
+
 
 
 	## SETUP
@@ -27,6 +29,9 @@ class View_Checker(Checker_Base):
 	def __initialize_checks(self):
 		for ag_check in node_aggregate_check_order:
 			self.node_aggregate_checks[ag_check] = 0
+
+		self.checks["Num_Fully_Overlapping_Clickable"] = Num_Clickable_Full_Overlap_Check("Num_Fully_Overlapping_Clickable", self.view)
+
 
 
 	### PRINTING
@@ -43,10 +48,10 @@ class View_Checker(Checker_Base):
 		if check_name in self.node_aggregate_checks.keys():
 			return self.node_aggregate_checks[check_name]
 		else:
-			Checker_Base.get_result(self,check_name)
+			return Checker_Base.get_result(self,check_name)
 
 	def print_debug(self):
-		print("ID: "+self.id)
+		print("num full overlap:" + str(self.checks['Num_Fully_Overlapping_Clickable'].result))
 
 	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
 	# print aggregate checks first, then by app checks

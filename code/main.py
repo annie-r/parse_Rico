@@ -48,6 +48,9 @@ if __name__ == "__main__":
 	
 	#v.print_table("BY_NODE","skype")
 
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\com.waze.test\\trace_0\\view_hierarchies\\1540.json"
+	#v = View("1540",view_dir)
+	#v.print_debug()
 	#print("\n############################################\n")
 	#trace test
 	#file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider.test\\trace_1"
