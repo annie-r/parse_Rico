@@ -1,0 +1,11 @@
+app_id,node_id,class,android_widget,ad,Speakable_Text_Present,Element_Wide_Enough,Element_Tall_Enough,Editable_Textview_With_Cont_Desc,Num_Nodes_Overlap_With,Bounds
+com.waze.test,com.waze:id/btnAdd,android.widget.ImageView,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,1,0.336.0.84
+com.waze.test,com.waze:id/searchBox,com.waze.view.text.WazeEditText,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,1,0.336.0.84
+com.waze.test,com.waze:id/mapViewWrapperMapView,com.waze.map.MapView,FALSE,FALSE,FALSE,TRUE,TRUE,FALSE,na,0.84.1440.2392
+com.waze.test,com.waze:id/main_speedometer,com.waze.view.map.SpeedometerView,FALSE,FALSE,TRUE,TRUE,TRUE,FALSE,0,0.1817.368.2202
+com.waze.test,com.waze:id/searchBox,com.waze.view.text.WazeEditText,FALSE,FALSE,FALSE,TRUE,TRUE,FALSE,0,28.131.1412.303
+com.waze.test,com.waze:id/speechRecognition,android.widget.ImageButton,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,0,0.84.0.84
+com.waze.test,com.waze:id/bottomBarStaticMessage,android.widget.LinearLayout,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,2,0.2147.1440.2392
+com.waze.test,com.waze:id/bottomBarNotif,android.widget.LinearLayout,TRUE,FALSE,TRUE,TRUE,TRUE,FALSE,2,0.2147.1440.2392
+com.waze.test,com.waze:id/mainBottomBar,com.waze.view.navbar.BottomBar,FALSE,FALSE,TRUE,TRUE,TRUE,FALSE,2,0.2147.1440.2392
+com.waze.test,com.waze:id/navBarSoundButtonMinimizedTouchView,android.view.View,FALSE,FALSE,FALSE,TRUE,TRUE,FALSE,0,1013.2161.1181.2329

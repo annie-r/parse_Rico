@@ -18,7 +18,7 @@ class Checker_Base():
 
 	def get_result(self, check_name):
 		if check_name not in self.checks.keys():
-			raise AssertionError("No such node check: "+str(check_name))
+			raise AssertionError("No such check: "+str(check_name))
 		return self.checks[check_name].result
 
 	def print_table(self,table_type):

@@ -100,3 +100,8 @@ def talkback_focus(node, check_children=True):
 		return True
 	else:
 		return False
+
+# based on Accessibility-Test-Framework-For-Android
+# java/com/google/apps/common/testing/accessibility/framework/ViewAccesibilityUtils
+
+#def is_important_for_accesibility(node):

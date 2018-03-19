@@ -19,12 +19,14 @@ class View:
 
 		self.__parse_view()
 
+		# must check nodes from here not when making nodes
+		# because need fully formed nodes, e.g. children sturct
 		self.check_nodes()
 
 		# to perform checks on this view's nodes
 		# must be done last as dependant on the nodes
 		self.checker = View_Checker(self)
-	
+		self.checker.perform_checks()
 
 	def check_nodes(self):
 		for node in self.nodes:
@@ -81,12 +83,12 @@ class View:
 
 	#### HELPERS ####
 
-	def get_clickable_nodes(self):
-		clickable_nodes = []
+	def get_clickable_talkback_nodes(self):
+		clickable_talkback_nodes = []
 		for n in self.nodes:
-			if n.is_clickable():
-				clickable_nodes.append(n)
-		return clickable_nodes
+			if n.is_clickable() and n.is_talkback_accessible():
+				clickable_talkback_nodes.append(n)
+		return clickable_talkback_nodes
 	# this really needs more comments anyway
 	# I have no idea what to type
 
@@ -123,6 +125,7 @@ class View:
 	def print_debug(self, talkback_focus_only = True):
 		print("view ID: "+self.id)
 		print ("num nodes: "+str(len(self.nodes)))
+		self.checker.print_debug()
 		self.__print(self.root, talkback_focus_only)
 
 	def json_loader(self,filepath):

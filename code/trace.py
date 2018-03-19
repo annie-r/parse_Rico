@@ -47,7 +47,7 @@ class Trace:
 			view_id = view_file.split(".")[0]
 			self.views[view_id] = View(view_id, view_directory + "\\"+ view_file)
 			#print(str(view_id))
-		return 0
+		#return 0
 
 	def __parse_gestures(self):
 		## parse json
