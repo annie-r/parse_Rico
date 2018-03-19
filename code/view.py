@@ -99,14 +99,15 @@ class View:
 				num_nodes += 1
 		return num_nodes
 
-	def print_table(self,table_type,app_id):
+	def print_table(self,table_type,app_id, talkback_focus_only = True):
 		if table_type=="BY_NODE":
 			for n in self.nodes:
+				if (not talkback_focus_only) and (not n.is_talkback_accessible()):
+					print(str(app_id)+",",end="")
+					n.print_table(table_type)
 				if n.is_talkback_accessible():
 					print(str(app_id)+",",end="")
 					n.print_table(table_type)
-					# new line
-					print("")
 		elif table_type == "BY_VIEW":
 			self.checker.print_table(table_type)
 

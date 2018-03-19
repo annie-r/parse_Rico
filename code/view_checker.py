@@ -1,11 +1,13 @@
 from checker_base import Checker_Base
 from num_clickable_full_overlap_check import Num_Clickable_Full_Overlap_Check
+from duplicate_text_clickable_check import Duplicate_Text_Clickable_Check
+from duplicate_text_non_clickable_check import Duplicate_Text_Non_Clickable_Check
 # MUST ADD AGGREGATE CHECK HERE AND PERFORM CHECK IN __run_aggregate_tests()
 # if needs to be initialized to something other than 0, must set in initialize checks
 node_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
   "Num_Editable_Textview_Cont_Desc"]
 
-by_view_check_order = ["Num_Fully_Overlapping_Clickable"]
+by_view_check_order = ["Num_Fully_Overlapping_Clickable", "Num_Clickable_Duplicate_Text","Num_Non_Clickable_Duplicate_Text"]
 
 class View_Checker(Checker_Base):
 	def __init__(self, view_arg):
@@ -31,8 +33,8 @@ class View_Checker(Checker_Base):
 			self.node_aggregate_checks[ag_check] = 0
 
 		self.checks["Num_Fully_Overlapping_Clickable"] = Num_Clickable_Full_Overlap_Check("Num_Fully_Overlapping_Clickable", self.view)
-
-
+		self.checks["Num_Clickable_Duplicate_Text"] = Duplicate_Text_Clickable_Check("Num_Clickable_Duplicate_Text",self.view)
+		self.checks["Num_Non_Clickable_Duplicate_Text"] = Duplicate_Text_Non_Clickable_Check("Num_Non_Clickable_Duplicate_Text",self.view)
 
 	### PRINTING
 
@@ -52,6 +54,7 @@ class View_Checker(Checker_Base):
 
 	def print_debug(self):
 		print("num full overlap:" + str(self.checks['Num_Fully_Overlapping_Clickable'].result))
+		print("num clikcalbe dupl: "+ str(self.checks['Num_Clickable_Duplicate_Text'].result))
 
 	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
 	# print aggregate checks first, then by app checks

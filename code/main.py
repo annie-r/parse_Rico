@@ -51,6 +51,11 @@ if __name__ == "__main__":
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\com.waze.test\\trace_0\\view_hierarchies\\1540.json"
 	#v = View("1540",view_dir)
 	#v.print_debug()
+
+
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\com.quizlet.quizletandroid.test\\trace_0\\view_hierarchies\\1246.json"
+	v = View("1246",view_dir)
+	v.print_debug()
 	#print("\n############################################\n")
 	#trace test
 	#file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider.test\\trace_1"
@@ -59,12 +64,12 @@ if __name__ == "__main__":
 	# ## Traverse all apps in directory, assume directory only has apps directories
 	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test"
 	# table type options: BY_NODE, BY_APP, (under constructon) BY_VIEW
+	if False:
+		table_type = "BY_NODE"
+		print_header(table_type)
 
-	table_type = "BY_APP"
-	print_header(table_type)
-	for a_dir in os.listdir(apps_dir):
-		a = App(apps_dir + "\\" + a_dir)
-		a.print_table(table_type)
-		#new line per app
-		print("")
+		for a_dir in os.listdir(apps_dir):
+			a = App(apps_dir + "\\" + a_dir)
+			a.print_table(table_type)
+
 

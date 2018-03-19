@@ -18,15 +18,15 @@ class Trace:
 		self.gestures = []
 		self.__parse_gestures()
 
-	def print_table(self, table_type):
+	def print_table(self, table_type, talkback_focus_only = True):
 		if table_type == "BY_NODE":
 			# table format
 			# app_name, <node info>, <node checks>
 			for v in self.views.values():
-				v.print_table(table_type, self.app_id)
+				v.print_table(table_type, self.app_id, talkback_focus_only)
 		if table_type == "BY_VIEW":
 			for v in self.views.values():
-				v.print_table(table_type, self.app_id)
+				v.print_table(table_type, self.app_id, talkback_focus_only)
 
 	def print_debug(self):
 		print("\t", end="")
