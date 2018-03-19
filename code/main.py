@@ -5,15 +5,15 @@ from view_checker import View_Checker
 from app_checker import App_Checker
 from trace import Trace
 import os
-def print_header(table_type):
+def print_header(table_type,fd):
 	
 	if (table_type == "BY_NODE"):
-		print("app_id,node_id,class,android_widget,ad,",end="")
-		Node_Checker.print_header()
+		fd.write("app_id,node_id,class,android_widget,ad,")
+		Node_Checker.print_header(fd)
 	elif table_type == "BY_APP":
-		App.print_header()
-		App_Checker.print_header()
-	print("")
+		App.print_header(fd)
+		App_Checker.print_header(fd)
+	fd.write("\n")
 
 if __name__ == "__main__":
 	# cont desc editable textfield, 1 
@@ -54,8 +54,8 @@ if __name__ == "__main__":
 
 
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\com.quizlet.quizletandroid.test\\trace_0\\view_hierarchies\\1246.json"
-	v = View("1246",view_dir)
-	v.print_debug()
+	#v = View("1246",view_dir)
+	#v.print_debug()
 	#print("\n############################################\n")
 	#trace test
 	#file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider.test\\trace_1"
@@ -64,12 +64,15 @@ if __name__ == "__main__":
 	# ## Traverse all apps in directory, assume directory only has apps directories
 	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test"
 	# table type options: BY_NODE, BY_APP, (under constructon) BY_VIEW
-	if False:
-		table_type = "BY_NODE"
-		print_header(table_type)
+	if True:
+		table_type = "BY_APP"
+		fd_name = "tabletest.csv"
+		fd = open(fd_name, 'w')
+		print_header(table_type,fd)
 
 		for a_dir in os.listdir(apps_dir):
 			a = App(apps_dir + "\\" + a_dir)
-			a.print_table(table_type)
+			a.print_table(table_type,fd)
 
+		fd.close()
 

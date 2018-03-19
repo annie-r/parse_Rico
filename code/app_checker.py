@@ -31,12 +31,12 @@ class App_Checker(Checker_Base):
 
 	### PRINTING
 
-	def print_table(self, table_type):
+	def print_table(self, table_type,fd):
 		if table_type == "BY_APP":
 			for c in view_aggregate_check_order:
-				print(str(self.view_aggregate_checks[c])+",",end="")
+				fd.write(str(self.view_aggregate_checks[c])+",")
 			for c in by_app_check_order:
-				print(str(self.checks[c].result)+",",end="")
+				fd.write(str(self.checks[c].result)+",")
 
 
 	def print_debug(self):
@@ -45,13 +45,13 @@ class App_Checker(Checker_Base):
 	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
 	# print aggregate checks first, then by app checks
 	@staticmethod
-	def print_header():
+	def print_header(fd):
 		# first comes aggregates, order matters
 		for c in view_aggregate_check_order:
-			print (str(c)+",", end="")
+			fd.write(str(c)+",")
 		# then by app checks
 		for c in by_app_check_order:
-			print (str(c)+",", end="")
+			fd.write(str(c)+",")
 
 	## View-Based Aggregated Per App Checks
 	def __run_aggregate_tests(self):

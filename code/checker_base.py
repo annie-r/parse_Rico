@@ -21,7 +21,7 @@ class Checker_Base():
 			raise AssertionError("No such check: "+str(check_name))
 		return self.checks[check_name].result
 
-	def print_table(self,table_type):
+	def print_table(self,table_type,fd):
 		raise NotImplementedError()
 
 	@staticmethod

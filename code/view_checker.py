@@ -38,12 +38,12 @@ class View_Checker(Checker_Base):
 
 	### PRINTING
 
-	def print_table(self, table_type):
+	def print_table(self, table_type, fd):
 		if table_type == "BY_APP":
 			for c in node_aggregate_check_order:
-				print(str(self.node_aggregate_checks[c])+",",end="")
+				fd.write(str(self.node_aggregate_checks[c])+",")
 			for c in by_view_check_order:
-				print(str(self.checks[c].result)+",",end="")
+				fd.write(str(self.checks[c].result)+",")
 
 	# need to add checking aggregate checks not just per_app checks
 	def get_result(self, check_name):
@@ -59,13 +59,13 @@ class View_Checker(Checker_Base):
 	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
 	# print aggregate checks first, then by app checks
 	@staticmethod
-	def print_header():
+	def print_header(fd):
 		# first comes aggregates, order matters
 		for c in node_aggregate_check_order:
-			print (str(c)+",", end="")
+			fd.write(str(c)+",")
 		# then by app checks
 		for c in by_view_check_order:
-			print (str(c)+",", end="")
+			fd.write(str(c)+",")
 
 	## Compile Node-Based Checks
 
