@@ -53,7 +53,7 @@ class App:
 					self.num_nodes += len(v.nodes)
 		return self.num_nodes
 
-	def __get_num_talkback_nodes(self):
+	def get_num_talkback_nodes(self):
 		if self.num_talkback_nodes == None:
 			self.num_talkback_nodes = 0
 			for t in self.traces.values():
@@ -76,7 +76,7 @@ class App:
 			fd.write(str(self.id)+","+str(len(self.traces))+","+\
 				str(self.__get_num_views())+"," +\
 				str(self.__get_num_nodes())+"," +\
-				str(self.__get_num_talkback_nodes())+",")
+				str(self.get_num_talkback_nodes())+",")
 			self.checker.print_table(table_type, fd)
 			fd.write("\n")
 

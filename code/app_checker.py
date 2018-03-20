@@ -35,6 +35,11 @@ class App_Checker(Checker_Base):
 		if table_type == "BY_APP":
 			for c in view_aggregate_check_order:
 				fd.write(str(self.view_aggregate_checks[c])+",")
+				if self.app.get_num_talkback_nodes() == 0:
+					fd.write("na,")
+				else:
+					per_node = self.view_aggregate_checks[c] / self.app.get_num_talkback_nodes()
+					fd.write(str(per_node)+",")
 			for c in by_app_check_order:
 				fd.write(str(self.checks[c].result)+",")
 
@@ -49,6 +54,7 @@ class App_Checker(Checker_Base):
 		# first comes aggregates, order matters
 		for c in view_aggregate_check_order:
 			fd.write(str(c)+",")
+			fd.write(str(c)+"_Per_Node,")
 		# then by app checks
 		for c in by_app_check_order:
 			fd.write(str(c)+",")

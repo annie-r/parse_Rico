@@ -74,7 +74,7 @@ if __name__ == "__main__":
 	#t = Trace(file,"skype_test")
 	#t.print_debug()
 	# ## Traverse all apps in directory, assume directory only has apps directories
-	#apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps"
+	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps"
 	apps_dir = "E:\\Work\\Research\\Mobile_App_Accessibility\\filtered_traces"
 
 	# all table types to run:
@@ -82,37 +82,67 @@ if __name__ == "__main__":
 	table_types = {"BY_APP":["error_by_app.csv",None]}
 	# table type options: BY_NODE, BY_APP, (under constructon) BY_VIEW, NODE_CLASS_COUNTS
 	if True:
-		table_type = "NODE_CLASS_COUNTS"
-		# for type,table_info in table_type.items():
-		# 	# set file objects
-		# 	table_info[1] = open(table_info[0],'w',encoding="utf-8")
-		# 	print_header(type,table_info[1])
+		#table_type = "NODE_CLASS_COUNTS"
+		for type,table_info in table_types.items():
+			# set file objects
+			if os.path.exists(table_info[0]):
+				# don't accidently write over old data
+				raise FileExistsError("file exists: "+table_info[0])
+			table_info[1] = open(table_info[0],'w',encoding="utf-8")
+			print_header(type,table_info[1])
 
-		fd_name = "node_class_count.csv"
-		if os.path.exists(fd_name):
-			raise FileExistsError("file exists: "+fd_name)
-		fd = open(fd_name, 'w', encoding='utf-8')
-		print_header(table_type,fd)
+		#fd_name = "node_class_count.csv"
+
+		#fd = open(fd_name, 'w', encoding='utf-8')
+		#print_header(table_type,fd)
 		print("Beginning cycle")
-		if table_type=="BY_APP" or table_type == "BY_NODE":
-			for a_dir in os.listdir(apps_dir):
-				a = App(apps_dir + "\\" + a_dir)
-				a.print_table(table_type,fd)
-		elif table_type == "NODE_CLASS_COUNTS":
-			node_class_counts = {}
-			counter = 0
-			for a_dir in os.listdir(apps_dir):
-				if counter%100==0:
-					print(str(counter))
-				a = App(apps_dir + "\\" + a_dir)
+		#only want to go through raw dataset once and create all tables from it
+
+		counter = 0
+		## aggregating variables:
+
+		# for NODE_CLASS_COUNTS
+		node_class_counts = {}
+
+		for a_dir in os.listdir(apps_dir):
+			if counter%100 == 0:
+				print(str(counter))
+			counter += 1
+			a = App(apps_dir + "\\" + a_dir)
+
+			# any aggregate updates from app
+			if "NODE_CLASS_COUNTS" in table_types.keys():
 				update_classes_count(node_class_counts,a)
-				counter += 1
+
+			# print row of appropriate tables
+			if "BY_APP" in table_types.keys():
+				a.print_table("BY_APP", table_types["BY_APP"][1])
+			if "BY_NODE" in table_types.keys():
+				a.print_table("BY_NODE", table_types["BY_NODE"][1])
+
+		if "NODE_CLASS_COUNTS" in table_types.keys():
 			for node_class,count in node_class_counts.items():
-				fd.write(str(node_class)+","+str(count)+"\n")
+				table_types["NODE_CLASS_COUNTS"][1].write(str(node_class)+","+str(count)+"\n")
+		#
+		# if table_type=="BY_APP" or table_type == "BY_NODE":
+		# 	for a_dir in os.listdir(apps_dir):
+		# 		a = App(apps_dir + "\\" + a_dir)
+		# 		a.print_table(table_type,fd)
+		# elif table_type == "NODE_CLASS_COUNTS":
+		# 	node_class_counts = {}
+		# 	counter = 0
+		# 	for a_dir in os.listdir(apps_dir):
+		# 		if counter%100==0:
+		# 			print(str(counter))
+		# 		a = App(apps_dir + "\\" + a_dir)
+		# 		update_classes_count(node_class_counts,a)
+		# 		counter += 1
+		# 	for node_class,count in node_class_counts.items():
+		# 		fd.write(str(node_class)+","+str(count)+"\n")
 
 		#close files
-		fd.close()
-		#for table_info in table_types.values():
-		#	table_info[1].close()
+		#fd.close()
+		for table_info in table_types.values():
+			table_info[1].close()
 
 
