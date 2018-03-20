@@ -66,16 +66,19 @@ class View:
 	# first build tree of children/parent
 	# then set characteristics of each node
 	def __parse_node(self, node):
+		if node.raw_properties == None:
+				print("file"+ self.filepath)
 		k = node.raw_properties.keys()
 		# recursively go through children
 		if 'children' in k:
 			child_level = node.level + 1
 			for child_prop in node.raw_properties["children"]:
-				# create node object with current node as parent
-				child = Node(child_prop, node, child_level)
-				# add child node to current node's children
-				node.add_child(child)
-				self.__parse_node(child)
+				if child_prop != None:
+					# create node object with current node as parent
+					child = Node(child_prop, node, child_level)
+					# add child node to current node's children
+					node.add_child(child)
+					self.__parse_node(child)
 		self.__add_node(node)	
 
 		# determine if talkback focuses
@@ -110,6 +113,7 @@ class View:
 					n.print_table(table_type,fd)
 		elif table_type == "BY_VIEW":
 			self.checker.print_table(table_type,fd)
+
 
 	# this is an internal function for printing
 	# talkback_focus_only: bool if if to only print nodes that are "Talkback Focusable"

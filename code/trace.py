@@ -24,7 +24,7 @@ class Trace:
 			# app_name, <node info>, <node checks>
 			for v in self.views.values():
 				v.print_table(table_type, fd, self.app_id, talkback_focus_only)
-		if table_type == "BY_VIEW":
+		elif table_type == "BY_VIEW":
 			for v in self.views.values():
 				v.print_table(table_type, fd, self.app_id, talkback_focus_only)
 
@@ -63,13 +63,19 @@ class Trace:
 		file_descriptor = open(gesture_filepath, "r")
 		data = json.load(file_descriptor)
 		file_descriptor.close()
-		data = {int(k):v for k,v in data.items()}
+		int_data = {}
+		#print("file:"+str(gesture_filepath))
+		for k,v in data.items():
+			if k != '' and len(v)>0:
+				int_data[int(k)]=v
+		#data = {int(k):v for k,v in data.items()}
+
 
 		# gestures need to be in order of view ID #
 		# they are not in order in original file
-		data = OrderedDict(sorted(data.items()))
+		int_data = OrderedDict(sorted(int_data.items()))
 		#data = yaml.load(file_descriptor)
-		return data
+		return int_data
 class Gesture:
 	def __init__(self, id_arg, coords_arg):
 		# view ID of gesture

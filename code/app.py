@@ -67,18 +67,19 @@ class App:
 		fd.write("app_id,num_traces,num_views,num_nodes,num_talkback_nodes,")
 
 	def print_table(self, table_type, fd, talkback_focus_only = True):
-		if table_type == "BY_NODE":
+		if table_type == "BY_NODE" :
 			for t in self.traces.values():
 				# table format
 				# app_name, <node info>, <node checks>
 				t.print_table(table_type, fd, talkback_focus_only)
-		if table_type == "BY_APP":
+		elif table_type == "BY_APP":
 			fd.write(str(self.id)+","+str(len(self.traces))+","+\
 				str(self.__get_num_views())+"," +\
 				str(self.__get_num_nodes())+"," +\
 				str(self.__get_num_talkback_nodes())+",")
 			self.checker.print_table(table_type, fd)
 			fd.write("\n")
+
 
 
 	def print_debug(self):
