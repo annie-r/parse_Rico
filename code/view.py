@@ -66,16 +66,19 @@ class View:
 	# first build tree of children/parent
 	# then set characteristics of each node
 	def __parse_node(self, node):
+		if node.raw_properties == None:
+				print("file"+ self.filepath)
 		k = node.raw_properties.keys()
 		# recursively go through children
 		if 'children' in k:
 			child_level = node.level + 1
 			for child_prop in node.raw_properties["children"]:
-				# create node object with current node as parent
-				child = Node(child_prop, node, child_level)
-				# add child node to current node's children
-				node.add_child(child)
-				self.__parse_node(child)
+				if child_prop != None:
+					# create node object with current node as parent
+					child = Node(child_prop, node, child_level)
+					# add child node to current node's children
+					node.add_child(child)
+					self.__parse_node(child)
 		self.__add_node(node)	
 
 		# determine if talkback focuses
@@ -99,17 +102,18 @@ class View:
 				num_nodes += 1
 		return num_nodes
 
-	def print_table(self,table_type,app_id, talkback_focus_only = True):
+	def print_table(self,table_type, fd,app_id, talkback_focus_only = True):
 		if table_type=="BY_NODE":
 			for n in self.nodes:
 				if (not talkback_focus_only) and (not n.is_talkback_accessible()):
-					print(str(app_id)+",",end="")
-					n.print_table(table_type)
+					fd.write(str(app_id)+",")
+					n.print_table(table_type,fd)
 				if n.is_talkback_accessible():
-					print(str(app_id)+",",end="")
-					n.print_table(table_type)
+					fd.write(str(app_id)+",")
+					n.print_table(table_type,fd)
 		elif table_type == "BY_VIEW":
-			self.checker.print_table(table_type)
+			self.checker.print_table(table_type,fd)
+
 
 	# this is an internal function for printing
 	# talkback_focus_only: bool if if to only print nodes that are "Talkback Focusable"

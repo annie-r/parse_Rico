@@ -32,18 +32,18 @@ class Node:
 		else:
 			return False
 
-	def print_table(self,table_type):
+	def print_table(self,table_type,fd):
 		if table_type == "BY_NODE":
 			k = self.raw_properties.keys()
 			#ID column
 			if 'resource-id' in k:
-				print(str(self.raw_properties['resource-id']),end="")
+				fd.write(str(self.raw_properties['resource-id']))
 			else:
-				print("None",end="")
+				fd.write("None")
 			#,class_name,android_widget?,ad_widget?,checks
-			print(","+str(self.raw_properties['class'])+"," + str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",",end="")
-			self.checker.print_table(table_type)
-			print("")
+			fd.write(","+str(self.raw_properties['class'])+"," + str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",")
+			self.checker.print_table(table_type,fd)
+			fd.write("\n")
 
 	def print(self):
 		k = self.raw_properties.keys()

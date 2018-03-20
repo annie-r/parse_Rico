@@ -35,24 +35,24 @@ class Node_Checker(Checker_Base):
 		for c in view_set_checks_order:
 			self.view_set_checks[c] = None
 
-	def print_table(self, table_type):
+	def print_table(self, table_type,fd):
 		# print order:
 		# has_speakable_text_present,
 		if table_type == "BY_NODE":
 			# result will be "na" if test isn't applicable
 			for c in check_order:
-				print(str(self.checks[c].result)+",",end="")
+				fd.write(str(self.checks[c].result)+",")
 			for c in view_set_checks_order:
-				print(str(self.view_set_checks[c])+",",end="")
+				fd.write(str(self.view_set_checks[c])+",")
 
 
 	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
 	@staticmethod
-	def print_header():
+	def print_header(fd):
 		for c in check_order:
-			print(str(c)+",", end="")
+			fd.write(str(c)+",")
 		for c in view_set_checks_order:
-			print(str(c)+",", end="")
+			fd.write(str(c)+",")
 		# print("Speakable_Text_Present,", end="")
 		# print("Element_Wide_Enough,",end="")
 		# print("Element_Tall_Enough,",end="")
