@@ -19,8 +19,6 @@ class App_Checker(Checker_Base):
 		self.__initialize_checks()
 		self.__run_aggregate_tests()
 
-		a=2
-
 
 	## SETUP
 	## MUST BE RUN IN INIT!!
@@ -33,13 +31,36 @@ class App_Checker(Checker_Base):
 
 	def print_table(self, table_type,fd):
 		if table_type == "BY_APP":
+			# print by percentage
 			for c in view_aggregate_check_order:
 				fd.write(str(self.view_aggregate_checks[c])+",")
-				if self.app.get_num_talkback_nodes() == 0:
-					fd.write("na,")
+				# these checks apply to all elements
+				if c == "Num_Missing_Speakable_Test" or c == "Num_Not_Wide_Enough" or c== "Num_Not_Tall_Enough":
+					if self.app.get_num_nodes_by_type("TALKBACK") == 0:
+						fd.write("na,")
+					else:
+						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("TALKBACK")
+						fd.write(str(per_node)+",")
+				elif c == "Num_Editable_Textview_Cont_Desc":
+					if self.app.get_num_nodes_by_type("EDITABLE_TEXTVIEW") == 0:
+						fd.write("na,")
+					else:
+						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("EDITABLE_TEXTVIEW")
+						fd.write(str(per_node)+",")
+				elif c == "Num_Fully_Overlapping_Clickable" or c == "Num_Clickable_Duplicate_Text":
+					if self.app.get_num_nodes_by_type("CLICKABLE") == 0:
+						fd.write("na,")
+					else:
+						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("CLICKABLE")
+						fd.write(str(per_node)+",")
+				elif c == "Num_Non_Clickable_Duplicate_Text":
+					if self.app.get_num_nodes_by_type("NON_CLICKABLE") == 0:
+						fd.write("na,")
+					else:
+						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("NON_CLICKABLE")
+						fd.write(str(per_node)+",")
 				else:
-					per_node = self.view_aggregate_checks[c] / self.app.get_num_talkback_nodes()
-					fd.write(str(per_node)+",")
+					raise NameError("Aggregate Test: "+str(c)+" does not have aggregate to get percentage defined")
 			for c in by_app_check_order:
 				fd.write(str(self.checks[c].result)+",")
 

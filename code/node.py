@@ -26,6 +26,8 @@ class Node:
 	# checks if coords are within this node's boundries
 	def contains_coords(self,coords):
 		bounds = self.get_bounds()
+		#print("coords: "+str(coords))
+		#print("bounds: "+str(bounds))
 		if coords['x'] >= bounds['left'] and coords['x'] <= bounds['right'] and \
 						coords['y'] >= bounds['top'] and coords['y'] <= bounds['bottom']:
 			return True
@@ -110,9 +112,9 @@ class Node:
 			print("- "+str(entry))
 
 		#self.__print_level()
-		self.checker.print_header()
+		#self.checker.print_header()
 		print("")
-		self.checker.print_table("BY_NODE")
+		#self.checker.print_table("BY_NODE")
 
 		#self.__print_children()
 
@@ -170,6 +172,7 @@ class Node:
 		return self.characteristics['android_default_widget']
 
 	# defined as having a class from the "android.widget" library
+	# TODO
 	def __is_android_default_widget(self):
 		node_class = self.raw_properties['class']
 		# classes appear to be android.widget.<widget>.<name>....
@@ -195,6 +198,7 @@ class Node:
 		return False
 
 
+
 	#################
 	##### TODO
 	###############
@@ -213,6 +217,12 @@ class Node:
 	###############
 	##### CHARACTERISTICS
 	###############
+
+	def is_editable_textview(self):
+		ancestors = self.raw_properties['ancestors']
+		if "android.widget.EditText" in ancestors:
+			return True
+		return False
 
 	def is_clickable(self):
 		#print("is clickable test")

@@ -1,7 +1,8 @@
 import json
 from collections import OrderedDict
 import os # for directory parsing
-
+from trace_checker import Trace_Checker
+from talkback_accessible import window_bounds, window_height, window_width
 from view import View
 class Trace:
 	def __init__(self, trace_dir_arg, app_arg):
@@ -12,14 +13,27 @@ class Trace:
 		self.app_id = app_arg
 		# map view ID to View object
 		self.views = {}
+		self.num_null_views = 0
 		self.__parse_views_dir()
 		# ordered list of gestures performed
 		# TODO swipe
 		self.gestures = []
 		self.__parse_gestures()
 
+		self.checker = Trace_Checker(self)
+
+	@staticmethod
+	def print_header(fd):
+		fd.write("app_id,trace_id,num_gestures,num_views,num_null_views,")
+
 	def print_table(self, table_type, fd, talkback_focus_only = True):
-		if table_type == "BY_NODE":
+		if table_type == "BY_TRACE":
+			fd.write(str(self.app_id)+","+str(self.id)+","+str(len(self.gestures))+"," \
+					 + str(len(self.views.keys()))+ "," +str(self.num_null_views)+",")
+			self.checker.print_table(table_type, fd)
+			fd.write("\n")
+
+		elif table_type == "BY_NODE":
 			# table format
 			# app_name, <node info>, <node checks>
 			for v in self.views.values():
@@ -45,8 +59,10 @@ class Trace:
 		view_directory = self.trace_dir + "\\view_hierarchies"
 		for view_file in os.listdir(view_directory):
 			view_id = view_file.split(".")[0]
-			self.views[view_id] = View(view_id, view_directory + "\\"+ view_file)
+			#print ("view ID: "+str(view_id))
+			self.views[int(view_id)] = View(view_id, view_directory + "\\"+ view_file)
 			#print(str(view_id))
+		#print(str(self.views.keys()))
 		#return 0
 
 	def __parse_gestures(self):
@@ -93,7 +109,9 @@ class Gesture:
 		if (len(coords_arg) < 20 ):
 			self.type = "TAP"
 			#print("view id: "+str(self.view_id)+ "coords "  +str(coords_arg))
-			self.coords = {"x":coords_arg[0][0], "y":coords_arg[0][1]}
+			# coords come in as percentage down screen, so have to re-save as screen based coord
+
+			self.coords = {"x":coords_arg[0][0]*window_width, "y":coords_arg[0][1]*window_height}
 		
 		# TODO: SWIPE!!!!! determine if useful
 		else:

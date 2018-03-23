@@ -17,7 +17,14 @@ class View:
 		# set of Node objects, representing the elements exposed by the view hierarchy	
 		self.nodes = []
 
+		#self.num_talkback_nodes = None
+		self.num_type_nodes = {'TALKBACK': None, 'CLICKABLE': None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW': None}
+		#self.num_clickable_nodes = None
+		#self.num_editable_textview_nodes = None
+
 		self.__parse_view()
+
+		self.__set_node_counts()
 
 		# must check nodes from here not when making nodes
 		# because need fully formed nodes, e.g. children sturct
@@ -95,12 +102,29 @@ class View:
 	# this really needs more comments anyway
 	# I have no idea what to type
 
-	def get_num_talkback_nodes(self):
-		num_nodes = 0
+	def get_num_type_nodes(self, type):
+		# shouldn't be because it should set in beginning
+		if self.num_type_nodes[type] == None:
+			print ("TYPE: "+str(type)+" Is empty")
+			self.__set_node_counts()
+		return self.num_type_nodes[type]
+
+	def __set_node_counts(self):
+		for type in self.num_type_nodes.keys():
+			self.num_type_nodes[type] = 0
 		for n in self.nodes:
 			if n.is_talkback_accessible():
-				num_nodes += 1
-		return num_nodes
+				self.num_type_nodes["TALKBACK"] += 1
+				if n.is_clickable():
+					self.num_type_nodes["CLICKABLE"] += 1
+				else:
+					self.num_type_nodes["NON_CLICKABLE"] += 1
+
+				if n.is_editable_textview():
+					self.num_type_nodes["EDITABLE_TEXTVIEW"] += 1
+
+
+	#### PRINTERS ####
 
 	def print_table(self,table_type, fd,app_id, talkback_focus_only = True):
 		if table_type=="BY_NODE":

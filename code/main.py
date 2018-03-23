@@ -4,7 +4,10 @@ from node_checker import Node_Checker
 from view_checker import View_Checker
 from app_checker import App_Checker
 from trace import Trace
+from trace_checker import Trace_Checker
 import os
+import csv
+
 def print_header(table_type,fd):
 	
 	if (table_type == "BY_NODE"):
@@ -13,6 +16,9 @@ def print_header(table_type,fd):
 	elif table_type == "BY_APP":
 		App.print_header(fd)
 		App_Checker.print_header(fd)
+	elif table_type == "BY_TRACE":
+		Trace.print_header(fd)
+		Trace_Checker.print_header(fd)
 	elif table_type == "NODE_CLASS_COUNTS":
 		fd.write("class,count")
 	fd.write("\n")
@@ -27,7 +33,47 @@ def update_classes_count(class_count_dict, app):
 						class_count_dict[node_class] = 0
 					class_count_dict[node_class] +=1
 
+def get_app_info(app_info_file_path):
+	with open(app_info_file_path, 'r', encoding='utf-8') as f:
+		app_info_dict = {}
+		#print(str(f))
+		reader = csv.reader(f)
+		row_count = 0
+		for row in reader:
+			if row_count == 0:
+				row_count += 1
+				continue
+			row_count += 1
+			# map pacakge: { category: '', rating: #,
+			# num_ratings: #, num_downloads: <range>
+			# #, date_updated: <M d, y>}
+			app_info_dict[row[0]] = {"name":row[1], "category":row[2], "rating":float(row[3]),
+							"num_ratings":int(row[4]), "num_downloads":row[5],
+							"date_updated":row[6]}
+		return app_info_dict
 if __name__ == "__main__":
+
+	# with open('app_details.csv', 'r', encoding='utf-8') as f:
+	# 	dict = {}
+	# 	#print(str(f))
+	# 	reader = csv.reader(f)
+	# 	row_count = 0
+	# 	for row in reader:
+	# 		if row_count == 0:
+	# 			row_count += 1
+	# 			continue
+	# 		row_count += 1
+	# 		try:
+	# 			# map pacakge: { category: #, rating: #,
+	# 			# num_ratings: #, num_downloads: #
+	# 			# #, date_updated: #}
+	# 			dict[row[0]] = {"category":row[2], "rating":row[3],
+	# 							"num_ratings":row[4], "num_downloads":row[5],
+	# 							"date_updated":row[6]}
+	# 			#print(str(row))
+	# 		except UnicodeDecodeError:
+	# 			print("error")
+	# 	print(str(dict))
 	# cont desc editable textfield, 1 
 	#filepath = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
 	#v = View(filepath)
@@ -68,19 +114,40 @@ if __name__ == "__main__":
 	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\com.quizlet.quizletandroid.test\\trace_0\\view_hierarchies\\1246.json"
 	#v = View("1246",view_dir)
 	#v.print_debug()
+
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.waze\\trace_0\\view_hierarchies\\6527.json"
+	#v = View("1246",view_dir)
+	#v.print_debug()
+
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.imo.android.imoim\\trace_0\\view_hierarchies\\662.json"
+	#v = View("662",view_dir)
+	#v.print_debug()
+
 	#print("\n############################################\n")
 	#trace test
 	#file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider.test\\trace_1"
 	#t = Trace(file,"skype_test")
 	#t.print_debug()
-	# ## Traverse all apps in directory, assume directory only has apps directories
-	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps"
-	apps_dir = "E:\\Work\\Research\\Mobile_App_Accessibility\\filtered_traces"
 
+	#apps_dir = "E:\\Work\\Research\\Mobile_App_Accessibility\\filtered_traces"
+
+
+
+	############## MAIN #################
+	# ## Traverse all apps in directory, assume directory only has apps directories
+	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps"
 	# all table types to run:
 	# maps table type to [file name, file_descriptor]
-	table_types = {"BY_APP":["error_by_app.csv",None]}
+	table_types = {"BY_APP":["app_test2.csv",None]}#"BY_NODE":["node_test.csv",None]},}
 	# table type options: BY_NODE, BY_APP, (under constructon) BY_VIEW, NODE_CLASS_COUNTS
+	app_info_filepath = "app_details.csv"
+	app_info = get_app_info(app_info_filepath)
+
+	#f =open('rating.csv','w',encoding="utf-8")
+	#for a in app_info.values():
+	#	f.write(str(a['rating'])+'\n')
+	#f.write("\n")
+	#f.close()
 	if True:
 		#table_type = "NODE_CLASS_COUNTS"
 		for type,table_info in table_types.items():
@@ -90,11 +157,6 @@ if __name__ == "__main__":
 				raise FileExistsError("file exists: "+table_info[0])
 			table_info[1] = open(table_info[0],'w',encoding="utf-8")
 			print_header(type,table_info[1])
-
-		#fd_name = "node_class_count.csv"
-
-		#fd = open(fd_name, 'w', encoding='utf-8')
-		#print_header(table_type,fd)
 		print("Beginning cycle")
 		#only want to go through raw dataset once and create all tables from it
 
@@ -104,11 +166,13 @@ if __name__ == "__main__":
 		# for NODE_CLASS_COUNTS
 		node_class_counts = {}
 
+
 		for a_dir in os.listdir(apps_dir):
 			if counter%100 == 0:
 				print(str(counter))
 			counter += 1
-			a = App(apps_dir + "\\" + a_dir)
+			a = App(apps_dir + "\\" + a_dir, app_info)
+
 
 			# any aggregate updates from app
 			if "NODE_CLASS_COUNTS" in table_types.keys():
@@ -119,6 +183,8 @@ if __name__ == "__main__":
 				a.print_table("BY_APP", table_types["BY_APP"][1])
 			if "BY_NODE" in table_types.keys():
 				a.print_table("BY_NODE", table_types["BY_NODE"][1])
+			if "BY_TRACE" in table_types.keys():
+				a.print_table("BY_TRACE", table_types["BY_TRACE"][1])
 
 		if "NODE_CLASS_COUNTS" in table_types.keys():
 			for node_class,count in node_class_counts.items():
