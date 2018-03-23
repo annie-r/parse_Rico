@@ -147,11 +147,6 @@ class Node:
 		else:
 			return None
 
-	def set_characteristics(self):
-		# will it be focused and attempted read by Talkback
-		#self.characteristics['talkback_accessible'] = talkback_focus(self)
-		return 0
-
 	def add_child(self,child):
 		self.children.append(child)
 
@@ -168,17 +163,26 @@ class Node:
 
 	def is_android_default_widget(self):
 		if not 'android_default_widget' in self.characteristics.keys():
-			self.characteristics['android_default_widget'] = self.__is_android_default_widget()
+			self.characteristics['android_default_widget'] = self.__is_android_supported_widget()
 		return self.characteristics['android_default_widget']
 
-	# defined as having a class from the "android.widget" library
+	# defined as having a class from the "android.widget", "android.appwidget",
+	# "android.inputmethodservice", "android.support", "android.view", "android.webkit"
+	#  library as chosen from the
+	# https://github.com/google/Accessibility-Test-Framework-for-Android/blob/master/src/main/java/com/google/android/apps/common/testing/accessibility/framework/checks/ClassNameCheck.java
+	# V3.0 accessed 3_23_2018
 	# TODO
-	def __is_android_default_widget(self):
+	def __is_android_supported_widget(self):
 		node_class = self.raw_properties['class']
 		# classes appear to be android.widget.<widget>.<name>....
-		class_name_list = node_class.split(".")
-		if (class_name_list[0] == "android" and class_name_list[1]=="widget"):
-			return True
+		valid_ui_package_names = [
+			"android.app", "android.appwidget", "android.inputmethodservice",
+			"android.support", "android.view", "android.webkit", "android.widget"
+		]
+
+		for package in valid_ui_package_names:
+			if node_class.startswith(package):
+				return True
 		return False
 
 

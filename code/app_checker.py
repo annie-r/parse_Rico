@@ -3,7 +3,7 @@ from checker_base import Checker_Base
 # if needs to be initialized to something other than 0, must set in initialize checks
 view_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
     "Num_Editable_Textview_Cont_Desc","Num_Fully_Overlapping_Clickable","Num_Clickable_Duplicate_Text", \
-							  "Num_Non_Clickable_Duplicate_Text"]
+							  "Num_Non_Clickable_Duplicate_Text", "Num_Redundant_Description"]
 
 by_app_check_order = []
 class App_Checker(Checker_Base):
@@ -32,35 +32,28 @@ class App_Checker(Checker_Base):
 	def print_table(self, table_type,fd):
 		if table_type == "BY_APP":
 			# print by percentage
+			ag_group_type = None
 			for c in view_aggregate_check_order:
 				fd.write(str(self.view_aggregate_checks[c])+",")
 				# these checks apply to all elements
 				if c == "Num_Missing_Speakable_Test" or c == "Num_Not_Wide_Enough" or c== "Num_Not_Tall_Enough":
-					if self.app.get_num_nodes_by_type("TALKBACK") == 0:
-						fd.write("na,")
-					else:
-						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("TALKBACK")
-						fd.write(str(per_node)+",")
+					ag_group_type = "TALKBACK"
 				elif c == "Num_Editable_Textview_Cont_Desc":
-					if self.app.get_num_nodes_by_type("EDITABLE_TEXTVIEW") == 0:
-						fd.write("na,")
-					else:
-						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("EDITABLE_TEXTVIEW")
-						fd.write(str(per_node)+",")
+					ag_group_type = "EDITABLE_TEXTVIEW"
 				elif c == "Num_Fully_Overlapping_Clickable" or c == "Num_Clickable_Duplicate_Text":
-					if self.app.get_num_nodes_by_type("CLICKABLE") == 0:
-						fd.write("na,")
-					else:
-						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("CLICKABLE")
-						fd.write(str(per_node)+",")
+					ag_group_type = "CLICKABLE"
 				elif c == "Num_Non_Clickable_Duplicate_Text":
-					if self.app.get_num_nodes_by_type("NON_CLICKABLE") == 0:
-						fd.write("na,")
-					else:
-						per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type("NON_CLICKABLE")
-						fd.write(str(per_node)+",")
+					ag_group_type = "NON_CLICKABLE"
+				elif c == "Num_Redundant_Description":
+					ag_group_type = "HAVE_CONT_DESC"
 				else:
 					raise NameError("Aggregate Test: "+str(c)+" does not have aggregate to get percentage defined")
+
+				if self.app.get_num_nodes_by_type(ag_group_type) == 0:
+						fd.write("na,")
+				else:
+					per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type(ag_group_type)
+					fd.write(str(per_node)+",")
 			for c in by_app_check_order:
 				fd.write(str(self.checks[c].result)+",")
 
@@ -92,3 +85,4 @@ class App_Checker(Checker_Base):
 				self.view_aggregate_checks["Num_Fully_Overlapping_Clickable"] += v.checker.get_result("Num_Fully_Overlapping_Clickable")
 				self.view_aggregate_checks["Num_Clickable_Duplicate_Text"] += v.checker.get_result("Num_Clickable_Duplicate_Text")
 				self.view_aggregate_checks["Num_Non_Clickable_Duplicate_Text"] += v.checker.get_result("Num_Non_Clickable_Duplicate_Text")
+				self.view_aggregate_checks["Num_Redundant_Description"] += v.checker.get_result("Num_Redundant_Description")

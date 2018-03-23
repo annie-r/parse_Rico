@@ -5,7 +5,7 @@ from duplicate_text_non_clickable_check import Duplicate_Text_Non_Clickable_Chec
 # MUST ADD AGGREGATE CHECK HERE AND PERFORM CHECK IN __run_aggregate_tests()
 # if needs to be initialized to something other than 0, must set in initialize checks
 node_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
-  "Num_Editable_Textview_Cont_Desc"]
+  "Num_Editable_Textview_Cont_Desc", "Num_Redundant_Description"]
 
 by_view_check_order = ["Num_Fully_Overlapping_Clickable", "Num_Clickable_Duplicate_Text","Num_Non_Clickable_Duplicate_Text"]
 
@@ -54,7 +54,7 @@ class View_Checker(Checker_Base):
 
 	def print_debug(self):
 		print("num full overlap:" + str(self.checks['Num_Fully_Overlapping_Clickable'].result))
-		print("num clikcalbe dupl: "+ str(self.checks['Num_Clickable_Duplicate_Text'].result))
+		print("num clickable dupl: "+ str(self.checks['Num_Clickable_Duplicate_Text'].result))
 
 	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
 	# print aggregate checks first, then by app checks
@@ -85,3 +85,5 @@ class View_Checker(Checker_Base):
 			# this one's node check counts the undesired trait, the ones above count the positives
 			if n.checker.get_result("Editable_Textview_With_Cont_Desc") == True:
 				self.node_aggregate_checks["Num_Editable_Textview_Cont_Desc"] += 1
+			if n.checker.get_result("Has_Redundant_Description") == True:
+				self.node_aggregate_checks["Num_Redundant_Description"] += 1

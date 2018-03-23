@@ -18,7 +18,8 @@ class View:
 		self.nodes = []
 
 		#self.num_talkback_nodes = None
-		self.num_type_nodes = {'TALKBACK': None, 'CLICKABLE': None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW': None}
+		self.num_type_nodes = {'TALKBACK': None, 'CLICKABLE': None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW': None,
+							   'ANDROID_DEFAULT':None, "HAVE_CONT_DESC": None}
 		#self.num_clickable_nodes = None
 		#self.num_editable_textview_nodes = None
 
@@ -89,7 +90,7 @@ class View:
 		self.__add_node(node)	
 
 		# determine if talkback focuses
-		node.set_characteristics()
+
 
 	#### HELPERS ####
 
@@ -113,8 +114,12 @@ class View:
 		for type in self.num_type_nodes.keys():
 			self.num_type_nodes[type] = 0
 		for n in self.nodes:
+
 			if n.is_talkback_accessible():
 				self.num_type_nodes["TALKBACK"] += 1
+				if n.is_android_default_widget():
+					self.num_type_nodes["ANDROID_DEFAULT"] += 1
+
 				if n.is_clickable():
 					self.num_type_nodes["CLICKABLE"] += 1
 				else:
@@ -123,6 +128,8 @@ class View:
 				if n.is_editable_textview():
 					self.num_type_nodes["EDITABLE_TEXTVIEW"] += 1
 
+				if n.get_cont_desc() != None:
+					self.num_type_nodes["HAVE_CONT_DESC"] += 1
 
 	#### PRINTERS ####
 

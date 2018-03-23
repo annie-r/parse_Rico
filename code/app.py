@@ -28,7 +28,8 @@ class App:
 
 		self.num_views = None
 		self.num_nodes = None
-		self.num_type_nodes = {'TALKBACK':None, 'CLICKABLE':None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW':None}
+		self.num_type_nodes = {'TALKBACK':None, 'CLICKABLE':None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW':None,
+							   'ANDROID_DEFAULT': None, 'HAVE_CONT_DESC':None}
 
 		self.checker = App_Checker(self)
 
@@ -94,7 +95,7 @@ class App:
 
 	@staticmethod
 	def print_header(fd):
-		fd.write("app_id,num_traces,num_views,num_nodes,num_talkback_nodes,"
+		fd.write("app_id,num_traces,num_views,num_nodes,num_talkback_nodes,num_talkback_android_default,"
 				 "num_clickable_nodes,num_non_clickable_nodes,num_editable_textview,")
 
 	def print_table(self, table_type, fd, talkback_focus_only = True):
@@ -108,9 +109,11 @@ class App:
 				str(self.__get_num_views())+"," +\
 				str(self.__get_num_nodes())+"," +\
 				str(self.get_num_nodes_by_type("TALKBACK"))+"," +\
+				str(self.get_num_nodes_by_type("ANDROID_DEFAULT"))+ ","  +\
 				str(self.get_num_nodes_by_type("CLICKABLE"))+"," +\
 				str(self.get_num_nodes_by_type("NON_CLICKABLE"))+"," +\
 				str(self.get_num_nodes_by_type("EDITABLE_TEXTVIEW"))+",")
+
 			self.checker.print_table(table_type, fd)
 			fd.write("\n")
 
