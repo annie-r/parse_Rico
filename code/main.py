@@ -123,6 +123,15 @@ if __name__ == "__main__":
 	#v = View("662",view_dir)
 	#v.print_debug()
 
+
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\com.skype.raider\\trace_1\\view_hierarchies\\74.json"
+	#v = View("662",view_dir)
+	#v.print_debug()
+
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\com.skype.raider\\trace_1\\view_hierarchies\\677.json"
+	#v = View("662",view_dir)
+	#v.print_debug()
+
 	#print("\n############################################\n")
 	#trace test
 	#file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider.test\\trace_1"
@@ -135,10 +144,10 @@ if __name__ == "__main__":
 
 	############## MAIN #################
 	# ## Traverse all apps in directory, assume directory only has apps directories
-	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps"
+	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps_test"
 	# all table types to run:
 	# maps table type to [file name, file_descriptor]
-	table_types = {"BY_APP":["app_test3.csv",None]}#"BY_NODE":["node_test.csv",None]},}
+	table_types = {"BY_APP":["app_test5.csv",None]}#"BY_NODE":["node_test.csv",None]},}
 	# table type options: BY_NODE, BY_APP, (under constructon) BY_VIEW, NODE_CLASS_COUNTS
 	app_info_filepath = "app_details.csv"
 	app_info = get_app_info(app_info_filepath)

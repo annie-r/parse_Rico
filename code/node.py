@@ -166,6 +166,11 @@ class Node:
 			self.characteristics['android_default_widget'] = self.__is_android_supported_widget()
 		return self.characteristics['android_default_widget']
 
+	def is_webview(self):
+		if self.raw_properties['class'] == "android.webkit.WebView":
+			return True
+		return False
+
 	# defined as having a class from the "android.widget", "android.appwidget",
 	# "android.inputmethodservice", "android.support", "android.view", "android.webkit"
 	#  library as chosen from the

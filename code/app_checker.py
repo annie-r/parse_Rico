@@ -36,7 +36,9 @@ class App_Checker(Checker_Base):
 			for c in view_aggregate_check_order:
 				fd.write(str(self.view_aggregate_checks[c])+",")
 				# these checks apply to all elements
-				if c == "Num_Missing_Speakable_Test" or c == "Num_Not_Wide_Enough" or c== "Num_Not_Tall_Enough":
+				if c == "Num_Missing_Speakable_Test":
+					ag_group_type = "WEBVIEW"
+				elif c == "Num_Not_Wide_Enough" or c== "Num_Not_Tall_Enough":
 					ag_group_type = "TALKBACK"
 				elif c == "Num_Editable_Textview_Cont_Desc":
 					ag_group_type = "EDITABLE_TEXTVIEW"
@@ -48,12 +50,21 @@ class App_Checker(Checker_Base):
 					ag_group_type = "HAVE_CONT_DESC"
 				else:
 					raise NameError("Aggregate Test: "+str(c)+" does not have aggregate to get percentage defined")
+				denominator = None
+				if ag_group_type == "WEBVIEW":
+					# for speakable text exclude webview nodes
+					denominator = self.app.get_num_nodes_by_type("TALKBACK") - self.app.get_num_nodes_by_type("WEBVIEW")
+				else:
+					denominator = self.app.get_num_nodes_by_type(ag_group_type)
 
-				if self.app.get_num_nodes_by_type(ag_group_type) == 0:
+
+				if denominator == 0:
 						fd.write("na,")
 				else:
-					per_node = self.view_aggregate_checks[c] / self.app.get_num_nodes_by_type(ag_group_type)
+					per_node = self.view_aggregate_checks[c] / denominator
 					fd.write(str(per_node)+",")
+
+
 			for c in by_app_check_order:
 				fd.write(str(self.checks[c].result)+",")
 

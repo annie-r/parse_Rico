@@ -29,7 +29,7 @@ class App:
 		self.num_views = None
 		self.num_nodes = None
 		self.num_type_nodes = {'TALKBACK':None, 'CLICKABLE':None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW':None,
-							   'ANDROID_DEFAULT': None, 'HAVE_CONT_DESC':None}
+							   'ANDROID_DEFAULT': None, 'HAVE_CONT_DESC':None, 'WEBVIEW':None}
 
 		self.checker = App_Checker(self)
 

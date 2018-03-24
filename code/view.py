@@ -19,7 +19,7 @@ class View:
 
 		#self.num_talkback_nodes = None
 		self.num_type_nodes = {'TALKBACK': None, 'CLICKABLE': None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW': None,
-							   'ANDROID_DEFAULT':None, "HAVE_CONT_DESC": None}
+							   'ANDROID_DEFAULT':None, "HAVE_CONT_DESC": None, "WEBVIEW": None}
 		#self.num_clickable_nodes = None
 		#self.num_editable_textview_nodes = None
 
@@ -130,6 +130,9 @@ class View:
 
 				if n.get_cont_desc() != None:
 					self.num_type_nodes["HAVE_CONT_DESC"] += 1
+
+				if n.is_webview():
+					self.num_type_nodes["WEBVIEW"] += 1
 
 	#### PRINTERS ####
 
