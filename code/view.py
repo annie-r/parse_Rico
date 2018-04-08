@@ -17,7 +17,17 @@ class View:
 		# set of Node objects, representing the elements exposed by the view hierarchy	
 		self.nodes = []
 
+		#self.num_talkback_nodes = None
+		self.num_type_nodes = {'TALKBACK': None, 'CLICKABLE': None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW': None,
+							   'ANDROID_DEFAULT':None, "HAVE_CONT_DESC": None, "WEBVIEW": None}
+		#self.num_clickable_nodes = None
+		#self.num_editable_textview_nodes = None
+
 		self.__parse_view()
+		if not self.has_valid_file:
+			return
+
+		self.__set_node_counts()
 
 		# must check nodes from here not when making nodes
 		# because need fully formed nodes, e.g. children sturct
@@ -82,7 +92,7 @@ class View:
 		self.__add_node(node)	
 
 		# determine if talkback focuses
-		node.set_characteristics()
+
 
 	#### HELPERS ####
 
@@ -95,21 +105,47 @@ class View:
 	# this really needs more comments anyway
 	# I have no idea what to type
 
-	def get_num_talkback_nodes(self):
-		num_nodes = 0
-		for n in self.nodes:
-			if n.is_talkback_accessible():
-				num_nodes += 1
-		return num_nodes
+	def get_num_type_nodes(self, type):
+		# shouldn't be because it should set in beginning
+		if self.num_type_nodes[type] == None:
+			print ("TYPE: "+str(type)+" Is empty")
+			self.__set_node_counts()
+		return self.num_type_nodes[type]
 
-	def print_table(self,table_type, fd,app_id, talkback_focus_only = True):
+	def __set_node_counts(self):
+		for type in self.num_type_nodes.keys():
+			self.num_type_nodes[type] = 0
+		for n in self.nodes:
+
+			if n.is_talkback_accessible():
+				self.num_type_nodes["TALKBACK"] += 1
+				if n.is_android_default_widget():
+					self.num_type_nodes["ANDROID_DEFAULT"] += 1
+
+				if n.is_clickable():
+					self.num_type_nodes["CLICKABLE"] += 1
+				else:
+					self.num_type_nodes["NON_CLICKABLE"] += 1
+
+				if n.is_editable_textview():
+					self.num_type_nodes["EDITABLE_TEXTVIEW"] += 1
+
+				if n.get_cont_desc() != None:
+					self.num_type_nodes["HAVE_CONT_DESC"] += 1
+
+				if n.is_webview():
+					self.num_type_nodes["WEBVIEW"] += 1
+
+	#### PRINTERS ####
+
+	def print_table(self,table_type, fd,app_id, trace_id,talkback_focus_only = True):
 		if table_type=="BY_NODE":
 			for n in self.nodes:
 				if (not talkback_focus_only) and (not n.is_talkback_accessible()):
-					fd.write(str(app_id)+",")
+					fd.write(str(app_id)+","+str(trace_id)+",")
 					n.print_table(table_type,fd)
 				if n.is_talkback_accessible():
-					fd.write(str(app_id)+",")
+					fd.write(str(app_id)+","+str(trace_id)+","+str(self.id)+",")
 					n.print_table(table_type,fd)
 		elif table_type == "BY_VIEW":
 			self.checker.print_table(table_type,fd)
@@ -118,20 +154,20 @@ class View:
 	# this is an internal function for printing
 	# talkback_focus_only: bool if if to only print nodes that are "Talkback Focusable"
 
-	def __print(self, node, talkback_focus_only = True):
+	def __print(self, node, fd, talkback_focus_only = True):
 		if not talkback_focus_only:
-			node.print()
+			node.print(fd)
 		elif talkback_focus_only and node.is_talkback_accessible():
-			node.print()
+			node.print(fd)
 		for child in node.children:
-			self.__print(child, talkback_focus_only)
+			self.__print(child, fd, talkback_focus_only)
 
 	# mostly debugging print statement
-	def print_debug(self, talkback_focus_only = True):
-		print("view ID: "+self.id)
-		print ("num nodes: "+str(len(self.nodes)))
-		self.checker.print_debug()
-		self.__print(self.root, talkback_focus_only)
+	def print_debug(self, fd, talkback_focus_only = True):
+		fd.write("view ID: "+self.id+"\n")
+		fd.write("num nodes: "+str(len(self.nodes))+"\n")
+		self.checker.print_debug(fd)
+		self.__print(self.root, fd, talkback_focus_only)
 
 	def json_loader(self,filepath):
 		file_descriptor = open(filepath, "r")

@@ -16,6 +16,8 @@ class Check_Base:
 
 
 	def get_result(self):
+		if self.result == None:
+			self.perform()
 		return self.result
 
 	# must set self.result

@@ -11,6 +11,8 @@ from view_check_base import View_Check_Base
 # Views in the hierarchy have any speakable text, we report that the test was not run.
 #####
 
+## sets check in node as well
+
 # if it's clickable, it's a warning
 # if it's not, then it's just info
 # so for now count as separate checks

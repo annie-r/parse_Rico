@@ -13,7 +13,7 @@ class Element_Width_Check(Node_Check_Base):
 	def perform(self):
 		### Label check
 		# if talkback accessible, should have appropriate label
-		if self.node.is_talkback_accessible():
+		if self.node.is_talkback_accessible() and self.node.is_clickable():
 			self.result = self.__wide_enough()
 		else:
 			self.result = "na"

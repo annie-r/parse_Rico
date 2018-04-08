@@ -3,8 +3,10 @@ from speakable_text_present_check import Speakable_Text_Present_Check
 from element_height_check import Element_Height_Check
 from element_width_check import Element_Width_Check
 from cont_desc_editable_textview_check import Cont_Desc_Editable_Textview_Check
+from redundant_description_check import Redundant_Description_Check
 
-check_order = ["Speakable_Text_Present","Element_Wide_Enough","Element_Tall_Enough","Editable_Textview_With_Cont_Desc"]
+check_order = ["Speakable_Text_Present","Element_Wide_Enough","Element_Tall_Enough","Editable_Textview_With_Cont_Desc",
+			   "Has_Redundant_Description"]
 
 # some per node checks can only be set by the view because need know about other nodes
 # so initilize here but will be set by view
@@ -31,6 +33,7 @@ class Node_Checker(Checker_Base):
 		self.checks["Element_Wide_Enough"]=(Element_Width_Check("Element_Wide_Enough",self.node))
 		self.checks["Element_Tall_Enough"]=(Element_Height_Check("Element_Tall_Enough",self.node))
 		self.checks["Editable_Textview_With_Cont_Desc"]=(Cont_Desc_Editable_Textview_Check("Editable_Textview_With_Cont_Desc",self.node))
+		self.checks["Has_Redundant_Description"] = Redundant_Description_Check("Has_Redundant_Description",self.node)
 
 		for c in view_set_checks_order:
 			self.view_set_checks[c] = None

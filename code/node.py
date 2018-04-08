@@ -26,11 +26,17 @@ class Node:
 	# checks if coords are within this node's boundries
 	def contains_coords(self,coords):
 		bounds = self.get_bounds()
+		#print("coords: "+str(coords))
+		#print("bounds: "+str(bounds))
 		if coords['x'] >= bounds['left'] and coords['x'] <= bounds['right'] and \
 						coords['y'] >= bounds['top'] and coords['y'] <= bounds['bottom']:
 			return True
 		else:
 			return False
+
+	@staticmethod
+	def print_header(fd):
+		fd.write("app_id,trace_id,view_id,node_id,class,is_clickable,android_widget,ad,")
 
 	def print_table(self,table_type,fd):
 		if table_type == "BY_NODE":
@@ -41,61 +47,62 @@ class Node:
 			else:
 				fd.write("None")
 			#,class_name,android_widget?,ad_widget?,checks
-			fd.write(","+str(self.raw_properties['class'])+"," + str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",")
+			fd.write(","+str(self.raw_properties['class'])+"," +str(self.is_clickable())+","+\
+					 str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",")
 			self.checker.print_table(table_type,fd)
 			fd.write("\n")
 
-	def print(self):
+	def print(self, fd):
 		k = self.raw_properties.keys()
-		self.__print_level()
-		print("##########")
+		self.__print_level(fd)
+		fd.write("##########\n")
 		# resource id
-		self.__print_level()
+		self.__print_level(fd)
 		if 'resource-id' in k:
-			print("id: " + str(self.raw_properties['resource-id']))
+			fd.write("id: " + str(self.raw_properties['resource-id'] +"\n"))
 		else:
-			print("no resource id")
+			fd.write("no resource id\n")
 		# class
-		self.__print_level()
+		self.__print_level(fd)
 		if 'class' in k:
-			print("class: "+str(self.raw_properties['class']))
+			fd.write("class: "+str(self.raw_properties['class'])+"\n")
 		else:
-			print('no class')
-		self.__print_level()
-		print("ad: "+str(self.is_ads_widget()))
-		self.__print_level()
-		print("widget: "+str(self.is_android_default_widget()))
+			fd.write('no class\n')
+		self.__print_level(fd)
+		fd.write("ad: "+str(self.is_ads_widget())+"\n")
+		self.__print_level(fd)
+		fd.write("widget: "+str(self.is_android_default_widget())+"\n")
 
 		# bounds
-		self.__print_level()
-		print("bounds: "+str(self.get_bounds()))
+		self.__print_level(fd)
+		fd.write("bounds: "+str(self.get_bounds())+"\n")
 		# text, if applicable, to help identify
 
 		if 'text' in self.raw_properties.keys():
-			self.__print_level()
+			self.__print_level(fd)
 			try:
-				print("text: " + str(self.raw_properties['text']))
+				fd.write("text: " + str(self.raw_properties['text'])+"\n")
 			except UnicodeEncodeError:
-				print("text: undefined unicode")
+				fd.write("text: undefined unicode\n")
 
-		self.__print_level()
+		self.__print_level(fd)
 		try:
-			print("label: " + str(self.get_speakable_text()))
+			fd.write("label: " + str(self.get_speakable_text())+"\n")
 		except UnicodeEncodeError:
-			print("label: undefined unicode")
+			fd.write("label: undefined unicode\n")
 
 
 		# talkback accessible criteria
-		self.__print_level()
-		print("talkback_accessible: " + str(self.is_talkback_accessible()))
+		self.__print_level(fd)
+		fd.write("talkback_accessible: " + str(self.is_talkback_accessible())+"\n")
 
 		# print talkback accessible log
 		for entry in set(self.log['talkback_accessible']):
-			self.__print_level()
+			self.__print_level(fd)
 			try:
-				print("- "+str(entry))
+				fd.write("- "+str(entry)+"\n")
 			except UnicodeEncodeError:
-				print("-: undefined unicode")
+				fd.write("-: undefined unicode\n")
 
 		# print results of checks
 		# self.__print_level()
@@ -106,17 +113,17 @@ class Node:
 
 		# print checks log
 		for entry in set(self.log['checks']):
-			self.__print_level()
-			print("- "+str(entry))
+			self.__print_level(fd)
+			fd.write("- "+str(entry)+"\n")
 
 		#self.__print_level()
-		self.checker.print_header()
-		print("")
-		self.checker.print_table("BY_NODE")
+		self.checker.print_header(fd)
+		fd.write("\n")
+		self.checker.print_table("BY_NODE",fd)
 
 		#self.__print_children()
 
-		print ('\n')
+		fd.write('\n\n')
 
 	def __print_children(self):
 		for c in self.children:
@@ -129,10 +136,10 @@ class Node:
 				print("- child: "+str(c.get_resource_id()) + " undefined unicode")
 
 
-	def __print_level(self):
+	def __print_level(self,fd):
 		for i in range(0,self.level):
-			print("\t ",end="")
-		print("++ ",end="")
+			fd.write("\t ")
+		fd.write("++ ")
 
 
 	##############
@@ -144,11 +151,6 @@ class Node:
 			return self.raw_properties['resource-id']
 		else:
 			return None
-
-	def set_characteristics(self):
-		# will it be focused and attempted read by Talkback
-		#self.characteristics['talkback_accessible'] = talkback_focus(self)
-		return 0
 
 	def add_child(self,child):
 		self.children.append(child)
@@ -166,16 +168,31 @@ class Node:
 
 	def is_android_default_widget(self):
 		if not 'android_default_widget' in self.characteristics.keys():
-			self.characteristics['android_default_widget'] = self.__is_android_default_widget()
+			self.characteristics['android_default_widget'] = self.__is_android_supported_widget()
 		return self.characteristics['android_default_widget']
 
-	# defined as having a class from the "android.widget" library
-	def __is_android_default_widget(self):
+	def is_webview(self):
+		if self.raw_properties['class'] == "android.webkit.WebView":
+			return True
+		return False
+
+	# defined as having a class from the "android.widget", "android.appwidget",
+	# "android.inputmethodservice", "android.support", "android.view", "android.webkit"
+	#  library as chosen from the
+	# https://github.com/google/Accessibility-Test-Framework-for-Android/blob/master/src/main/java/com/google/android/apps/common/testing/accessibility/framework/checks/ClassNameCheck.java
+	# V3.0 accessed 3_23_2018
+	# TODO
+	def __is_android_supported_widget(self):
 		node_class = self.raw_properties['class']
 		# classes appear to be android.widget.<widget>.<name>....
-		class_name_list = node_class.split(".")
-		if (class_name_list[0] == "android" and class_name_list[1]=="widget"):
-			return True
+		valid_ui_package_names = [
+			"android.app", "android.appwidget", "android.inputmethodservice",
+			"android.support", "android.view", "android.webkit", "android.widget"
+		]
+
+		for package in valid_ui_package_names:
+			if node_class.startswith(package):
+				return True
 		return False
 
 
@@ -195,24 +212,35 @@ class Node:
 		return False
 
 
+
 	#################
 	##### TODO
 	###############
-	#TODO
-	def has_webAction(self):
-		return False
-
 	#TODO
 	# don't know what fields to look for
 	def is_checkable(self):
 		return False
 
-
+	# best guess for now of catching webviews
+	# if it is or inherits from android.webkit.WebView
+	def has_webAction(self):
+		web_class = "android.webkit.WebView"
+		if self.raw_properties['class'] == web_class:
+			return True
+		if web_class in self.raw_properties['ancestors']:
+			return True
+		return False
 
 
 	###############
 	##### CHARACTERISTICS
 	###############
+
+	def is_editable_textview(self):
+		ancestors = self.raw_properties['ancestors']
+		if "android.widget.EditText" in ancestors:
+			return True
+		return False
 
 	def is_clickable(self):
 		#print("is clickable test")

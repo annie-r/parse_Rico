@@ -12,16 +12,23 @@ class Speakable_Text_Present_Check(Node_Check_Base):
 	def perform(self):
 		### Label check
 		# if talkback accessible, should have appropriate label
-		if self.node.is_talkback_accessible():
+		# don't check on webviews
+		if self.node.is_talkback_accessible() and (not self.node.is_webview()):
 			self.result = self.__has_label()
 		else:
-			self.result = "na"
+			self.result = "NA"
 
 	#####
 	### Check Label
 	#####
 
 	def __has_label(self):
+		# Special case for web content.
+		if self.node.has_webAction():
+			return True
+		# TODO special case for checkable
+		if self.node.is_checkable():
+			return True
 		#print("\ntest: "+(self.node.get_resource_id()))
 		return self.node.get_speakable_text() != None
 
