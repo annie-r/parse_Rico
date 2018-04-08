@@ -4,7 +4,7 @@ from duplicate_text_clickable_check import Duplicate_Text_Clickable_Check
 from duplicate_text_non_clickable_check import Duplicate_Text_Non_Clickable_Check
 # MUST ADD AGGREGATE CHECK HERE AND PERFORM CHECK IN __run_aggregate_tests()
 # if needs to be initialized to something other than 0, must set in initialize checks
-node_aggregate_check_order = ["Num_Missing_Speakable_Test", "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
+node_aggregate_check_order = ["Num_Missing_Speakable_Text", "Num_Not_Wide_Enough", "Num_Not_Tall_Enough",\
   "Num_Editable_Textview_Cont_Desc", "Num_Redundant_Description"]
 
 by_view_check_order = ["Num_Fully_Overlapping_Clickable", "Num_Clickable_Duplicate_Text","Num_Non_Clickable_Duplicate_Text"]
@@ -52,9 +52,9 @@ class View_Checker(Checker_Base):
 		else:
 			return Checker_Base.get_result(self,check_name)
 
-	def print_debug(self):
-		print("num full overlap:" + str(self.checks['Num_Fully_Overlapping_Clickable'].result))
-		print("num clickable dupl: "+ str(self.checks['Num_Clickable_Duplicate_Text'].result))
+	def print_debug(self,fd):
+		fd.write("num full overlap:" + str(self.checks['Num_Fully_Overlapping_Clickable'].result)+"\n")
+		fd.write("num clickable dupl: "+ str(self.checks['Num_Clickable_Duplicate_Text'].result)+"\n")
 
 	## MUST BE IN SAME ORDER AS PUT IN __INITIALIZE_CHECKS
 	# print aggregate checks first, then by app checks
@@ -77,7 +77,7 @@ class View_Checker(Checker_Base):
 			# so making checks explicit (== True) to reduce errors
 			# count num of nodes in this view with missing speakable text
 			if n.checker.get_result("Speakable_Text_Present") == False:
-				self.node_aggregate_checks["Num_Missing_Speakable_Test"] += 1
+				self.node_aggregate_checks["Num_Missing_Speakable_Text"] += 1
 			if n.checker.get_result("Element_Wide_Enough") == False:
 				self.node_aggregate_checks["Num_Not_Wide_Enough"] += 1
 			if n.checker.get_result("Element_Tall_Enough") == False:

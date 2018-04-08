@@ -24,6 +24,8 @@ class View:
 		#self.num_editable_textview_nodes = None
 
 		self.__parse_view()
+		if not self.has_valid_file:
+			return
 
 		self.__set_node_counts()
 
@@ -136,14 +138,14 @@ class View:
 
 	#### PRINTERS ####
 
-	def print_table(self,table_type, fd,app_id, talkback_focus_only = True):
+	def print_table(self,table_type, fd,app_id, trace_id,talkback_focus_only = True):
 		if table_type=="BY_NODE":
 			for n in self.nodes:
 				if (not talkback_focus_only) and (not n.is_talkback_accessible()):
-					fd.write(str(app_id)+",")
+					fd.write(str(app_id)+","+str(trace_id)+",")
 					n.print_table(table_type,fd)
 				if n.is_talkback_accessible():
-					fd.write(str(app_id)+",")
+					fd.write(str(app_id)+","+str(trace_id)+","+str(self.id)+",")
 					n.print_table(table_type,fd)
 		elif table_type == "BY_VIEW":
 			self.checker.print_table(table_type,fd)
@@ -152,20 +154,20 @@ class View:
 	# this is an internal function for printing
 	# talkback_focus_only: bool if if to only print nodes that are "Talkback Focusable"
 
-	def __print(self, node, talkback_focus_only = True):
+	def __print(self, node, fd, talkback_focus_only = True):
 		if not talkback_focus_only:
-			node.print()
+			node.print(fd)
 		elif talkback_focus_only and node.is_talkback_accessible():
-			node.print()
+			node.print(fd)
 		for child in node.children:
-			self.__print(child, talkback_focus_only)
+			self.__print(child, fd, talkback_focus_only)
 
 	# mostly debugging print statement
-	def print_debug(self, talkback_focus_only = True):
-		print("view ID: "+self.id)
-		print ("num nodes: "+str(len(self.nodes)))
-		self.checker.print_debug()
-		self.__print(self.root, talkback_focus_only)
+	def print_debug(self, fd, talkback_focus_only = True):
+		fd.write("view ID: "+self.id+"\n")
+		fd.write("num nodes: "+str(len(self.nodes))+"\n")
+		self.checker.print_debug(fd)
+		self.__print(self.root, fd, talkback_focus_only)
 
 	def json_loader(self,filepath):
 		file_descriptor = open(filepath, "r")

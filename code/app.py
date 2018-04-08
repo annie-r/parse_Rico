@@ -5,7 +5,8 @@ from app_checker import App_Checker
 
 class App:
 	# defaults the ID of an app to the package name used as the directory name
-	def __init__(self, app_dir_arg, app_info_dict, app_id_arg=None):
+	# info only for not constructing whole thing, mostly to quickly get missing info of app only
+	def __init__(self, app_dir_arg, app_info_dict, app_id_arg=None, info_only=False):
 		self.app_dir = app_dir_arg
 
 		#ID should be package name since used as key to info dict
@@ -19,19 +20,21 @@ class App:
 		# 				 'date_updated': '<Month Day, Year>',
 		# 				 'num_downloads': '<range>', 'category': '<>',
 		#				 'num_ratings': #, 'rating':#
-		self.info = app_info_dict[self.id]
+		self.info = {'date_updated':None,'name':None,'num_downloads':None,'category':None,'num_ratings':None,'rating':None}
+		if self.id in app_info_dict.keys():
+			self.info = app_info_dict[self.id]
 
+		if not info_only:
+			# map trace ID to Trace object
+			self.traces = {}
+			self.__parse_trace_dirs()
 
-		# map trace ID to Trace object
-		self.traces = {}
-		self.__parse_trace_dirs()
+			self.num_views = None
+			self.num_nodes = None
+			self.num_type_nodes = {'TALKBACK':None, 'CLICKABLE':None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW':None,
+								   'ANDROID_DEFAULT': None, 'HAVE_CONT_DESC':None, 'WEBVIEW':None}
 
-		self.num_views = None
-		self.num_nodes = None
-		self.num_type_nodes = {'TALKBACK':None, 'CLICKABLE':None, 'NON_CLICKABLE':None, 'EDITABLE_TEXTVIEW':None,
-							   'ANDROID_DEFAULT': None, 'HAVE_CONT_DESC':None, 'WEBVIEW':None}
-
-		self.checker = App_Checker(self)
+			self.checker = App_Checker(self)
 
 	def __parse_trace_dirs(self):
 		## assume directory struct of <....>\<app_package>\trace_<ID> 
@@ -94,9 +97,12 @@ class App:
 
 
 	@staticmethod
-	def print_header(fd):
-		fd.write("app_id,num_traces,num_views,num_nodes,num_talkback_nodes,num_talkback_android_default,"
-				 "num_clickable_nodes,num_non_clickable_nodes,num_editable_textview,")
+	def print_header(fd, table_type):
+		if table_type == "BY_APP":
+			fd.write("app_id,app_name,date_updated,num_downloads,category,num_ratings,rating,num_traces,num_views,num_nodes,num_talkback_nodes,num_talkback_android_default,"
+					 "num_clickable_nodes,num_non_clickable_nodes,num_editable_textview,")
+		elif table_type == "APP_INFO_ONLY":
+			fd.write("app_id,app_name,date_updated,num_downloads,category,num_ratings,rating,")
 
 	def print_table(self, table_type, fd, talkback_focus_only = True):
 		if table_type == "BY_NODE" or table_type == "BY_TRACE":
@@ -105,7 +111,13 @@ class App:
 				# app_name, <node info>, <node checks>
 				t.print_table(table_type, fd, talkback_focus_only)
 		elif table_type == "BY_APP":
-			fd.write(str(self.id)+","+str(len(self.traces))+","+\
+			fd.write(str(self.id)+","+\
+				"\""+str(self.info['name'])+"\","+\
+				"\""+str(self.info['date_updated'])+"\","+\
+				"\""+str(self.info['num_downloads'])+"\","+\
+				"\""+str(self.info['category'])+"\","+\
+				str(self.info['num_ratings'])+","+str(self.info['rating'])+"," +\
+				str(len(self.traces))+","+\
 				str(self.__get_num_views())+"," +\
 				str(self.__get_num_nodes())+"," +\
 				str(self.get_num_nodes_by_type("TALKBACK"))+"," +\
@@ -116,7 +128,14 @@ class App:
 
 			self.checker.print_table(table_type, fd)
 			fd.write("\n")
-
+		elif table_type == "APP_INFO_ONLY":
+			fd.write(str(self.id)+","+\
+				"\""+str(self.info['name'])+"\","+\
+				"\""+str(self.info['date_updated'])+"\","+\
+				"\""+str(self.info['num_downloads'])+"\","+\
+				"\""+str(self.info['category'])+"\","+\
+				str(self.info['num_ratings'])+","+str(self.info['rating'])+"," )
+			fd.write("\n")
 
 
 	def print_debug(self):

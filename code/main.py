@@ -5,17 +5,20 @@ from view_checker import View_Checker
 from app_checker import App_Checker
 from trace import Trace
 from trace_checker import Trace_Checker
+from node import Node
 import os
 import csv
 
 def print_header(table_type,fd):
 	
 	if (table_type == "BY_NODE"):
-		fd.write("app_id,node_id,class,android_widget,ad,")
+		Node.print_header(fd)
 		Node_Checker.print_header(fd)
 	elif table_type == "BY_APP":
-		App.print_header(fd)
+		App.print_header(fd, table_type)
 		App_Checker.print_header(fd)
+	elif table_type == "APP_INFO_ONLY":
+		App.print_header(fd,table_type)
 	elif table_type == "BY_TRACE":
 		Trace.print_header(fd)
 		Trace_Checker.print_header(fd)
@@ -132,6 +135,16 @@ if __name__ == "__main__":
 	#v = View("662",view_dir)
 	#v.print_debug()
 
+	view_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\co.petcoach\\trace_0\\view_hierarchies\\8.json"
+	#v = View("8",view_dir)
+	#v.print_debug()
+
+	view_dir ="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\sample\\trace_0\\view_hierarchies\\190.json"
+	v = View("190",view_dir)
+	#fd = open("testview.txt",'w',encoding="utf-8")
+	#v.print_debug(fd)
+	#fd.close()
+
 	#print("\n############################################\n")
 	#trace test
 	#file = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.skype.raider.test\\trace_1"
@@ -144,12 +157,16 @@ if __name__ == "__main__":
 
 	############## MAIN #################
 	# ## Traverse all apps in directory, assume directory only has apps directories
-	apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps_test"
+	#apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps_test"
+	apps_dir = "E:\\Work\\Research\\Mobile_App_Accessibility\\filtered_traces"
 	# all table types to run:
 	# maps table type to [file name, file_descriptor]
-	table_types = {"BY_APP":["app_test5.csv",None]}#"BY_NODE":["node_test.csv",None]},}
+	table_types = {"BY_NODE":["by_node_fix.csv",None], "BY_APP":["by_app_fix.csv",None]}#"APP_INFO_ONLY":["app_info.csv",None]}#"BY_APP":["all_app.csv",None]}#,}
+	#!!!!! THERE IS AN APP NAMED LOVE QUOTE", MUST GO INTO CSV AND DELETE THE " at the end of the app name!!!! app_id == net.ayudaporfavor.Love
+
+
 	# table type options: BY_NODE, BY_APP, (under constructon) BY_VIEW, NODE_CLASS_COUNTS
-	app_info_filepath = "app_details.csv"
+	app_info_filepath = "rico_app_details.csv"
 	app_info = get_app_info(app_info_filepath)
 
 	#f =open('rating.csv','w',encoding="utf-8")
@@ -180,7 +197,10 @@ if __name__ == "__main__":
 			if counter%100 == 0:
 				print(str(counter))
 			counter += 1
-			a = App(apps_dir + "\\" + a_dir, app_info)
+			info_only = False
+			if len(table_types.keys()) == 1 and "APP_INFO_ONLY" in table_types.keys():
+				info_only = True
+			a = App(apps_dir + "\\" + a_dir, app_info, info_only=info_only)
 
 
 			# any aggregate updates from app
@@ -190,6 +210,8 @@ if __name__ == "__main__":
 			# print row of appropriate tables
 			if "BY_APP" in table_types.keys():
 				a.print_table("BY_APP", table_types["BY_APP"][1])
+			if "APP_INFO_ONLY" in table_types.keys():
+				a.print_table("APP_INFO_ONLY", table_types["APP_INFO_ONLY"][1])
 			if "BY_NODE" in table_types.keys():
 				a.print_table("BY_NODE", table_types["BY_NODE"][1])
 			if "BY_TRACE" in table_types.keys():

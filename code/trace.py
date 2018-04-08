@@ -37,7 +37,8 @@ class Trace:
 			# table format
 			# app_name, <node info>, <node checks>
 			for v in self.views.values():
-				v.print_table(table_type, fd, self.app_id, talkback_focus_only)
+				#fd.write(str(self.app_id)+","+str(self.id)+",")
+				v.print_table(table_type, fd, self.app_id, self.id, talkback_focus_only)
 		elif table_type == "BY_VIEW":
 			for v in self.views.values():
 				v.print_table(table_type, fd, self.app_id, talkback_focus_only)
@@ -60,7 +61,10 @@ class Trace:
 		for view_file in os.listdir(view_directory):
 			view_id = view_file.split(".")[0]
 			#print ("view ID: "+str(view_id))
-			self.views[int(view_id)] = View(view_id, view_directory + "\\"+ view_file)
+			v = View(view_id, view_directory + "\\"+ view_file)
+			# only count and consider valid non-null views
+			if v.has_valid_file:
+				self.views[int(view_id)] = v
 			#print(str(view_id))
 		#print(str(self.views.keys()))
 		#return 0

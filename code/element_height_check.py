@@ -12,10 +12,14 @@ class Element_Height_Check(Node_Check_Base):
 	def perform(self):
 		### Label check
 		# if talkback accessible, should have appropriate label
-		if self.node.is_talkback_accessible():
+		# using version 2_25_2018 accessibility test framework
+		# ony applies to clickable elelents
+
+		if self.node.is_talkback_accessible() and self.node.is_clickable():
 			self.result = self.__tall_enough()
 		else:
 			self.result = "na"
+
 
 	#####
 	### Check Height
