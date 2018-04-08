@@ -1,8 +1,166 @@
 # To answer questions about co-occurences of similar errors within same app
 
-by_app = read.csv("app_errors.csv")
-View(by_app)
+###### Import data by app
+error_by_app = read.csv("app_errors.csv")
+## THERE IS AN APP NAMED 
+error_by_app = read.table(file="by_app_size_fix.csv", header=TRUE,
+                          quote="'\"", sep=",",
+                        encoding="UTF-8", fill=FALSE)
+View(error_by_app)
+View(error_by_app[error_by_app$num_nodes==0,])
+# attempt to remove apps that have only null views as estimated by having no nodes at all
+error_by_app = error_by_app[error_by_app$num_nodes>0,]
+View(error_by_app)
+num_apps = nrow(error_by_app)
 
-by$
+error_by_app$percent_and = error_by_app$num_talkback_android_default/error_by_app$num_talkback_nodes
+error_by_app$percent_not_and = 1- error_by_app$percent_and
 
+
+## prep data
+test = factor(error_by_app$num_downloads, 
+                  levels=c("100 - 500","500 - 1,000","1,000 - 5,000","5,000 - 10,000", "10,000 - 50,000",
+                          "50,000 - 100,000","100,000 - 500,000","500,000 - 1,000,000","1,000,000 - 5,000,000",
+                          "5,000,000 - 10,000,000","10,000,000 - 50,000,000","50,000,000 - 100,000,000",
+                          "100,000,000 - 500,000,000","500,000,000 - 1,000,000,000","1,000,000,000 - 5,000,000,000", "None"),
+                  ordered=T)
+View(test)
+
+
+error_by_app$date_updated = as.Date(error_by_app$date_updated, "%d-%b-%y")
+
+# set all as numeric
+error_by_app$rating = as.numeric(paste(error_by_app$rating))
+error_by_app$num_ratings = as.numeric(error_by_app$num_ratings)
+error_by_app$Num_Missing_Speakable_Test_Per_Node[error_by_app$Num_Missing_Speakable_Test_Per_Node=='na'] <- NaN # is done by coeersion automatically in next step
+error_by_app$Num_Missing_Speakable_Test_Per_Node = as.numeric(paste(error_by_app$Num_Missing_Speakable_Test_Per_Node))
+error_by_app$Num_Not_Wide_Enough_Per_Node = as.numeric(paste(error_by_app$Num_Not_Wide_Enough_Per_Node))
+error_by_app$Num_Not_Tall_Enough_Per_Node = as.numeric(paste(error_by_app$Num_Not_Tall_Enough_Per_Node))
+error_by_app$Num_Editable_Textview_Cont_Desc_Per_Node = as.numeric(paste(error_by_app$Num_Editable_Textview_Cont_Desc_Per_Node))
+error_by_app$Num_Fully_Overlapping_Clickable_Per_Node = as.numeric(paste(error_by_app$Num_Fully_Overlapping_Clickable_Per_Node))
+error_by_app$Num_Clickable_Duplicate_Text_Per_Node = as.numeric(paste(error_by_app$Num_Clickable_Duplicate_Text_Per_Node))
+error_by_app$Num_Non_Clickable_Duplicate_Text_Per_Node = as.numeric(paste(error_by_app$Num_Non_Clickable_Duplicate_Text_Per_Node))
+error_by_app$Num_Redundant_Description_Per_Node = as.numeric(paste(error_by_app$Num_Redundant_Description_Per_Node))
+
+
+summary(error_by_app)
+
+#########3 Import data by node
+node = read.csv("all_node.csv")
+
+## Prep data
+node$Num_Nodes_Overlap_With = as.numeric(node$Num_Nodes_Overlap_With)
+node$Num_Nodes_Share_Label = as.numeric(node$Num_Nodes_Share_Label)
+node$android_widget = as.factor(node$android_widget)
+View(node)
+##############################################################
 ## Dist of percent of elements with error per app
+
+hist(error_by_app$percent_not_and,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps",
+     main="Not Android Default"
+     )
+nrow(error_by_app[!is.na(error_by_app$Num_Missing_Speakable_Test_Per_Node),])
+
+# histogram of each error in percentage form
+hist(error_by_app$Num_Missing_Speakable_Test_Per_Node, 
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Missing Speakable Text", labels=TRUE, ylim=c(0,2000))
+hist(error_by_app$Num_Not_Wide_Enough_Per_Node,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Not Wide Enough")
+hist(error_by_app$Num_Not_Tall_Enough_Per_Node,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Not Tall Enough")
+hist(error_by_app$Num_Editable_Textview_Cont_Desc_Per_Node, breaks=20,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Editable Textview with Content Desc")
+hist(error_by_app$Num_Fully_Overlapping_Clickable_Per_Node,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Fully Overlapping Clickable")
+hist(error_by_app$Num_Clickable_Duplicate_Text_Per_Node,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Duplicate Text on Clickable")
+hist(error_by_app$Num_Non_Clickable_Duplicate_Text_Per_Node,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Duplicate Text on Non-Clickable")
+hist(error_by_app$Num_Redundant_Description_Per_Node, breaks=20,
+     xlab="Percent of Nodes with Error", ylab="Number of Apps", 
+     main = "Redundant Description")
+hist(error_by_app[error_by_app$Num_Redundant_Description_Per_Node>0,]$Num_Redundant_Description_Per_Node)
+
+############ Android Widgets
+plot(error_by_app$rating, error_by_app$percent_not_and)
+View(error_by_app[,c("Num_Redundant_Description_Per_Node","Num_Not_Tall_Enough_Per_Node","percent_not_and")])
+
+
+################## Num not tall enough
+View(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node==1,])
+hist(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node>0.05 & error_by_app$Num_Not_Tall_Enough_Per_Node <0.2,]$Num_Not_Tall_Enough_Per_Node)
+nrow(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node>0.05 & error_by_app$Num_Not_Tall_Enough_Per_Node <0.2,])
+## the small drop doesn't seem to have to do with rating
+hist(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node>0.05 & error_by_app$Num_Not_Tall_Enough_Per_Node <0.2,]$rating)
+hist(error_by_app[ error_by_app$Num_Not_Tall_Enough_Per_Node >=0.2,]$rating)
+
+# looks at node class composition of apps with and within the blip, 
+summary(error_by_app$Num_Not_Tall_Enough_Per_Node)
+#compare 1sst quartile to the upper half
+#Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+# 0.0000  0.1394  0.2727  0.3082  0.4506  1.0000     342 
+hist(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node>0.1394 & error_by_app$Num_Not_Tall_Enough_Per_Node <0.2727,]$Num_Not_Tall_Enough_Per_Node)
+hist(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node>=0.2727,]$Num_Not_Tall_Enough_Per_Node)
+hist(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node>0.05& error_by_app$Num_Not_Tall_Enough_Per_Node <0.4,]$Num_Not_Tall_Enough_Per_Node)
+nrow(error_by_app[error_by_app$Num_Not_Tall_Enough_Per_Node>0.05 & error_by_app$Num_Not_Tall_Enough_Per_Node <0.2,])
+
+tall_by_app = error_by_app[,c("app_id","Num_Not_Tall_Enough_Per_Node")]
+View(tall_by_app)
+for (i in 1:nrow(tall_by_app)){
+if(is.na(tall_by_app$Num_Not_Tall_Enough_Per_Node[i]) |tall_by_app$Num_Not_Tall_Enough_Per_Node[i]<0.1394){tall_by_app$blip[i] =NA} 
+  else if(tall_by_app$Num_Not_Tall_Enough_Per_Node[i]>=0.2727){tall_by_app$blip[i]=FALSE}else{tall_by_app$blip[i]=TRUE}
+}
+
+tall_node = node[,1:5]
+View(tall_node)
+tall_node = merge(tall_by_app, tall_node, SORT=FALSE, by="app_id")
+View(tall_node)
+View(table(tall_node[tall_node$blip==TRUE,]$class))
+
+
+########### Speakble Text Missing
+View(error_by_app)
+View(error_by_app[,c("app_id","Num_Missing_Speakable_Text_Per_Node","Num_Redundant_Description_Per_Node")])
+
+
+##################### Coorelation b/t error and rating
+plot(error_by_app$category, error_by_app$Num_Missing_Speakable_Test_Per_Node, 
+     xlab = "App Category", ylab="Percent Elements with Missing Speakable Text")
+plot(error_by_app$rating, error_by_app$Num_Missing_Speakable_Test_Per_Node, 
+     xlab = "Rating", ylab="Percent Elements with Missing Speakable Text")
+plot(error_by_app$percent_not_and, error_by_app$Num_Missing_Speakable_Test_Per_Node, 
+     xlab = "Percent Not Android", ylab="Percent Elements with Missing Speakable Text")
+
+library(corrplot)
+(names(error_by_app))
+View(error_by_app)
+corr_vars = error_by_app[,c("date_updated","category","num_ratings","rating","Num_Missing_Speakable_Test_Per_Node",
+                            "Num_Not_Wide_Enough_Per_Node","Num_Not_Tall_Enough_Per_Node","Num_Editable_Textview_Cont_Desc_Per_Node",
+                            "Num_Fully_Overlapping_Clickable_Per_Node","Num_Non_Clickable_Duplicate_Text_Per_Node","Num_Redundant_Description_Per_Node",
+                            "percent_not_and" )] 
+M<-cor(corr_vars[,5:12],use = "complete.obs")
+View(M)
+library(corrplot)
+corrplot(M, method="circle")
+
+library(car)
+scatterplotMatrix(corr_vars)
+############## ImageButton and FAB cooccurance of missing speakable text
+
+
+#### NOT CORRECT
+temp = node[node$class=="android.support.design.widget.FloatingActionButton" | node$class=="android.widget.ImageButton",c("app_id","class","node_id","Speakable_Text_Present")]
+temp = merge(temp[temp$class=="android.support.design.widget.FloatingActionButton", c("app_id","class","Speakable_Text_Present")],temp[temp$class=="android.widget.ImageButton", c("app_id","class","Speakable_Text_Present")], by="app_id")
+temp = rename(temp, c("Speakable_Text_Present.x"="FAB.Speak_Text_Pres", "Speakable_Text_Present.y"="ImgBn.Speak_Text_Pres"))
+
+View(temp)
+ImgBn_FAB_ba = as.data.frame(table(temp$FAB.Speak_Text_Pres,temp$ImgBn.Speak_Text_Pres, dnn=list("FAB.Speak_Text_Pres","ImgBn.Speak_Text_Pres")))
+View(ImgBn_FAB_ba)

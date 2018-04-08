@@ -25,12 +25,11 @@ detach(node_class_count)
 error_by_app = read.csv("app_errors.csv")
 
 error_by_app$percent_default = num_talkback_android_default/num_talkback_nodes
-# attempt to remove apps that have only null views as estimated by having no nodes at all
-error_by_app = error_by_app[error_by_app$num_nodes>0,]
+
 
 attach(error_by_app)
 View(error_by_app)
-summary(error_by_app)
+
 
 hist(error_by_app$Percent_Miss_Label)
 plot(error_by_app$Num_Missing_Speakable_Test_Per_Node)
