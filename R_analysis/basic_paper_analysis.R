@@ -5,7 +5,9 @@ library(tidyr) # create wide data table
 #### BEWARE POS GOOD OR BAD CHANGES PER ERROR
 
 
-node = read.csv("all_node_webview.csv")
+#node = read.csv("all_node_webview.csv")
+#node = read.csv("by_node_size_fix.csv")
+node = read.csv("image_node.csv", encoding="UTF-8")
 # convert to R NULL's
 node[node=="na"] <- NA
 #View(node)
@@ -22,6 +24,9 @@ percent_andr_widget = nrow(node[node$android_widget=="True",])/nrow(node)
 
 
 ### simple stats
+
+
+
 
 
 
@@ -44,7 +49,7 @@ View(error_by_class)
 #View(error_by_class)
 
 ### if "android widget" column
-and.widget.classes <- data.frame(unique(node[,c("class","android_widget")]))
+and.widget.classes <- data.frame(unique(node[,c("class","android_widget", "ad")]))
 View(and.widget.classes)
 
 error_by_class <- merge(error_by_class, and.widget.classes, by="class")
@@ -214,12 +219,14 @@ plot(h_freq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Redundant Description",
 ###
 ### Not Wide Enough
 h =hist(wide_en_bc_wide$percent_not_wide_enough,
-        ylab="num classes", ylim=c(0,12000))
+        ylab="num classes", ylim=c(0,12000), labels=TRUE)
 h$density =h$counts/sum(h$counts)
-plot(h,freq=FALSE,ylim=c(0,0.8), xlab="Percent Not Wide Enough", ylab="Percent Classes", main="Percent of Widgets of a Class with Error")
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE,
+     xlab="Percent Not Wide Enough", 
+     ylab="Percent Classes", main="Percent of Widgets of a Class with Error")
 
 h_infreq_class = hist(wide_en_bc_wide[wide_en_bc_wide$class_count<=5,]$percent_not_wide_enough,
-                      ylab="num classes", ylim=c(0,12000), breaks=20)
+                      ylab="num classes", ylim=c(0,4000), breaks=20, labels=TRUE)
 h_infreq_class$density =h_infreq_class$counts/sum(h_infreq_class$counts)
 sum(h_infreq_class$counts)
 plot(h_infreq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Not Wide Enough", 
@@ -227,12 +234,16 @@ plot(h_infreq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Not Wide Enough",
      main="Classes with 5 or fewer elements in the dataset")
 
 h_freq_class = hist(wide_en_bc_wide[wide_en_bc_wide$class_count >=50,]$percent_not_wide_enough,
-                    ylab="num classes", ylim=c(0,12000), breaks=20)
+                    ylab="num classes", ylim=c(0,12000), breaks=20, labels=TRUE)
 h_freq_class$density =h_freq_class$counts/sum(h_freq_class$counts)
 sum(h_freq_class$counts)
-plot(h_freq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Not Wide Enough", 
+plot(h_freq_class,freq=FALSE,ylim=c(0,1),  xlab="Percent Not Wide Enough", 
      ylab="Percent Classes", 
      main="Classes with 50 or more elements in the dataset")
+
+nrow(wide_en_bc_wide[wide_en_bc_wide$class_count >=50 & wide_en_bc_wide$percent_not_wide_enough ==0,])
+# amoung most frequent table of top 5 most frequent classes with errors, order by num False
+View(wide_en_bc_wide[wide_en_bc_wide$class_count >=50 & wide_en_bc_wide$percent_not_wide_enough ==1,])
 
 ### Tall Enough
 h=hist(tall_en_bc_wide$percent_not_tall_enough,
@@ -256,20 +267,26 @@ plot(h_freq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Not Tall Enough",
      ylab="Percent Classes", 
      main="Classes with 50 or more elements in the dataset")
 
+nrow(tall_en_bc_wide[tall_en_bc_wide$class_count >=50 & tall_en_bc_wide$percent_not_tall_enough == 0,])
+
+
 #####
 ### Speakable text
 ### 0 is good, 1 is bad
 h =hist(sp_text_bc_wide$percent_speak_text_missing,
-     ylab="num classes", ylim=c(0,12000))
+     ylab="num classes", ylim=c(0,12000), labels=TRUE)
 h$density =h$counts/sum(h$counts)
-plot(h,freq=FALSE,ylim=c(0,1.0), xlab="Percent Speaking Text Missing", ylab="Percent Classes", main="Percent of Widgets of a Class with Speakable Text Missing")
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Speaking Text Missing", ylab="Percent Classes", 
+     main="Percent of Widgets of a Class with Speakable Text Missing")
 
 ## least frequent class dist
 h_infreq_class = hist(sp_text_bc_wide[sp_text_bc_wide$class_count <=5,]$percent_speak_text_missing,
           ylab="num classes", ylim=c(0,12000), breaks=20)
 h_infreq_class$density =h_infreq_class$counts/sum(h_infreq_class$counts)
 sum(h_infreq_class$counts)
-plot(h_infreq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Speaking Text Missing", 
+plot(h_infreq_class,freq=FALSE,ylim=c(0,1), labels=TRUE, 
+     xlab="Percent Speaking Text Missing", 
      ylab="Percent Classes", 
      main="Classes with 5 or fewer elements in the dataset")
 
@@ -278,7 +295,8 @@ h_freq_class = hist(sp_text_bc_wide[sp_text_bc_wide$class_count >=50,]$percent_s
                       ylab="num classes", ylim=c(0,12000), breaks=20)
 h_freq_class$density =h_freq_class$counts/sum(h_freq_class$counts)
 sum(h_freq_class$counts)
-plot(h_freq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Speaking Text Missing", 
+plot(h_freq_class,freq=FALSE,ylim=c(0,1), labels=TRUE,
+     xlab="Percent Speaking Text Missing", 
      ylab="Percent Classes", 
      main="Classes with 50 or more elements in the dataset")
 
@@ -286,3 +304,131 @@ plot(h_freq_class,freq=FALSE,ylim=c(0,1), xlab="Percent Speaking Text Missing",
 View(sp_text_bc_wide[sp_text_bc_wide$class_count>=50,])
 
 # table of top 5 most likely error
+View(sp_text_bc_wide[sp_text_bc_wide$class_count>=50 & sp_text_bc_wide$percent_speak_text_missing==1,])
+
+##########################
+####### Ad vs Not
+### speakable text
+summary(sp_text_bc_wide[sp_text_bc_wide$ad=="True",]$percent_speak_text_missing)
+summary(sp_text_bc_wide[sp_text_bc_wide$ad=="False",]$percent_speak_text_missing)
+boxplot(sp_text_bc_wide[sp_text_bc_wide$ad=="True",]$percent_speak_text_missing,sp_text_bc_wide[sp_text_bc_wide$ad=="False",]$percent_speak_text_missing)
+
+h =hist(sp_text_bc_wide[sp_text_bc_wide$ad=="True",]$percent_speak_text_missing,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Speaking Text Missing", ylab="Percent Classes", 
+     main="Percent of Widgets of an Ad Class with Speakable Text Missing")
+h =hist(sp_text_bc_wide[sp_text_bc_wide$ad=="False",]$percent_speak_text_missing,
+        ylab="num classes", labels=TRUE)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Speaking Text Missing", ylab="Percent Classes", 
+     main="Percent of Widgets of a  Non Ad Class with Speakable Text Missing")
+
+#####################
+##### Ad vs Not
+nrow(node[node$ad=="True",])
+nrow(error_by_class[error_by_class$ad=="True",])
+
+
+
+#####################
+## Android vs Not
+h =hist(sp_text_bc_wide[sp_text_bc_wide$android_widget=="True",]$percent_speak_text_missing,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Speaking Text Missing", ylab="Percent Classes", 
+     main="Percent of Widgets of an And Class with Speakable Text Missing")
+
+h =hist(sp_text_bc_wide[sp_text_bc_wide$android_widget=="False",]$percent_speak_text_missing,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Speaking Text Missing", ylab="Percent Classes", 
+     main="Percent of Widgets of an Non-Android Class with Speakable Text Missing")
+
+h =hist(wide_en_bc_wide[wide_en_bc_wide$android_widget=="True",]$percent_not_wide_enough,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Not Wide Enough", ylab="Percent Classes", 
+     main="Percent of Widgets of an And Class Not Wide Enough")
+
+h =hist(wide_en_bc_wide[wide_en_bc_wide$android_widget=="False",]$percent_not_wide_enough,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Not Wide Enough", ylab="Percent Classes", 
+     main="Percent of Widgets of a Not And Class Not Wide Enough")
+
+h =hist(tall_en_bc_wide[tall_en_bc_wide$android_widget=="True",]$percent_not_tall_enough,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Not Wide Enough", ylab="Percent Classes", 
+     main="Percent of Widgets of a And Class Not Tall Enough")
+
+h =hist(tall_en_bc_wide[tall_en_bc_wide$android_widget=="False",]$percent_not_tall_enough,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Not Wide Enough", ylab="Percent Classes", 
+     main="Percent of Widgets of a Not And Class Not Tall Enough")
+
+## red desc
+h =hist(has_red_desc_bc_wide[has_red_desc_bc_wide$android_widget=="True",]$percent_redun,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Redun Desc", ylab="Percent Classes", 
+     main="Percent of Widgets of a And Class")
+h =hist(has_red_desc_bc_wide[has_red_desc_bc_wide$android_widget=="False",]$percent_redun,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Redun Desc", ylab="Percent Classes", 
+     main="Percent of Widgets of a Non And Class")
+
+## shares label
+h =hist(shares_label_bc_wide[shares_label_bc_wide$android_widget=="True",]$percent_dup_label,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Shares Label", ylab="Percent Classes", 
+     main="Percent of Widgets of a And Class")
+h =hist(shares_label_bc_wide[shares_label_bc_wide$android_widget=="False",]$percent_dup_label,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Shares Label", ylab="Percent Classes", 
+     main="Percent of Widgets of a Non And Class")
+
+## editable text view w/ cont desc
+h =hist(editable_txtvw_w_cont_desc_bc_wide[editable_txtvw_w_cont_desc_bc_wide$android_widget=="True",]$percent_editable_txtvw_w_cont_desc,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Edit TxtView w/ cont desc", ylab="Percent Classes", 
+     main="Percent of Widgets of a And Class")
+h =hist(editable_txtvw_w_cont_desc_bc_wide[editable_txtvw_w_cont_desc_bc_wide$android_widget=="False",]$percent_editable_txtvw_w_cont_desc,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Edit TxtView w/ cont desc", ylab="Percent Classes", 
+     main="Percent of Widgets of a Non And Class")
+
+## fully overlap
+h =hist(overlaps_bc_wide[overlaps_bc_wide$android_widget=="True",]$percent_overlapping,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Fully Overlap", ylab="Percent Classes", 
+     main="Percent of Widgets of a And Class")
+h =hist(overlaps_bc_wide[overlaps_bc_wide$android_widget=="False",]$percent_overlapping,
+        ylab="num classes", labels=TRUE, breaks=20)
+h$density =h$counts/sum(h$counts)
+plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
+     xlab="Percent Fully Overlap", ylab="Percent Classes", 
+     main="Percent of Widgets of a Non And Class")
