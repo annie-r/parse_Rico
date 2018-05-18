@@ -3,10 +3,16 @@
 ###### Import data by app
 #error_by_app_old = read.csv("app_errors.csv")
 ## THERE IS AN APP NAMED 
+error_by_app = read.table(file="error_by_app.csv", header=TRUE,
+                                                  quote="'\"", sep=",",
+                          encoding="UTF-8", fill=FALSE)
 #error_by_app = read.table(file="by_app_size_fix.csv", header=TRUE,
 #                          quote="'\"", sep=",",
 #                        encoding="UTF-8", fill=FALSE)
 error_by_app = read.table(file="app_recalc.csv", header=TRUE,
+                          quote="'\"", sep=",",
+                          encoding="UTF-8", fill=FALSE)
+error_by_app = read.table(file="app_drop_package.csv", header=TRUE,
                           quote="'\"", sep=",",
                           encoding="UTF-8", fill=FALSE)
 View(error_by_app)
@@ -53,22 +59,15 @@ summary(error_by_app)
 #########3 Import data by node
 #node = read.csv("all_node.csv")
 #node = read.csv("by_node_size_fix.csv")
-node = read.csv("image_node.csv", encoding="UTF-8")
-node = read.table(file="image_node.csv", header=TRUE,
+node = read.csv("node_drop_package.csv", encoding="UTF-8")
+node = read.table(file="node_drop_package.csv", header=TRUE,
                   quote="'\"", sep=",",
                   encoding="UTF-8", fill=FALSE, skipNul=T)
 
-only_of_interest
-
-View(node[(node$class=="android.widget.ImageButton" | node$class=="android.widget.ImageView" | node$class=="android.support.design.widget.FloatingActionButton") &
-            node$Num_Nodes_Share_Label > 0,])
-
-tmp = unique(node[(node$class=="android.widget.ImageButton" | node$class=="android.widget.ImageView" 
-                   | node$class=="android.support.design.widget.FloatingActionButton") 
-                  &node$Num_Nodes_Share_Label > 0,c("app_id","label")])
 ## Prep data
 node$Num_Nodes_Overlap_With = as.numeric(node$Num_Nodes_Overlap_With)
 node$Num_Nodes_Share_Label = as.numeric(node$Num_Nodes_Share_Label)
+
 node$android_widget = as.factor(node$android_widget)
 View(node)
 ##############################################################
@@ -83,14 +82,14 @@ hist(error_by_app$percent_not_and,
 # histogram of each error in percentage form
 hist(error_by_app$Num_Missing_Speakable_Text_Per_Node, 
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
-     main = "Missing Speakable Text", labels=TRUE)
+     main = "Missing Speakable Text", labels=TRUE, ylim=c(0,8000), xlim=c(0,1))
 nrow(error_by_app[!is.na(error_by_app$Num_Missing_Speakable_Text_Per_Node),])
 
-hist(error_by_app$Num_Not_Wide_Enough_Per_Node, ylim=c(0,5000),
+hist(error_by_app$Num_Not_Wide_Enough_Per_Node, 
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
-     main = "Not Wide Enough", labels=TRUE)
-hist(error_by_app$Num_Not_Tall_Enough_Per_Node,
-     labels=TRUE, ylim=c(0,5000),
+     main = "Not Wide Enough", labels=TRUE, ylim=c(0,10000), xlim=c(0,1))
+hist(error_by_app$Num_Not_Tall_Enough_Per_Node,  ylim=c(0,10000), xlim=c(0,1),
+     labels=TRUE,
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
      main = "Not Tall Enough")
 nrow(error_by_app[!is.na(error_by_app$Num_Not_Tall_Enough_Per_Node),])

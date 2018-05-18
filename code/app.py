@@ -103,9 +103,13 @@ class App:
 					 "num_clickable_nodes,num_non_clickable_nodes,num_editable_textview,")
 		elif table_type == "APP_INFO_ONLY":
 			fd.write("app_id,app_name,date_updated,num_downloads,category,num_ratings,rating,")
+		elif table_type == "IMAGE_APP":
+			fd.write("app_id,app_name,date_updated,num_downloads,category,num_ratings,rating,num_traces,num_views,num_nodes,num_talkback_nodes,num_talkback_android_default,"
+					 "num_clickable_nodes,num_non_clickable_nodes,num_editable_textview,")
+			#need to have num of eligible nodes per  test. FIX IN VIEW!!
 
 	def print_table(self, table_type, fd, talkback_focus_only = True):
-		if table_type == "BY_NODE" or table_type == "BY_TRACE":
+		if table_type == "BY_NODE" or table_type == "BY_TRACE" or table_type=="IMAGE_NODE":
 			for t in self.traces.values():
 				# table format
 				# app_name, <node info>, <node checks>

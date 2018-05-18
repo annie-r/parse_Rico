@@ -33,7 +33,7 @@ class Trace:
 			self.checker.print_table(table_type, fd)
 			fd.write("\n")
 
-		elif table_type == "BY_NODE":
+		elif table_type == "BY_NODE" or table_type=="IMAGE_NODE":
 			# table format
 			# app_name, <node info>, <node checks>
 			for v in self.views.values():
@@ -61,7 +61,7 @@ class Trace:
 		for view_file in os.listdir(view_directory):
 			view_id = view_file.split(".")[0]
 			#print ("view ID: "+str(view_id))
-			v = View(view_id, view_directory + "\\"+ view_file)
+			v = View(view_id, view_directory + "\\"+ view_file, self.app_id)
 			# only count and consider valid non-null views
 			if v.has_valid_file:
 				self.views[int(view_id)] = v

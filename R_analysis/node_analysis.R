@@ -4,17 +4,7 @@ library(tidyr) # create wide data table
 
 #### BEWARE POS GOOD OR BAD CHANGES PER ERROR
 
-node = read.csv("all_node.csv")
-node = read.csv("all_node_webview.csv")
-# convert to R NULL's
-node[node=="na"] <- NA
-#View(node)
-#View(node[node$class=="android.widget.ZoomButton",])
-#summary(node[node$class=="android.widget.ZoomButton",])
 
-attach(node)
-node$Num_Nodes_Overlap_With = as.numeric(as.character(node$Num_Nodes_Overlap_With))
-node$Num_Nodes_Share_Label = as.numeric(as.character(node$Num_Nodes_Share_Label))
 
 summary(node)
 
@@ -134,6 +124,7 @@ wide_en_bc_wide = spread(wide_en_by_class, wide_enough, wide_enough_count)
 wide_en_bc_wide$total = (wide_en_bc_wide$False + wide_en_bc_wide$True)
 wide_en_bc_wide = merge(error_by_class, wide_en_bc_wide, by="class")
 wide_en_bc_wide$percent_wide_enough = wide_en_bc_wide$True/wide_en_bc_wide$total
+wide_en_bc_wide$prop_not_wide_enough = wide_en_bc_wide$False/wide_en_bc_wide$total
 View(wide_en_bc_wide)
 
 # ######################
@@ -145,6 +136,7 @@ tall_en_bc_wide$total = tall_en_bc_wide$True + tall_en_bc_wide$False
 tall_en_bc_wide = merge(error_by_class, tall_en_bc_wide, by="class")
  
 tall_en_bc_wide$percent_tall_enough = tall_en_bc_wide$True/tall_en_bc_wide$total
+tall_en_bc_wide$prop_not_tall_enough = tall_en_bc_wide$False/tall_en_bc_wide$total
 View(tall_en_bc_wide)
 
 ###### TALL VS WIDE
@@ -207,6 +199,12 @@ View(has_red_desc_bc_wide[has_red_desc_bc_wide$percent_not_redun ==1,])
 
 ###
 ### Wide Enough
+
+hist(wide_en_bc_wide$prop_not_wide_enough, labels=T, ylim=c(0,10000),
+     xlab="proprtion of nodes within class not wide enough",
+     ylab="number of classes", 
+     main="Prop Node not Wide Enough by Class")
+
 hist(wide_en_bc_wide[wide_en_bc_wide$android_widget=="True",]$percent_wide_enough, xlab="percent of nodes within class wide enough",ylab="number of classes", main="And Classes by Per Nodes within class with error")
 hist(wide_en_bc_wide[wide_en_bc_wide$android_widget=="False",]$percent_wide_enough, xlab="percent of nodes within class wide enough",ylab="number of classes", main="And Classes by Per Nodes within class with error")
 View(wide_en_bc_wide[wide_en_bc_wide$android_widget=="True" & wide_en_bc_wide$percent_wide_enough==0,])
@@ -228,6 +226,12 @@ View(node[node$class=="android.widget.VerticalSeekBar",])
 
 ### Tall Enough
 plot(error_by_class$percent_tall_enough)
+
+hist(tall_en_bc_wide$prop_not_tall_enough, labels=T, ylim=c(0,10000),
+     xlab="proportion elements not tall enough by class",
+     ylab="number of classes", 
+     main="Not Tall Enough by Class")
+
 hist(tall_en_bc_wide$percent_tall_enough, xlab="percent of nodes within class",ylab="number of classes", main="Tall Enough")
 summary(tall_en_bc_wide[tall_en_bc_wide$android_widget=="True",]$percent_tall_enough)
 View(tall_en_bc_wide[tall_en_bc_wide$percent_tall_enough>0.45 & tall_en_bc_wide$percent_tall_enough < 0.55,])
@@ -246,11 +250,16 @@ View(tall_en_bc_wide[tall_en_bc_wide$android_widget=="False" & tall_en_bc_wide$p
 ### Speakable text
 ### 0 is good, 1 is bad
 hist(sp_text_bc_wide$percent_speak_text_missing,
-     ylab="num classes")
+   label=T, ylim=c(0,12000),
+     xlab="Percent Elements with Missing Label", ylab="Number of Classes",
+     main="Missing Label Prevalence by Class")
 hist(sp_text_bc_wide[sp_text_bc_wide$percent_speak_text_missing>0,]$percent_speak_text_missing,
      ylab="num classes", main="sp text missing per class without 0")
 View(sp_text_bc_wide[sp_text_bc_wide$percent_speak_text_missing==1,])
 View(sp_text_bc_wide[ sp_text_bc_wide$percent_speak_text_missing> 0.48 & sp_text_bc_wide$percent_speak_text_missing< 0.52,])
+
+### look for high profile cases
+
 
 ### look at 50% nodes by app
 sp_text_err_by_app = node[node$class=="android.widget.ImageButton",c("app_id","Speakable_Text_Present")]

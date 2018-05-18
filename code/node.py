@@ -35,8 +35,11 @@ class Node:
 			return False
 
 	@staticmethod
-	def print_header(fd):
-		fd.write("app_id,trace_id,view_id,node_id,class,is_clickable,android_widget,ad,")
+	def print_header(table_type,fd):
+		if table_type=="BY_NODE":
+			fd.write("app_id,trace_id,view_id,node_id,class,is_clickable,android_widget,ad,")
+		if table_type == "IMAGE_NODE":
+			fd.write("app_id,trace_id,view_id,node_id,class,is_clickable,android_widget,ad,text,cont_desc,label,")
 
 	def print_table(self,table_type,fd):
 		if table_type == "BY_NODE":
@@ -49,6 +52,23 @@ class Node:
 			#,class_name,android_widget?,ad_widget?,checks
 			fd.write(","+str(self.raw_properties['class'])+"," +str(self.is_clickable())+","+\
 					 str(self.is_android_default_widget())+","+str(self.is_ads_widget())+",")
+			self.checker.print_table(table_type,fd)
+			fd.write("\n")
+		if table_type == "IMAGE_NODE":
+			k = self.raw_properties.keys()
+			#ID column
+			if 'resource-id' in k:
+				fd.write(str(self.raw_properties['resource-id']))
+			else:
+				fd.write("None")
+			#,class_name,android_widget?,ad_widget?,checks
+			#text_to_print = self.get_textfield().split("",)
+			# apparenlty only prints first line of label which is fine
+			fd.write(","+str(self.raw_properties['class'])+"," +str(self.is_clickable())+","+\
+					 str(self.is_android_default_widget())+","+str(self.is_ads_widget())+"," +\
+					 "\""+str(self.get_textfield()).replace("\n","::").replace("\"","*")+"\","+\
+					 "\""+str(self.get_cont_desc()).replace("\n","::").replace("\"","*")+"\","+\
+					 "\""+str(self.get_speakable_text()).replace("\n","::").replace("\"","*")+"\",")
 			self.checker.print_table(table_type,fd)
 			fd.write("\n")
 
@@ -423,7 +443,7 @@ class Node:
 		#print ("hast text")
 		#pass_label = False
 		text = None
-		text = self.__get_textfield()
+		text = self.get_textfield()
 		if text == None:
 			text = self.get_cont_desc()
 		self.log['talkback_accessible'].append("has own label: "+str(not text == None))
@@ -577,7 +597,7 @@ class Node:
 
 
 	#### Private Getters
-	def __get_textfield(self):
+	def get_textfield(self):
 		text = None
 		k = self.raw_properties.keys()
 		# set to if the field exists
