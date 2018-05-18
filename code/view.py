@@ -7,8 +7,9 @@ import node_checker
 import json
 class View:
 
-	def __init__(self, id_arg, file_arg):
+	def __init__(self, id_arg, file_arg, app_id_arg):
 		self.id = id_arg
+		self.app_id =app_id_arg
 		# json file of viewhierarchy
 		self.filepath = file_arg
 		self.has_valid_file = False
@@ -66,11 +67,35 @@ class View:
 
 		#if no tree, data will be null
 		if(file_data):
-			self.has_valid_file = True
-			root_prop = file_data["activity"]["root"]
-			self.root = Node(root_prop, None, 0)
-			# parse data
-			self.__parse_node(self.root)
+			# if is Android home page or lock screen, not valid for the app
+			## if beginning of activity name doesn't match app package, throw out
+			# attempt to filter out Android home page, etc.
+			#print(str(self.filepath))
+			if not "activity_name" in file_data.keys():
+				self.has_valid_file = False
+			else:
+				activity = file_data["activity_name"]
+				if activity is None:
+					self.has_valid_file = False
+				else:
+					activity_package = file_data["activity_name"].split("/")[0]
+					if activity_package == self.app_id:
+						self.has_valid_file = True
+						root_prop = file_data["activity"]["root"]
+						self.root = Node(root_prop, None, 0)
+						# parse data
+						self.__parse_node(self.root)
+					else:
+						self.has_valid_file = False
+			#if file_data["activity_name"] == "com.android.launcher3/com.android.launcher3.Launcher" or \
+			#	file_data["activity_name"] == "com.morrison.applocklite/com.morrison.applocklite.PasswordActivity":
+			#	self.has_valid_file = False
+			#else:
+			#	self.has_valid_file = True
+			#	root_prop = file_data["activity"]["root"]
+			#	self.root = Node(root_prop, None, 0)
+				# parse data
+			#	self.__parse_node(self.root)
 
 
 	# first build tree of children/parent
@@ -113,6 +138,7 @@ class View:
 		return self.num_type_nodes[type]
 
 	def __set_node_counts(self):
+
 		for type in self.num_type_nodes.keys():
 			self.num_type_nodes[type] = 0
 		for n in self.nodes:
@@ -139,7 +165,7 @@ class View:
 	#### PRINTERS ####
 
 	def print_table(self,table_type, fd,app_id, trace_id,talkback_focus_only = True):
-		if table_type=="BY_NODE":
+		if table_type=="BY_NODE" or table_type=="IMAGE_NODE":
 			for n in self.nodes:
 				if (not talkback_focus_only) and (not n.is_talkback_accessible()):
 					fd.write(str(app_id)+","+str(trace_id)+",")

@@ -12,7 +12,10 @@ import csv
 def print_header(table_type,fd):
 	
 	if (table_type == "BY_NODE"):
-		Node.print_header(fd)
+		Node.print_header(table_type,fd)
+		Node_Checker.print_header(fd)
+	elif (table_type=="IMAGE_NODE"):
+		Node.print_header(table_type,fd)
 		Node_Checker.print_header(fd)
 	elif table_type == "BY_APP":
 		App.print_header(fd, table_type)
@@ -139,8 +142,8 @@ if __name__ == "__main__":
 	#v = View("8",view_dir)
 	#v.print_debug()
 
-	view_dir ="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\sample\\trace_0\\view_hierarchies\\190.json"
-	v = View("190",view_dir)
+	view_dir ="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\me.lyft.android\\trace_0\\view_hierarchies\\102.json"
+	#v = View("190",view_dir,"me.lyft.android")
 	#fd = open("testview.txt",'w',encoding="utf-8")
 	#v.print_debug(fd)
 	#fd.close()
@@ -160,8 +163,8 @@ if __name__ == "__main__":
 	#apps_dir = "C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\\example_apps_test"
 	apps_dir = "E:\\Work\\Research\\Mobile_App_Accessibility\\filtered_traces"
 	# all table types to run:
-	# maps table type to [file name, file_descriptor]
-	table_types = {"BY_NODE":["by_node_fix.csv",None], "BY_APP":["by_app_fix.csv",None]}#"APP_INFO_ONLY":["app_info.csv",None]}#"BY_APP":["all_app.csv",None]}#,}
+	# maps table type to [file name, file_descriptor===None to start]
+	table_types = {"IMAGE_NODE":["node_drop_package.csv",None], "BY_APP":["app_drop_package.csv",None]}#"APP_INFO_ONLY":["app_info.csv",None]}#"BY_APP":["all_app.csv",None]}#,}
 	#!!!!! THERE IS AN APP NAMED LOVE QUOTE", MUST GO INTO CSV AND DELETE THE " at the end of the app name!!!! app_id == net.ayudaporfavor.Love
 
 
@@ -216,6 +219,9 @@ if __name__ == "__main__":
 				a.print_table("BY_NODE", table_types["BY_NODE"][1])
 			if "BY_TRACE" in table_types.keys():
 				a.print_table("BY_TRACE", table_types["BY_TRACE"][1])
+			if "IMAGE_NODE" in table_types.keys():
+				a.print_table("IMAGE_NODE", table_types["IMAGE_NODE"][1])
+
 
 		if "NODE_CLASS_COUNTS" in table_types.keys():
 			for node_class,count in node_class_counts.items():

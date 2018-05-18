@@ -41,7 +41,7 @@ class Node_Checker(Checker_Base):
 	def print_table(self, table_type,fd):
 		# print order:
 		# has_speakable_text_present,
-		if table_type == "BY_NODE":
+		if table_type == "BY_NODE" or table_type=="IMAGE_NODE":
 			# result will be "na" if test isn't applicable
 			for c in check_order:
 				fd.write(str(self.checks[c].result)+",")
