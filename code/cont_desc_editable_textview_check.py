@@ -7,7 +7,8 @@ class Cont_Desc_Editable_Textview_Check(Node_Check_Base):
 		Node_Check_Base.__init__(self,id_arg, node_arg)
 
 	def perform(self):
-		if self.node.is_talkback_accessible():
+		# not applicable to non-textviews or non-focusable textviews
+		if self.node.is_talkback_accessible() and self.node.is_editable_textview():
 			self.result = self.__cont_desc_editable_textview()
 		else:
 			self.result = "na"
