@@ -142,8 +142,8 @@ if __name__ == "__main__":
 	#v = View("8",view_dir)
 	#v.print_debug()
 
-	view_dir ="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps_test\sample\\trace_0\\view_hierarchies\\190.json"
-	#v = View("190",view_dir)
+	view_dir ="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\me.lyft.android\\trace_0\\view_hierarchies\\102.json"
+	#v = View("190",view_dir,"me.lyft.android")
 	#fd = open("testview.txt",'w',encoding="utf-8")
 	#v.print_debug(fd)
 	#fd.close()
