@@ -14,8 +14,6 @@ window_height = window_bounds['bottom'] - window_bounds['top']
 ######################
 
 
-
-# Not currently used
 def __bounds_within_window(node):
 	bounds = node.get_bounds()
 	within_window = True
@@ -34,6 +32,15 @@ def __bounds_within_window(node):
 		within_window = False
 		node.log['talkback_accessible'].append("neg outside height")
 	return within_window
+
+# check if element has dimension
+# zero width or depth may happen to a collapsed element which should not be considered
+def __non_zero_bounds(node):
+	bounds = node.get_bounds()
+	non_zero_bounds = True
+	if bounds['left'] == bounds['right'] or bounds ['top'] == bounds['bottom']:
+		non_zero_bounds = False
+	return non_zero_bounds
 
 def __bounds_same_as_window(node):
 	node_bounds = node.get_bounds()
@@ -68,6 +75,10 @@ def talkback_focus(node, check_children=True):
 
 	# if outside of bounds, not of interest
 	if not __bounds_within_window(node):
+		return False
+
+	# if zero dimension (aka collapsed) not of interest
+	if not __non_zero_bounds(node):
 		return False
 
 	if (node.has_webAction()):
