@@ -13,7 +13,7 @@ class Speakable_Text_Present_Check(Node_Check_Base):
 		### Label check
 		# if talkback accessible, should have appropriate label
 		# don't check on webviews
-		if self.node.is_talkback_accessible() and (not self.node.is_webview()):
+		if self.node.is_talkback_accessible() and (not self.node.is_webview()) and (not self.node.is_editable_textview()):
 			self.result = self.__has_label()
 		else:
 			self.result = "NA"

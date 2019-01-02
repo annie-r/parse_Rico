@@ -142,10 +142,10 @@ if __name__ == "__main__":
 	#v = View("8",view_dir)
 	#v.print_debug()
 
-	view_dir ="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\me.lyft.android\\trace_0\\view_hierarchies\\102.json"
-	#v = View("190",view_dir,"me.lyft.android")
+	view_dir ="C:\\Users\\ansross\Documents\Research\Accessibility\parse_Rico\example_apps\com.aldrinarciga.creepypastareader\\trace_0\\view_hierarchies\\1494.json"
+	#v = View("190",view_dir,"com.magicfluids.demo")
 	#fd = open("testview.txt",'w',encoding="utf-8")
-	#v.print_debug(fd)
+	#v.print_debug(fd, talkback_focus_only=False)
 	#fd.close()
 
 	#print("\n############################################\n")
@@ -164,7 +164,8 @@ if __name__ == "__main__":
 	apps_dir = "E:\\Work\\Research\\Mobile_App_Accessibility\\filtered_traces"
 	# all table types to run:
 	# maps table type to [file name, file_descriptor===None to start]
-	table_types = {"IMAGE_NODE":["node_drop_package.csv",None], "BY_APP":["app_drop_package.csv",None]}#"APP_INFO_ONLY":["app_info.csv",None]}#"BY_APP":["all_app.csv",None]}#,}
+
+	table_types = {"BY_NODE":["node_6_1_2018.csv",None], "IMAGE_NODE":["image_node_6_1_2018.csv",None], "BY_APP":["app_6_1_2018.csv",None]}#"APP_INFO_ONLY":["app_info.csv",None]}#"BY_APP":["all_app.csv",None]}#,}
 	#!!!!! THERE IS AN APP NAMED LOVE QUOTE", MUST GO INTO CSV AND DELETE THE " at the end of the app name!!!! app_id == net.ayudaporfavor.Love
 
 
