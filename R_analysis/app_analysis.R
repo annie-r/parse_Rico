@@ -2,7 +2,23 @@
 
 ###### Import data by app
 #error_by_app_old = read.csv("app_errors.csv")
-## THERE IS AN APP NAMED 
+## THERE IS AN APP NAMED net.ayudaporfavor.Love,"Love quotes""
+all_nodes = read.table(file="app_6_1_2018.csv", header=TRUE,
+                       quote="'\"", sep=",",
+                       encoding="UTF-8", fill=FALSE)
+all_nodes = all_nodes[all_nodes$num_nodes>0,]
+write.csv(as.data.frame(table(all_nodes$category)),"all_nodes_cat_count.csv")
+
+
+apps_without_talkback_nodes = read.table(file="app_6_1_2018.csv", header=TRUE,
+                            quote="'\"", sep=",",
+                            encoding="UTF-8", fill=FALSE)
+nrow(apps_without_talkback_nodes[apps_without_talkback_nodes$num_nodes>0 & apps_without_talkback_nodes$num_talkback_nodes==0,])
+nrow(apps_without_talkback_nodes[apps_without_talkback_nodes$num_nodes>0,])
+apps_without_talkback_nodes = (apps_without_talkback_nodes[apps_without_talkback_nodes$num_nodes>0 & apps_without_talkback_nodes$num_talkback_nodes==0,])
+
+
+
 error_by_app = read.table(file="error_by_app.csv", header=TRUE,
                                                   quote="'\"", sep=",",
                           encoding="UTF-8", fill=FALSE)
@@ -15,13 +31,23 @@ error_by_app = read.table(file="app_recalc.csv", header=TRUE,
 error_by_app = read.table(file="app_drop_package.csv", header=TRUE,
                           quote="'\"", sep=",",
                           encoding="UTF-8", fill=FALSE)
+error_by_app = read.table(file="app_6_1_2018.csv", header=TRUE,
+                          quote="'\"", sep=",",
+                          encoding="UTF-8", fill=FALSE)
 View(error_by_app)
-View(error_by_app[error_by_app$num_nodes==0,])
+View(error_by_app[error_by_app$num_talkback_nodes==0,])
 # attempt to remove apps that have only null views as estimated by having no nodes at all
+
 error_by_app = error_by_app[error_by_app$num_nodes>0,]
 View(error_by_app)
 num_apps = nrow(error_by_app)
 num_apps
+
+#isolate apps that have no focusable elements but have at least one valid element
+apps_without_talkback_nodes = error_by_app[error_by_app$num_talkback_nodes ==0,]
+
+# remove apps without talkback focusable elements for remaining tests
+error_by_app=error_by_app[error_by_app$num_talkback_nodes > 0,] ## need to make sure this is correct!
 
 error_by_app$percent_and = error_by_app$num_talkback_android_default/error_by_app$num_talkback_nodes
 error_by_app$percent_not_and = 1- error_by_app$percent_and
@@ -84,6 +110,7 @@ hist(error_by_app$Num_Missing_Speakable_Text_Per_Node,
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
      main = "Missing Speakable Text", labels=TRUE, ylim=c(0,8000), xlim=c(0,1))
 nrow(error_by_app[!is.na(error_by_app$Num_Missing_Speakable_Text_Per_Node),])
+nrow(error_by_app[error_by_app$Num_Missing_Speakable_Text_Per_Node==0,])
 
 hist(error_by_app$Num_Not_Wide_Enough_Per_Node, 
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
@@ -97,15 +124,21 @@ nrow(error_by_app[!is.na(error_by_app$Num_Not_Tall_Enough_Per_Node),])
 hist(error_by_app$Num_Editable_Textview_Cont_Desc_Per_Node, breaks=20,
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
      main = "Editable Textview with Content Desc", labels=T)
+nrow(error_by_app[!is.na(error_by_app$Num_Clickable_Duplicate_Text_Per_Node),])
+
 hist(error_by_app$Num_Fully_Overlapping_Clickable_Per_Node,
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
      main = "Fully Overlapping Clickable", labels=T)
 hist(error_by_app$Num_Clickable_Duplicate_Text_Per_Node,
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
-     main = "Duplicate Text on Clickable", labels=T, ylim=c(0,6000))
+     main = "Duplicate Text on Clickable", labels=T, ylim=c(0,8000))
+nrow(error_by_app[!is.na(error_by_app$Num_Clickable_Duplicate_Text_Per_Node),])
+
 hist(error_by_app$Num_Non_Clickable_Duplicate_Text_Per_Node,
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
-     main = "Duplicate Text on Non-Clickable")
+     main = "Duplicate Text on Non-Clickable", labels=T, ylim=c(0,8000))
+nrow(error_by_app[!is.na(error_by_app$Num_Non_Clickable_Duplicate_Text_Per_Node),])
+
 hist(error_by_app$Num_Redundant_Description_Per_Node, breaks=20,
      xlab="Percent of Nodes with Error", ylab="Number of Apps", 
      main = "Redundant Description", labels=T)
@@ -170,9 +203,8 @@ library(corrplot)
 View(error_by_app)
 corr_vars = error_by_app[,c("date_updated","category","num_ratings","rating","Num_Missing_Speakable_Text_Per_Node",
                             "Num_Not_Wide_Enough_Per_Node","Num_Not_Tall_Enough_Per_Node","Num_Editable_Textview_Cont_Desc_Per_Node",
-                            "Num_Fully_Overlapping_Clickable_Per_Node","Num_Non_Clickable_Duplicate_Text_Per_Node","Num_Redundant_Description_Per_Node",
-                            "percent_not_and" )] 
-M<-cor(corr_vars[,5:12],use = "complete.obs")
+                            "Num_Fully_Overlapping_Clickable_Per_Node","Num_Non_Clickable_Duplicate_Text_Per_Node","Num_Redundant_Description_Per_Node" )] 
+M<-cor(corr_vars[,5:11],use = "complete.obs") 
 View(M)
 library(corrplot)
 corrplot(M, method="circle")
@@ -196,3 +228,19 @@ View(ImgBn_FAB_ba)
 ############################
 ##### Ads vs Not
 
+
+
+
+#################################
+############ Unfocusable apps
+###############
+#### Unfocusable apps
+##
+nrow(apps_without_talkback_nodes)
+write.csv(apps_without_talkback_nodes[floor(runif(10, min=0, max=nrow(apps_without_talkback_nodes)+1)),], "Sample_Unfocusable_Apps.csv")
+write.csv(apps_without_talkback_nodes, "without_tb_nodes.csv")
+write.csv(as.data.frame(table(apps_without_talkback_nodes$category)),"unfocusable_apps_category.csv")
+plot(apps_without_talkback_nodes$num_downloads)
+plot(apps_without_talkback_nodes$category)
+plot(error_by_app$num_downloads)
+plot(error_by_app$category)

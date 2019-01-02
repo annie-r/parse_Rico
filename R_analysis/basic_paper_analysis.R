@@ -8,6 +8,15 @@ library(tidyr) # create wide data table
 #node = read.csv("all_node_webview.csv")
 #node = read.csv("by_node_size_fix.csv")
 node = read.csv("image_node.csv", encoding="UTF-8")
+node = read.table(file="node_6_1_2018.csv", header=TRUE,
+                          quote="'\"", sep=",",
+                          encoding="UTF-8", fill=FALSE)
+img_node =read.table(file="image_node_6_1_2018.csv", header=TRUE,
+                     quote="'\"", sep=",",
+                     encoding="UTF-8", fill=FALSE)
+
+
+
 # convert to R NULL's
 node[node=="na"] <- NA
 #View(node)
@@ -34,14 +43,14 @@ percent_andr_widget = nrow(node[node$android_widget=="True",])/nrow(node)
 #### investigate errors by class
 #########
 error_by_class = table(node$class)
-error_by_class = rename(as.data.frame(error_by_class), c("Var1"="class","Freq"="class_count"))
+error_by_class = plyr::rename(as.data.frame(error_by_class), c("Var1"="class","Freq"="class_count"))
 View(error_by_class)
 
 # get the number of apps that have at least one element of a given class
 tmp = node[,c("app_id","class")]
 tmp = unique(tmp)
 apps_with_class = as.data.frame(table(tmp$class))
-apps_with_class = rename(apps_with_class, c("Var1"="class","Freq"="num_apps_with_class"))
+apps_with_class = plyr::rename(apps_with_class, c("Var1"="class","Freq"="num_apps_with_class"))
 View(apps_with_class)
 error_by_class = merge(error_by_class,apps_with_class, by="class")
 View(error_by_class)
@@ -61,10 +70,11 @@ error_by_class <- merge(error_by_class, and.widget.classes, by="class")
 ############
 ############ Sp Text 
 
+
 sp_text_by_class <- as.data.frame(table(node$class,node$Speakable_Text_Present, useNA="no", exclude="na"))
 View(sp_text_by_class)
-sp_text_by_class = rename(sp_text_by_class, c("Var1"="class","Var2"="speakable_text_present","Freq"="has_sp_text_count"))
-sp_text_bc_wide = spread(sp_text_by_class, speakable_text_present,has_sp_text_count ) 
+sp_text_by_class = plyr::rename(sp_text_by_class, c("Var1"="class","Var2"="speakable_text_present","Freq"="has_sp_text_count"))
+sp_text_bc_wide = tidyr::spread(sp_text_by_class, speakable_text_present,has_sp_text_count ) 
 sp_text_bc_wide$total = (sp_text_bc_wide$False + sp_text_bc_wide$True)
 
 sp_text_bc_wide = merge(error_by_class, sp_text_bc_wide, by="class")
@@ -432,3 +442,12 @@ h$density =h$counts/sum(h$counts)
 plot(h,freq=FALSE,ylim=c(0,1.0), labels=TRUE, 
      xlab="Percent Fully Overlap", ylab="Percent Classes", 
      main="Percent of Widgets of a Non And Class")
+
+
+
+
+####################
+#### Unfocusable Node Classes?
+View(node[node$class=="com.unity3d.player.UnityPlayer",])
+
+
