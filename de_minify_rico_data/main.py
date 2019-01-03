@@ -27,14 +27,51 @@ def parse_map(map_filename):
 
 def unminify(mini_map, node_filename, outfile_name):
 	with open(node_filename) as node_csv_file:
-		node_dict = csv.DictReader(node_csv_file)
+		with open(outfile_name, 'w', newline='') as csv_outfile:
+			header = ['app_id','trace_id','view_id',
+					  'node_id', 'class', 'is_clickable',
+					  'android_widget', 'ad', 'Speakable_Text_Present',
+					  'Element_Wide_Enough', 'Element_Tall_Enough', 'Editable_Textview_With_Cont_Desc',
+					  'Has_Redundant_Description', 'Num_Nodes_Overlap_With', 'Num_Nodes_Share_Label', '',
+					 'unmutated_class','class_was_mutated' ]
+			reader = csv.reader(node_csv_file)
+			node_dict = []
+			old_header = []
+			is_header = True
+			for row in reader:
+				if is_header:
+					old_header = row
+					is_header =False
+				else:
+					dict = {}
+					for i in range(len(row)):
 
-		for row in node_dict:
-			classname = row['class']
-			if classname in mini_map:
-				print(row['class'])
-				print(mini_map[row['class']])
-				exit()
+						dict[old_header[i]] = row[i]
+					node_dict.append(dict)
+
+			#node_dict = csv.DictReader(node_csv_file, fieldnames = header)
+
+			for row in node_dict:
+				classname = row['class']
+				# class matches mutation
+				if classname in mini_map:
+					row['unmutated_class'] = mini_map[classname]
+					row['class_was_mutated'] = "TRUE"
+				# not mutated, so copy original name
+				else:
+					row['unmutated_class'] = classname
+					row['class_was_mutated'] = "FALSE"
+
+			#write new csv
+			writer = csv.DictWriter(csv_outfile, fieldnames=header, delimiter=",")
+			writer.writeheader()
+			header = True
+			for row in node_dict:
+				if header:
+					header = False
+					continue
+				writer.writerow(row)
+	exit()
 
 if __name__ == "__main__":
 	# read in mapping file
