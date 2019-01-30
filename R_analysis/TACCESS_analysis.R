@@ -7,10 +7,18 @@ library(tibble) #add_column
 
 ###################
 ##### Read in data
-node =read.table(file="node_6_1_2018.csv", header=TRUE,
-                     quote="'\"", sep=",",
-                     encoding="UTF-8", fill=FALSE)
+# unmodified
+# node =read.table(file="node_6_1_2018.csv", header=TRUE,
+#                     quote="'\"", sep=",",
+#                    encoding="UTF-8", fill=FALSE)
+## has unmutated class names
+node =read.table(file="node_1.2.2019.13.18_unminified_1.8.2019.11.07.csv", header=TRUE,
+                 quote="'\"", sep=",",
+                 encoding="UTF-8", fill=FALSE)
+node[node=="na"] <- NA
+
 #Specialty Nodes, to account for different test exclusion criteria
+
 not_na_size_node = node[node$Element_Tall_Enough!="na" & node$Element_Wide_Enough != "na",]
 not_na_size_node = add_column(not_na_size_node, Element_Big_Enough = not_na_size_node$Element_Tall_Enough=="True" & not_na_size_node$Element_Wide_Enough=="True", .after="Element_Tall_Enough")
 not_na_size_node = add_column(not_na_size_node, Element_NOT_Big_Enough = not_na_size_node$Element_Tall_Enough=="False" & not_na_size_node$Element_Wide_Enough=="False", .after="Element_Tall_Enough")
@@ -18,11 +26,11 @@ not_na_size_node = add_column(not_na_size_node, Element_NOT_Wide_Only = not_na_s
 not_na_size_node = add_column(not_na_size_node, Element_NOT_Tall_Only = not_na_size_node$Element_Tall_Enough=="False" & not_na_size_node$Element_Wide_Enough=="True", .after="Element_Tall_Enough")
 
 
+
 ##### Format data
-node[node=="na"] <- NA
 node$Num_Nodes_Overlap_With = as.numeric(as.character(node$Num_Nodes_Overlap_With))
 node$Num_Nodes_Share_Label = as.numeric(as.character(node$Num_Nodes_Share_Label))
-node = add_column(node, Element_Big_Enough = node$Element_Tall_Enough=="True" & node$Element_Wide_Enough=="True", .after="Element_Tall_Enough")
+node = tibble::add_column(node, Element_Big_Enough = node$Element_Tall_Enough=="True" & node$Element_Wide_Enough=="True", .after="Element_Tall_Enough")
 #### investigate errors by class
 #########
 
@@ -284,12 +292,12 @@ View(not_big_en_ba_wide)
 
 #####
 ## Missing Label
-app_class_count_lab = group_by(node, app_id, class) %>%
+app_class_count_lab = dplyr::group_by(node, app_id, class) %>%
   dplyr::summarise(Freq = n())
 app_class_count_lab = plyr::rename(as.data.frame(app_class_count_lab), c("Freq"="total_element_count"))
 
-has_sp_txt_bc_wa <-  node %>% group_by(app_id, class,Speakable_Text_Present) %>%
-  summarise(Freq = n())
+has_sp_txt_bc_wa <-  node %>% dplyr::group_by(app_id, class,Speakable_Text_Present) %>%
+ dplyr::summarise(Freq = n())
 
 has_sp_txt_bc_wa = merge(has_sp_txt_bc_wa,app_class_count_lab, by=c("app_id","class"))
 has_sp_txt_bc_wa_wide = tidyr::spread(has_sp_txt_bc_wa, Speakable_Text_Present,Freq ) 
@@ -301,12 +309,14 @@ View(has_sp_txt_bc_wa_wide)
 ## SIZE
 
 
-app_class_count = group_by(not_na_size_node,app_id, class) %>%
-  summarise(Freq = n())
+app_class_count = dplyr::group_by(not_na_size_node,app_id, class) %>%
+  dplyr::summarise(Freq = n())
 app_class_count <- plyr::rename(as.data.frame(app_class_count), c("Freq"="total_element_count"))
+
+
 ## Not Big Enough (either)
-big_en_bc_wa <-  not_na_size_node %>% group_by(app_id, class,Element_Big_Enough) %>%
-  summarise(Freq = n())
+big_en_bc_wa <-  not_na_size_node %>% dplyr::group_by(app_id, class,Element_Big_Enough) %>%
+  dplyr::summarise(Freq = n())
 
 big_en_bc_wa = merge(big_en_bc_wa,app_class_count, by=c("app_id","class"))
 big_en_bc_wa_wide = tidyr::spread(big_en_bc_wa, Element_Big_Enough,Freq ) 
@@ -314,8 +324,8 @@ big_en_bc_wa_wide[is.na(big_en_bc_wa_wide)] = 0
 big_en_bc_wa_wide$prop_not_big_en_either = big_en_bc_wa_wide$"FALSE"/big_en_bc_wa_wide$total_element_count
 View(big_en_bc_wa_wide)
 ## Not Big Enough (both dimen)
-not_big_en_bc_wa <-  not_na_size_node %>% group_by(app_id, class,Element_NOT_Big_Enough) %>%
-  summarise(Freq = n())
+not_big_en_bc_wa <-  not_na_size_node %>% dplyr::group_by(app_id, class,Element_NOT_Big_Enough) %>%
+  dplyr::summarise(Freq = n())
 
 not_big_en_bc_wa = merge(not_big_en_bc_wa,app_class_count, by=c("app_id","class"))
 not_big_en_bc_wa_wide = tidyr::spread(not_big_en_bc_wa, Element_NOT_Big_Enough,Freq ) 
@@ -325,8 +335,8 @@ not_big_en_bc_wa_wide$prop_NOT_big_en = not_big_en_bc_wa_wide$"TRUE"/not_big_en_
 View(not_big_en_bc_wa_wide)
 
 ## Not Tall Enough Only
-not_tall_en_bc_wa = not_na_size_node %>% group_by(app_id, class,Element_NOT_Tall_Only) %>%
-  summarise(Freq = n())
+not_tall_en_bc_wa = not_na_size_node %>% dplyr::group_by(app_id, class,Element_NOT_Tall_Only) %>%
+  dplyr::summarise(Freq = n())
 
 not_tall_en_bc_wa = merge(not_tall_en_bc_wa,app_class_count, by=c("app_id","class"))
 not_tall_en_bc_wa_wide = spread(not_tall_en_bc_wa, Element_NOT_Tall_Only, Freq)
@@ -443,13 +453,18 @@ h =hist(not_wide_en_only_bc_wide$percent_not_wide_enough_only,
 ## by app
 h=hist(not_wide_en_only_ba_wide$Prop_Not_Wide_Enough_Only,
        ylab="Number of Apps",
-       ylim=c(0,6000),
-       xlab="Proportion Elements Not Wide Enough",
+       ylim=c(0,10000),
+       xlab="Proportion Elements Not Wide Enough Only",
        main = "Proportion of Elements in App Not Wide Enough",
        breaks = c(.1*0:10),
        labels=TRUE)
 
 View(not_wide_en_only_bc_wide[order(not_wide_en_only_bc_wide$num_apps_with_class, decreasing=TRUE),][1:107,])
+
+## top 1% reuse, top error prone
+top_one_per = nrow(not_wide_en_only_bc_wide)*.01 #105
+View(not_wide_en_only_bc_wide[order(not_wide_en_only_bc_wide$num_apps_with_class, decreasing=TRUE),][1:top_one_per,])
+
 
 ##
 ### Not Tall Enough
@@ -499,8 +514,24 @@ h=hist(not_tall_en_only_bc_wide$percent_not_tall_en_only,
        breaks = c(.1*0:10),
        labels=TRUE)
 
+## by app
+h = hist(not_tall_en_only_ba_wide$Prop_Not_Tall_Enough,
+         ylab="Number of Apps", 
+         ylim=c(0,10000), 
+         xlab="Proportion Elements Not Tall Enough Only",
+         main = "Proportion of Elements of App Not Tall Enough Only",
+         breaks = c(.1*0:10),
+         labels=TRUE)
+
+## top 1% reuse, top error prone
+top_one_per = nrow(not_tall_en_only_bc_wide)*.01 #105
+View(not_tall_en_only_bc_wide[order(not_tall_en_only_bc_wide$num_apps_with_class, decreasing=TRUE),][1:top_one_per,])
+
+
 ## case studies class by app
  
+
+
 h=hist(not_tall_en_bc_wa_wide[not_tall_en_bc_wa_wide$class=="android.widget.Button",]$prop_NOT_tall_only*100,
        ylab="Number of Apps (out of 3,944)", 
        ylim=c(0,4000), 
@@ -586,6 +617,15 @@ h=hist(big_en_bc_wide$percent_not_big_enough,
        breaks = c(.1*0:10),
        labels=TRUE)
 
+#by app
+h=hist(big_en_ba_wide$Prop_Not_Big_Enough,
+       ylab="Number of Apps", 
+       ylim=c(0,10000), 
+       xlab="Proportion Elements By App Not Big Enough",
+       main = "Proportion of Elements of App Not Big Enough in Either Dimension",
+       breaks = c(.1*0:10),
+       labels=TRUE)
+
 #by app of specific classes
 
 h=hist(big_en_bc_wa_wide[big_en_bc_wa_wide$class=="android.widget.RadioButton",]$prop_not_big_en_either*100,
@@ -613,7 +653,8 @@ h=hist(big_en_bc_wa_wide[big_en_bc_wa_wide$class=="android.widget.Button",]$prop
        labels=TRUE)
 
 ## top 1% reuse, top error prone
-View(big_en_bc_wide[order(big_en_bc_wide$num_apps_with_class, decreasing=TRUE),][1:107,])
+top_one_per = nrow(big_en_bc_wide)*.01 #105
+View(big_en_bc_wide[order(big_en_bc_wide$num_apps_with_class, decreasing=TRUE),][1:top_one_per,])
 
 #combine image button and button
 tmp = big_en_bc_wa_wide[big_en_bc_wa_wide$class=="android.widget.ImageButton" |
@@ -640,8 +681,6 @@ View(big_en_bc_wide[big_en_bc_wide$percent_not_big_enough>=.90,])
 # popular, sort by num apps
 View(big_en_bc_wide)
 
-#popular, high error: top 1% (1007) classes of reuse, then order by error rate
-View(not_big_en_bc_wide[order(not_big_en_bc_wide$num_apps_with_class, decreasing=TRUE),][1:107,])
 
 
 ## by app
@@ -670,6 +709,15 @@ h=hist(not_big_en_bc_wide$percent_not_big_enough,
        ylim=c(0,10000), 
        xlab="Proportion Elements Not Big Enough",
        main = "Proportion of Elements of Class Not Big Enough in Both Dimension",
+       breaks = c(.1*0:10),
+       labels=TRUE)
+
+#by app
+h=hist(not_big_en_ba_wide$Prop_Not_Big_Enough,
+       ylab="Number of Apps", 
+       ylim=c(0,10000), 
+       xlab="Proportion Elements Not Big Enough",
+       main = "Proportion of Elements of App Not Big Enough in Both Dimension",
        breaks = c(.1*0:10),
        labels=TRUE)
 
@@ -713,6 +761,10 @@ h=hist(not_big_en_bc_wa_wide[not_big_en_bc_wa_wide$class=="android.widget.Button
 View(not_big_en_bc_wide[big_en_bc_wide$percent_not_big_enough>=.90,])
 # popular, sort by num apps
 View(not_big_en_bc_wide)
+
+#popular, high error: top 1% (105) of classes of reuse, then order by error rate
+top_one_per = nrow(not_big_en_bc_wide)*0.01
+View(not_big_en_bc_wide[order(not_big_en_bc_wide$num_apps_with_class, decreasing=TRUE),][1:top_one_per,])
 
 
 ## WHERE CHECKBOXES AND SWITCHES SHOW UP!!!!
