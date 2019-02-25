@@ -48,12 +48,12 @@ tmp = unique(tmp)
 apps_with_class_size = as.data.frame(table(tmp$class))
 apps_with_class_size = rename(apps_with_class_size, c("Var1"="class","Freq"="num_apps_with_class"))
 bc_info_size = merge(bc_info_size,apps_with_class_size, by="class")
-View(bc_info_size)
+#View(bc_info_size)
 
 # general
 by_class_info = table(node$class)
 by_class_info = plyr::rename(as.data.frame(by_class_info), c("Var1"="class","Freq"="class_count"))
-View(by_class_info)
+#View(by_class_info)
 
 # get the number of apps that have at least one element of a given class that is not na
 
